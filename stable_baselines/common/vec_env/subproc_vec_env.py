@@ -28,8 +28,8 @@ def _worker(remote, parent_remote, env_fn_wrapper):
             elif cmd == 'get_spaces':
                 remote.send((env.observation_space, env.action_space))
             elif cmd == 'env_method':
-                method = getattr(env,data[0])
-                result = method(*data[1],**data[2])
+                method = getattr(env, data[0])
+                result = method(*data[1], **data[2])
                 remote.send(result)
             else:
                 raise NotImplementedError
@@ -113,6 +113,15 @@ class SubprocVecEnv(VecEnv):
         return imgs
 
     def env_method(self, method_name, *method_args, **method_kwargs):
+        """
+        Provides an interface to call arbitrary class methods of vectorized environments
+
+        :param method_name (str) The name of the env class method to invoke
+        :param method_args (tuple) Any positional arguments to provide in the call
+        :param method_kwargs (dict) Any keyword arguments to provide in the call
+        :return: (list) List of items retured by each environment's method call
+        """
+
         for remote in self.remotes:
-            remote.send(('env_method',(method_name, method_args, method_kwargs)))
-        return np.stack([remote.recv() for remote in self.remotes])
+            remote.send(('env_method', (method_name, method_args, method_kwargs)))
+        return [remote.recv() for remote in self.remotes]
