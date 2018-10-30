@@ -81,3 +81,15 @@ class DummyVecEnv(VecEnv):
             return self.buf_obs[None]
         else:
             return self.buf_obs
+
+    def env_method(self, method_name, *method_args, **method_kwargs):
+        """
+        Provides an interface to call arbitrary class methods of vectorized environments
+
+        :param method_name (str) The name of the env class method to invoke
+        :param method_args (tuple) Any positional arguments to provide in the call
+        :param method_kwargs (dict) Any keyword arguments to provide in the call
+        :return: (list) List of items retured by the environment's method call
+        """
+        method = getattr(self.envs[0], method_name)
+        return [method(*method_args, **method_kwargs)]
