@@ -27,6 +27,10 @@ def _worker(remote, parent_remote, env_fn_wrapper):
                 break
             elif cmd == 'get_spaces':
                 remote.send((env.observation_space, env.action_space))
+            elif cmd == 'env_method':
+                method = getattr(env,data[0])
+                result = method(*data[1],**data[2])
+                remote.send(result)
             else:
                 raise NotImplementedError
         except EOFError:
@@ -107,3 +111,8 @@ class SubprocVecEnv(VecEnv):
             pipe.send(('render', {"mode": 'rgb_array'}))
         imgs = [pipe.recv() for pipe in self.remotes]
         return imgs
+
+    def env_method(self, method_name, *method_args, **method_kwargs):
+        for remote in self.remotes:
+            remote.send(('env_method',(method_name, method_args, method_kwargs)))
+        return np.stack([remote.recv() for remote in self.remotes])
