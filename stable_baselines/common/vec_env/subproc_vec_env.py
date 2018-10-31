@@ -29,8 +29,11 @@ def _worker(remote, parent_remote, env_fn_wrapper):
                 remote.send((env.observation_space, env.action_space))
             elif cmd == 'env_method':
                 method = getattr(env, data[0])
-                result = method(*data[1], **data[2])
-                remote.send(result)
+                remote.send(method(*data[1], **data[2]))
+            elif cmd == 'get_attr':
+                remote.send(getattr(env, data))
+            elif cmd == 'set_attr':
+                remote.send(setattr(env, data[0], data[1]))
             else:
                 raise NotImplementedError
         except EOFError:
@@ -124,4 +127,28 @@ class SubprocVecEnv(VecEnv):
 
         for remote in self.remotes:
             remote.send(('env_method', (method_name, method_args, method_kwargs)))
+        return [remote.recv() for remote in self.remotes]
+
+    def get_attr(self, attr_name):
+        """
+        Provides a mechanism for getting class attribues from vectorized environments
+
+        :param attr_name: (str) The name of the attribute whose value to return
+        :return: (list) List of values of 'attr_name' in all environments
+        """
+        for remote in self.remotes:
+            remote.send(('get_attr', attr_name))
+        return [remote.recv() for remote in self.remotes]
+
+    def set_attr(self, attr_name, value):
+        """
+        Provides a mechanism for setting arbitrary class attributes inside vectorized environments
+        (note:  this is a broadcast of a single value to all instances)
+
+        :param attr_name: (str) Name of attribute to assign new value
+        :param value: (obj) Value to assign to 'attr_name'
+        :return: (list) in case env access methods might return something, they will be returned in a list
+        """
+        for remote in self.remotes:
+            remote.send(('set_attr', (attr_name, value)))
         return [remote.recv() for remote in self.remotes]
