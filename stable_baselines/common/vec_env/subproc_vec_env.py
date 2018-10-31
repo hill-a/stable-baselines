@@ -116,9 +116,9 @@ class SubprocVecEnv(VecEnv):
         """
         Provides an interface to call arbitrary class methods of vectorized environments
 
-        :param method_name (str) The name of the env class method to invoke
-        :param method_args (tuple) Any positional arguments to provide in the call
-        :param method_kwargs (dict) Any keyword arguments to provide in the call
+        :param method_name: (str) The name of the env class method to invoke
+        :param method_args: (tuple) Any positional arguments to provide in the call
+        :param method_kwargs: (dict) Any keyword arguments to provide in the call
         :return: (list) List of items retured by each environment's method call
         """
 
