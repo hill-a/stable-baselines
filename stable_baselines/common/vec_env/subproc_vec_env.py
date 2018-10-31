@@ -156,6 +156,8 @@ class SubprocVecEnv(VecEnv):
 
         if indices is None:
             indices = range(len(self.remotes))
-        for remote in self.remotes[indices]:
+        elif isinstance(indices, int):
+            indices = [indices]
+        for remote in [self.remotes[i] for i in indices]:
             remote.send(('set_attr', (attr_name, value)))
-        return [remote.recv() for remote in self.remotes[indices]]
+        return [remote.recv() for remote in [self.remotes[i] for i in indices]]
