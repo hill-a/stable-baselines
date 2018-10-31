@@ -137,11 +137,12 @@ class SubprocVecEnv(VecEnv):
         :param attr_name: (str) The name of the attribute whose value to return
         :return: (list) List of values of 'attr_name' in all environments
         """
+
         for remote in self.remotes:
             remote.send(('get_attr', attr_name))
         return [remote.recv() for remote in self.remotes]
 
-    def set_attr(self, attr_name, value):
+    def set_attr(self, attr_name, value, indices=None):
         """
         Provides a mechanism for setting arbitrary class attributes inside vectorized environments
         (note:  this is a broadcast of a single value to all instances)
@@ -149,8 +150,12 @@ class SubprocVecEnv(VecEnv):
 
         :param attr_name: (str) Name of attribute to assign new value
         :param value: (obj) Value to assign to 'attr_name'
+        :param indices: (list,tuple) Iterable containing indices of envs whose attr to set
         :return: (list) in case env access methods might return something, they will be returned in a list
         """
-        for remote in self.remotes:
+
+        if indices is None:
+            indices = range(len(self.remotes))
+        for remote in self.remotes[indices]:
             remote.send(('set_attr', (attr_name, value)))
-        return [remote.recv() for remote in self.remotes]
+        return [remote.recv() for remote in self.remotes[indices]]
