@@ -102,12 +102,17 @@ class DummyVecEnv(VecEnv):
         """
         return [getattr(env_i, attr_name) for env_i in self.envs]
 
-    def set_attr(self, attr_name, value):
+    def set_attr(self, attr_name, value, indices=None):
         """
         Provides a mechanism for setting arbitrary class attributes inside vectorized environments
 
         :param attr_name: (str) Name of attribute to assign new value
         :param value: (obj) Value to assign to 'attr_name'
+        :param indices: (list,int) Indices of envs to assign value
         :return: (list) in case env access methods might return something, they will be returned in a list
         """
-        return [setattr(env_i, attr_name, value) for env_i in self.envs]
+        if indices is None:
+            indices = range(len(self.envs))
+        elif isinstance(indices, int):
+            indices = [indices]
+        return [setattr(env_i, attr_name, value) for env_i in [self.envs[i] for i in indices]]
