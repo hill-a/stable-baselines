@@ -1,36 +1,89 @@
+import pytest
 import gym
-from stable_baselines.common.vec_env.dummy_vec_env import DummyVecEnv
-from stable_baselines.common.vec_env.subproc_vec_env import SubprocVecEnv
+import numpy as np
 
-ENV_ID = 'BreakoutNoFrameskip-v4'
+from stable_baselines.common.vec_env import DummyVecEnv, SubprocVecEnv
 
-
-def test_dummyvecenv():
-    """test dummy_vec_env object"""
-
-    test_vecenv(DummyVecEnv([lambda: gym.make(ENV_ID) for i in range(3)]))
+N_ENVS = 3
 
 
-def test_subprocvecenv():
-    """test dummy_vec_env object"""
+class CustomGymEnv(gym.Env):
+    def __init__(self):
+        """
+        Custom gym environment for testing purposes
+        """
+        self.action_space = gym.spaces.Discrete(2)
+        self.observation_space = self.action_space
+        self.current_step = 0
+        self.ep_length = 4
 
-    test_vecenv(SubprocVecEnv([lambda: gym.make(ENV_ID) for i in range(3)]))
+    def reset(self):
+        self.current_step = 0
+        self._choose_next_state()
+        return self.state
+
+    def step(self, action):
+        reward = self._get_reward(action)
+        self._choose_next_state()
+        self.current_step += 1
+        done = self.current_step >= self.ep_length
+        return self.state, reward, done, {}
+
+    def _choose_next_state(self):
+        self.state = self.action_space.sample()
+
+    def render(self, mode='human'):
+        pass
+
+    def custom_method(self, dim_0=1, dim_1=1):
+        """
+        Dummy method to test call to custom method
+        from VecEnv
+
+        :param dim_0: (int)
+        :param dim_1: (int)
+        :return: (np.ndarray)
+        """
+        return np.ones((dim_0, dim_1))
 
 
-def test_vecenv(vec_env):
-    """test arbitrary vectorized environment"""
-
-    envmethod_results = vec_env.env_method('reset')
+@pytest.mark.parametrize("vec_env_class", [DummyVecEnv, SubprocVecEnv])
+def test_vecenv_custom_calls(vec_env_class):
+    """Test access to methods/attributes of vectorized environments"""
+    vec_env = vec_env_class([lambda: CustomGymEnv() for _ in range(N_ENVS)])
+    env_method_results = vec_env.env_method('custom_method', 1, dim_1=2)
     setattr_results = []
-    for i in range(3):
-        setattr_results.append(vec_env.set_attr('name', 'testname' + str(i), indices=i))
-    getattr_results = vec_env.get_attr('name')
-    assert [res.shape for res in envmethod_results] == [(210, 160, 3)] * 3
-    assert setattr_results == [[None]] * 3
-    assert getattr_results == ['testname0', 'testname1', 'testname2']
+    # Set current_step to an arbitrary value
+    for env_idx in range(N_ENVS):
+        setattr_results.append(vec_env.set_attr('current_step', env_idx, indices=env_idx))
+    # Retrieve the value for each environment
+    getattr_results = vec_env.get_attr('current_step')
 
+    assert len(env_method_results) == N_ENVS
+    assert len(setattr_results) == N_ENVS
+    assert len(getattr_results) == N_ENVS
 
-if __name__ == '__main__':
-    test_dummyvecenv()
-    test_subprocvecenv()
-    exit(0)
+    for env_idx in range(N_ENVS):
+        assert (env_method_results[env_idx] == np.ones((1, 2))).all()
+        assert setattr_results[env_idx][0] is None
+        assert getattr_results[env_idx] == env_idx
+
+    # Test to change value for all the environments
+    setattr_result = vec_env.set_attr('current_step', 42, indices=None)
+    getattr_result = vec_env.get_attr('current_step')
+    assert setattr_result == [None for _ in range(N_ENVS)]
+    assert getattr_result == [42 for _ in range(N_ENVS)]
+
+    # Additional tests for setattr that does not affect all the environments
+    vec_env.reset()
+    setattr_result = vec_env.set_attr('current_step', 12, indices=[0, 1])
+    getattr_result = vec_env.get_attr('current_step')
+    assert setattr_result == [None for _ in range(2)]
+    assert getattr_result == [12 for _ in range(2)] + [0 for _ in range(N_ENVS - 2)]
+
+    vec_env.reset()
+    # Change value only for first and last environment
+    setattr_result = vec_env.set_attr('current_step', 12, indices=[0, -1])
+    getattr_result = vec_env.get_attr('current_step')
+    assert setattr_result == [None for _ in range(2)]
+    assert getattr_result == [12] + [0 for _ in range(N_ENVS - 2)] + [12]
