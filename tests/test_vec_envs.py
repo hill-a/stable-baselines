@@ -36,7 +36,7 @@ class CustomGymEnv(gym.Env):
         pass
 
     @staticmethod
-    def custom_method(self, dim_0=1, dim_1=1):
+    def custom_method(dim_0=1, dim_1=1):
         """
         Dummy method to test call to custom method
         from VecEnv
