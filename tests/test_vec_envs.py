@@ -35,6 +35,7 @@ class CustomGymEnv(gym.Env):
     def render(self, mode='human'):
         pass
 
+    @staticmethod
     def custom_method(self, dim_0=1, dim_1=1):
         """
         Dummy method to test call to custom method
@@ -50,7 +51,7 @@ class CustomGymEnv(gym.Env):
 @pytest.mark.parametrize("vec_env_class", [DummyVecEnv, SubprocVecEnv])
 def test_vecenv_custom_calls(vec_env_class):
     """Test access to methods/attributes of vectorized environments"""
-    vec_env = vec_env_class([lambda: CustomGymEnv() for _ in range(N_ENVS)])
+    vec_env = vec_env_class([CustomGymEnv for _ in range(N_ENVS)])
     env_method_results = vec_env.env_method('custom_method', 1, dim_1=2)
     setattr_results = []
     # Set current_step to an arbitrary value
