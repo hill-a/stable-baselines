@@ -8,8 +8,8 @@ from stable_baselines.common.vec_env import VecEnvWrapper, DummyVecEnv, VecNorma
 
 class VecVideoRecorder(VecEnvWrapper):
 
-    def __init__(self, venv, video_folder, record_video_trigger, video_length=200,
-                 name_prefix='rl-video'):
+    def __init__(self, venv, video_folder, record_video_trigger,
+                 video_length=200, name_prefix='rl-video'):
         """
         Wraps a VecEnv or VecEnvWrapper object to record rendered image as mp4 video.
         It requires ffmpeg or avconv to be installed on the machine.
@@ -29,9 +29,9 @@ class VecVideoRecorder(VecEnvWrapper):
         # Temp variable to retrieve metadata
         temp_env = venv
 
-        # Several HACK to retrieve metadata dict
+        # Unwrap to retrieve metadata dict
         # that will be used by gym recorder
-        if isinstance(temp_env, VecNormalize) or isinstance(temp_env, VecFrameStack):
+        while isinstance(temp_env, VecNormalize) or isinstance(temp_env, VecFrameStack):
             temp_env = temp_env.venv
 
         if isinstance(temp_env, DummyVecEnv) or isinstance(temp_env, SubprocVecEnv):
@@ -62,7 +62,8 @@ class VecVideoRecorder(VecEnvWrapper):
     def start_video_recorder(self):
         self.close_video_recorder()
 
-        base_path = os.path.join(self.video_folder, '{}-step{:06}'.format(self.name_prefix, self.step_id))
+        video_name = '{}-step-{}-to-step-{}'.format(self.name_prefix, self.step_id,  self.step_id + self.video_length)
+        base_path = os.path.join(self.video_folder, video_name)
         self.video_recorder = video_recorder.VideoRecorder(
                 env=self.env,
                 base_path=base_path,
