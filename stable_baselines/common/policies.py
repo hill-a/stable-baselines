@@ -9,6 +9,18 @@ from stable_baselines.common.distributions import make_proba_dist_type
 from stable_baselines.common.input import observation_input
 
 
+def mlp(inputs, layers=[64, 64], activation=tf.tanh, layer_name_preffix=""):
+    inputs = tf.layers.flatten(inputs)
+    activ = activation
+
+    out = inputs
+    for i, layer_size in enumerate(layers):
+        layer_name = (layer_name_preffix if layer_name_preffix is not None else "") + str(i)
+        out = activ(linear(out, layer_name, n_hidden=layer_size, init_scale=np.sqrt(2)))
+
+    return out
+
+
 def nature_cnn(scaled_images, **kwargs):
     """
     CNN from Nature paper.
@@ -191,11 +203,7 @@ class LstmPolicy(ActorCriticPolicy):
             if feature_extraction == "cnn":
                 extracted_features = cnn_extractor(self.processed_x, **kwargs)
             else:
-                activ = tf.tanh
-                extracted_features = tf.layers.flatten(self.processed_x)
-                for i, layer_size in enumerate(layers):
-                    extracted_features = activ(linear(extracted_features, 'pi_fc' + str(i), n_hidden=layer_size,
-                                                      init_scale=np.sqrt(2)))
+                extracted_features = mlp(self.processed_x, layers=layers, layer_name_preffix='pi_fc', **kwargs)
             input_sequence = batch_to_seq(extracted_features, self.n_env, n_steps)
             masks = batch_to_seq(self.masks_ph, self.n_env, n_steps)
             rnn_output, self.snew = lstm(input_sequence, masks, self.states_ph, 'lstm1', n_hidden=n_lstm,
@@ -256,13 +264,8 @@ class FeedForwardPolicy(ActorCriticPolicy):
                 pi_latent = extracted_features
                 vf_latent = extracted_features
             else:
-                activ = tf.tanh
-                processed_x = tf.layers.flatten(self.processed_x)
-                pi_h = processed_x
-                vf_h = processed_x
-                for i, layer_size in enumerate(layers):
-                    pi_h = activ(linear(pi_h, 'pi_fc' + str(i), n_hidden=layer_size, init_scale=np.sqrt(2)))
-                    vf_h = activ(linear(vf_h, 'vf_fc' + str(i), n_hidden=layer_size, init_scale=np.sqrt(2)))
+                vf_h = mlp(self.processed_x, layers=layers, layer_name_preffix="vf_fc", **kwargs)
+                pi_h = mlp(self.processed_x, layers=layers, layer_name_preffix="pi_fc", **kwargs)
                 value_fn = linear(vf_h, 'vf', 1)
                 pi_latent = pi_h
                 vf_latent = vf_h
