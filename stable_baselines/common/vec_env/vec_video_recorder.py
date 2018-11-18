@@ -45,6 +45,7 @@ class VecVideoRecorder(VecEnvWrapper):
         self.video_recorder = None
 
         self.video_folder = os.path.abspath(video_folder)
+        # Create output folder if needed
         os.makedirs(self.video_folder, exist_ok=True)
 
         self.name_prefix = name_prefix
@@ -62,7 +63,8 @@ class VecVideoRecorder(VecEnvWrapper):
     def start_video_recorder(self):
         self.close_video_recorder()
 
-        video_name = '{}-step-{}-to-step-{}'.format(self.name_prefix, self.step_id,  self.step_id + self.video_length)
+        video_name = '{}-step-{}-to-step-{}'.format(self.name_prefix, self.step_id,
+                                                    self.step_id + self.video_length)
         base_path = os.path.join(self.video_folder, video_name)
         self.video_recorder = video_recorder.VideoRecorder(
                 env=self.env,
@@ -88,7 +90,7 @@ class VecVideoRecorder(VecEnvWrapper):
                 logger.info("Saving video to ", self.video_recorder.path)
                 self.close_video_recorder()
         elif self._video_enabled():
-                self.start_video_recorder()
+            self.start_video_recorder()
 
         return obs, rews, dones, infos
 
@@ -96,7 +98,7 @@ class VecVideoRecorder(VecEnvWrapper):
         if self.recording:
             self.video_recorder.close()
         self.recording = False
-        self.recorded_frames = 0
+        self.recorded_frames = 1
 
     def close(self):
         VecEnvWrapper.close(self)
