@@ -9,7 +9,9 @@ from stable_baselines.common.distributions import make_proba_dist_type
 from stable_baselines.common.input import observation_input
 
 
-def mlp(inputs, layers=[64, 64], activation=tf.tanh, layer_name_preffix=""):
+def mlp(inputs, layers=None, activation=tf.tanh, layer_name_preffix=""):
+    if layers is None:
+        layers = [64, 64]
     inputs = tf.layers.flatten(inputs)
     activ = activation
 
