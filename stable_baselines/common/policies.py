@@ -17,7 +17,7 @@ def mlp(inputs, layers=None, activation=tf.tanh, layer_name_prefix=""):
 
     out = inputs
     for i, layer_size in enumerate(layers):
-        layer_name = (layer_name_preffix if layer_name_preffix is not None else "") + str(i)
+        layer_name = "{}{}".format(layer_name_prefix, i)
         out = activ(linear(out, layer_name, n_hidden=layer_size, init_scale=np.sqrt(2)))
 
     return out
