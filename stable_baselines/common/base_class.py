@@ -198,23 +198,29 @@ class BaseRLModel(ABC):
 
     @staticmethod
     def _save_to_file(save_path, data=None, params=None):
-        _, ext = os.path.splitext(save_path)
-        if ext == "":
-            save_path += ".pkl"
+        if isinstance(save_path, str):
+            _, ext = os.path.splitext(save_path)
+            if ext == "":
+                save_path += ".pkl"
 
-        with open(save_path, "wb") as file:
-            cloudpickle.dump((data, params), file)
+            with open(save_path, "wb") as file:
+                cloudpickle.dump((data, params), file)
+        else:
+            cloudpickle.dump((data, params), save_path)
 
     @staticmethod
     def _load_from_file(load_path):
-        if not os.path.exists(load_path):
-            if os.path.exists(load_path + ".pkl"):
-                load_path += ".pkl"
-            else:
-                raise ValueError("Error: the file {} could not be found".format(load_path))
+        if isinstance(load_path, str):
+            if not os.path.exists(load_path):
+                if os.path.exists(load_path + ".pkl"):
+                    load_path += ".pkl"
+                else:
+                    raise ValueError("Error: the file {} could not be found".format(load_path))
 
-        with open(load_path, "rb") as file:
-            data, params = cloudpickle.load(file)
+            with open(load_path, "rb") as file:
+                data, params = cloudpickle.load(file)
+        else:
+            data, params = cloudpickle.load(load_path)
 
         return data, params
 
