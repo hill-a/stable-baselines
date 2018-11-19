@@ -203,7 +203,7 @@ class BaseRLModel(ABC):
             if ext == "":
                 save_path += ".pkl"
 
-            with open(save_path, "wb") as file:
+            with open(save_path, "wb") as file_:
                 cloudpickle.dump((data, params), file)
         else:
             cloudpickle.dump((data, params), save_path)
