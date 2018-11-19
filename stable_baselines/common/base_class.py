@@ -206,6 +206,7 @@ class BaseRLModel(ABC):
             with open(save_path, "wb") as file_:
                 cloudpickle.dump((data, params), file)
         else:
+            # Here save_path is a file-like object, not a path
             cloudpickle.dump((data, params), save_path)
 
     @staticmethod
