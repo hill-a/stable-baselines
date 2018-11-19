@@ -20,7 +20,7 @@ MODEL_LIST = [
     TRPO,
 ]
 
-STORE_METHOD = [
+STORE_METHODS = [
     "path",
     "file-like"
 ]
@@ -28,7 +28,7 @@ STORE_METHOD = [
 
 @pytest.mark.slow
 @pytest.mark.parametrize("model_class", MODEL_LIST)
-@pytest.mark.parametrize("storage_method", STORE_METHOD)
+@pytest.mark.parametrize("storage_method", STORE_METHODS)
 def test_model_manipulation(model_class, storage_method):
     """
     Test if the algorithm (with a given policy) can be loaded and saved without any issues, the environment switching
