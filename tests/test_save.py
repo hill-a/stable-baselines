@@ -72,7 +72,7 @@ def test_model_manipulation(model_class, storage_method):
             model = model_class.load("./test_model")
         else:
             b_io = BytesIO(model_bytes)
-            model_class.load(b_io)
+            model = model_class.load(b_io)
             b_io.close()
 
         # changing environment (note: this can be done at loading)

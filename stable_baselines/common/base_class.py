@@ -177,7 +177,7 @@ class BaseRLModel(ABC):
         """
         Save the current parameters to file
 
-        :param save_path: (str) the save location
+        :param save_path: (str or file-like) the save location
         """
         # self._save_to_file(save_path, data={}, params=None)
         raise NotImplementedError()
@@ -188,7 +188,7 @@ class BaseRLModel(ABC):
         """
         Load the model from file
 
-        :param load_path: (str) the saved parameter location
+        :param load_path: (str or file-like) the saved parameter location
         :param env: (Gym Envrionment) the new environment to run the loaded model on
             (can be None if you only need prediction from a trained model)
         :param kwargs: extra arguments to change the model when loading
