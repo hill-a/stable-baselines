@@ -10,6 +10,15 @@ from stable_baselines.common.input import observation_input
 
 
 def mlp(inputs, layers=None, activation=tf.tanh, layer_name_prefix=""):
+    '''
+    Create a traditional MLP.
+
+    :param inputs: (TensorFlow Tensor) Feature input placeholder
+    :param layers: ([int]) The size of the Neural network (if None, default to [64, 64])
+    :param activation: Activation to be used in the Neural network (default: tanh)
+    :param layer_name_preffix: The preffix do be used to name the Neural network layers
+    :return:
+    '''
     if layers is None:
         layers = [64, 64]
     inputs = tf.layers.flatten(inputs)
