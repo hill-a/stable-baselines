@@ -221,7 +221,7 @@ class BaseRLModel(ABC):
             with open(load_path, "rb") as file:
                 data, params = cloudpickle.load(file)
         else:
-            # Here save_path is a file-like object, not a path
+            # Here load_path is a file-like object, not a path
             data, params = cloudpickle.load(load_path)
 
         return data, params
