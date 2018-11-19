@@ -177,7 +177,7 @@ class BaseRLModel(ABC):
         """
         Save the current parameters to file
 
-        :param save_path: (str or file-like) the save location
+        :param save_path: (str or file-like object) the save location
         """
         # self._save_to_file(save_path, data={}, params=None)
         raise NotImplementedError()
