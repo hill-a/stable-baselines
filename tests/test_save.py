@@ -57,9 +57,9 @@ def test_model_manipulation(model_class, storage_method):
         acc_reward = sum(acc_reward) / N_TRIALS
 
         # saving
-        if storage_method == "path":
+        if storage_method == "path":  # saving to a path
             model.save("./test_model")
-        else:
+        else:  # saving to a file-like object (BytesIO in this case)
             b_io = BytesIO()
             model.save(b_io)
             model_bytes = b_io.getvalue()
@@ -68,10 +68,10 @@ def test_model_manipulation(model_class, storage_method):
         del model, env
 
         # loading
-        if storage_method == "path":
+        if storage_method == "path":  # loading from path
             model = model_class.load("./test_model")
         else:
-            b_io = BytesIO(model_bytes)
+            b_io = BytesIO(model_bytes)  # loading from file-like object (BytesIO in this case)
             model = model_class.load(b_io)
             b_io.close()
 
