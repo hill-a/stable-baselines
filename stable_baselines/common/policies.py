@@ -16,7 +16,7 @@ def mlp(inputs, layers=None, activation=tf.tanh, layer_name_prefix=""):
     :param inputs: (TensorFlow Tensor) Feature input placeholder
     :param layers: ([int]) The size of the Neural network (if None, default to [64, 64])
     :param activation: Activation to be used in the Neural network (default: tanh)
-    :param layer_name_preffix: The preffix do be used to name the Neural network layers
+    :param layer_name_prefix: The prefix do be used to name the Neural network layers
     :return:
     '''
     if layers is None:
@@ -214,7 +214,7 @@ class LstmPolicy(ActorCriticPolicy):
             if feature_extraction == "cnn":
                 extracted_features = cnn_extractor(self.processed_x, **kwargs)
             else:
-                extracted_features = mlp(self.processed_x, layers=layers, layer_name_preffix='pi_fc', **kwargs)
+                extracted_features = mlp(self.processed_x, layers=layers, layer_name_prefix='pi_fc', **kwargs)
             input_sequence = batch_to_seq(extracted_features, self.n_env, n_steps)
             masks = batch_to_seq(self.masks_ph, self.n_env, n_steps)
             rnn_output, self.snew = lstm(input_sequence, masks, self.states_ph, 'lstm1', n_hidden=n_lstm,
@@ -275,8 +275,8 @@ class FeedForwardPolicy(ActorCriticPolicy):
                 pi_latent = extracted_features
                 vf_latent = extracted_features
             else:
-                vf_h = mlp(self.processed_x, layers=layers, layer_name_preffix="vf_fc", **kwargs)
-                pi_h = mlp(self.processed_x, layers=layers, layer_name_preffix="pi_fc", **kwargs)
+                vf_h = mlp(self.processed_x, layers=layers, layer_name_prefix="vf_fc", **kwargs)
+                pi_h = mlp(self.processed_x, layers=layers, layer_name_prefix="pi_fc", **kwargs)
                 value_fn = linear(vf_h, 'vf', 1)
                 pi_latent = pi_h
                 vf_latent = vf_h
