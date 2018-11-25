@@ -17,7 +17,7 @@ def mlp(inputs, layers=None, activation=tf.tanh, layer_name_prefix=""):
     :param layers: ([int]) The number of units per layer (if None, default to [64, 64])
     :param activation: (tf function) Activation to be used in the Neural network (default: tf.tanh)
     :param layer_name_prefix: The prefix do be used to name the Neural network layers
-    :return:
+    :return: (tf.Tensor) the MLP output layer
     '''
     if layers is None:
         layers = [64, 64]
