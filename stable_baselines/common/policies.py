@@ -18,7 +18,7 @@ def mlp(inputs, layers=None, activation=tf.tanh, layer_name_prefix=""):
     :param activation: (tf function) Activation to be used in the Neural network (default: tf.tanh)
     :param layer_name_prefix: (str) Prefix for the neural network layer names.
     :return: (tf.Tensor) the MLP output layer
-    '''
+    """
     if layers is None:
         layers = [64, 64]
     inputs = tf.layers.flatten(inputs)
