@@ -13,7 +13,7 @@ def mlp(inputs, layers=None, activation=tf.tanh, layer_name_prefix=""):
     """
     Create a traditional MLP.
 
-    :param inputs: (TensorFlow Tensor) Feature input placeholder
+    :param inputs: (tf.placeholder) Feature input placeholder
     :param layers: ([int]) The size of the Neural network (if None, default to [64, 64])
     :param activation: Activation to be used in the Neural network (default: tanh)
     :param layer_name_prefix: The prefix do be used to name the Neural network layers
