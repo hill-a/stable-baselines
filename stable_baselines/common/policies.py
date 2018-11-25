@@ -10,7 +10,7 @@ from stable_baselines.common.input import observation_input
 
 
 def mlp(inputs, layers=None, activation=tf.tanh, layer_name_prefix=""):
-    '''
+    """
     Create a traditional MLP.
 
     :param inputs: (TensorFlow Tensor) Feature input placeholder
