@@ -11,7 +11,7 @@ from stable_baselines.common.input import observation_input
 
 def mlp(inputs, layers=None, activation=tf.tanh, layer_name_prefix=""):
     """
-    Create a traditional MLP.
+    Create a multilayer perceptron (MLP) composed of fully-connected layers.
 
     :param inputs: (tf.placeholder) Feature input placeholder
     :param layers: ([int]) The size of the Neural network (if None, default to [64, 64])
