@@ -4,7 +4,7 @@ import numpy as np
 import tensorflow as tf
 from gym.spaces import Discrete
 
-from stable_baselines.a2c.utils import conv, linear, conv_to_fc, batch_to_seq, seq_to_batch, lstm
+from stable_baselines.a2c.utils import conv, linear, conv_to_fc, batch_to_seq, seq_to_batch, lstm, ortho_init
 from stable_baselines.common.distributions import make_proba_dist_type
 from stable_baselines.common.input import observation_input
 
@@ -23,6 +23,55 @@ def nature_cnn(scaled_images, **kwargs):
     layer_3 = activ(conv(layer_2, 'c3', n_filters=64, filter_size=3, stride=1, init_scale=np.sqrt(2), **kwargs))
     layer_3 = conv_to_fc(layer_3)
     return activ(linear(layer_3, 'fc1', n_hidden=512, init_scale=np.sqrt(2)))
+
+
+def mlp_extractor(flat_observations, layers_spec, act_fun):
+    latent = flat_observations
+    policy_only_layers = []  # Layer sizes of the network that only belongs to the policy network
+    value_only_layers = []  # Layer sizes of the network that only belongs to the value network
+
+    # Iterate through the shared layers and build the shared parts of the network
+    for idx, layer in enumerate(layers_spec):
+        if isinstance(layer, int):  # Check that this is a shared layer
+            layer_size = layer
+            n_input = latent.get_shape()[1].value
+            with tf.variable_scope("shared_{}".format(idx)):
+                weight = tf.get_variable("w", [n_input, layer_size], initializer=ortho_init(np.sqrt(2)))
+                bias = tf.get_variable("b", [layer_size], initializer=tf.constant_initializer(0.0))
+                latent = act_fun(tf.matmul(latent, weight) + bias)
+        else:
+            assert isinstance(layer, dict)
+            if 'pi' in layer:
+                assert isinstance(layer['pi'], list)
+                policy_only_layers = layer['pi']
+
+            if 'vf' in layer:
+                assert isinstance(layer['vf'], list)
+                value_only_layers = layer['vf']
+            break  # From here on the network splits up in policy and value network
+
+    latent_policy = latent
+    latent_value = latent
+
+    # Build part of the network that exclusively belongs to the policy network
+    for idx, layer_size in enumerate(policy_only_layers):
+        assert isinstance(layer_size, int)
+        n_input = latent_policy.get_shape()[1].value
+        with tf.variable_scope("policy_{}".format(idx)):
+            weight = tf.get_variable("w", [n_input, layer_size], initializer=ortho_init(np.sqrt(2)))
+            bias = tf.get_variable("b", [layer_size], initializer=tf.constant_initializer(0.0))
+            latent_policy = act_fun(tf.matmul(latent_policy, weight) + bias)
+
+    # Build part of the network that exclusively belongs to the value network
+    for idx, layer_size in enumerate(value_only_layers):
+        assert isinstance(layer_size, int)
+        n_input = latent_value.get_shape()[1].value
+        with tf.variable_scope("value_{}".format(idx)):
+            weight = tf.get_variable("w", [n_input, layer_size], initializer=ortho_init(np.sqrt(2)))
+            bias = tf.get_variable("b", [layer_size], initializer=tf.constant_initializer(0.0))
+            latent_value = act_fun(tf.matmul(latent_value, weight) + bias)
+
+    return latent_policy, latent_value
 
 
 class BasePolicy(ABC):
@@ -49,9 +98,9 @@ class BasePolicy(ABC):
         self.n_steps = n_steps
         with tf.variable_scope("input", reuse=False):
             if obs_phs is None:
-                self.obs_ph, self.processed_x = observation_input(ob_space, n_batch, scale=scale)
+                self.obs_ph, self.processed_obs = observation_input(ob_space, n_batch, scale=scale)
             else:
-                self.obs_ph, self.processed_x = obs_phs
+                self.obs_ph, self.processed_obs = obs_phs
             self.masks_ph = tf.placeholder(tf.float32, [n_batch], name="masks_ph")  # mask (done t-1)
             self.states_ph = tf.placeholder(tf.float32, [self.n_env, n_lstm * 2], name="states_ph")  # states
             self.action_ph = None
@@ -189,10 +238,10 @@ class LstmPolicy(ActorCriticPolicy):
 
         with tf.variable_scope("model", reuse=reuse):
             if feature_extraction == "cnn":
-                extracted_features = cnn_extractor(self.processed_x, **kwargs)
+                extracted_features = cnn_extractor(self.processed_obs, **kwargs)
             else:
                 activ = tf.tanh
-                extracted_features = tf.layers.flatten(self.processed_x)
+                extracted_features = tf.layers.flatten(self.processed_obs)
                 for i, layer_size in enumerate(layers):
                     extracted_features = activ(linear(extracted_features, 'pi_fc' + str(i), n_hidden=layer_size,
                                                       init_scale=np.sqrt(2)))
@@ -236,13 +285,14 @@ class FeedForwardPolicy(ActorCriticPolicy):
     :param n_steps: (int) The number of steps to run for each environment
     :param n_batch: (int) The number of batch to run (n_envs * n_steps)
     :param reuse: (bool) If the policy is reusable or not
-    :param layers: ([int]) The size of the Neural network for the policy (if None, default to [64, 64])
+    :param layers: ([int]) The size of the Neural network for the policy (if None, default to [64, 64]) TODO: fix documentation here
+    :param act_fun: the activation function to use in the neural network.
     :param cnn_extractor: (function (TensorFlow Tensor, ``**kwargs``): (TensorFlow Tensor)) the CNN feature extraction
     :param feature_extraction: (str) The feature extraction type ("cnn" or "mlp")
     :param kwargs: (dict) Extra keyword arguments for the nature CNN feature extraction
     """
 
-    def __init__(self, sess, ob_space, ac_space, n_env, n_steps, n_batch, reuse=False, layers=None,
+    def __init__(self, sess, ob_space, ac_space, n_env, n_steps, n_batch, reuse=False, layers=None, act_fun=tf.tanh,
                  cnn_extractor=nature_cnn, feature_extraction="cnn", **kwargs):
         super(FeedForwardPolicy, self).__init__(sess, ob_space, ac_space, n_env, n_steps, n_batch, n_lstm=256,
                                                 reuse=reuse, scale=(feature_extraction == "cnn"))
@@ -251,26 +301,15 @@ class FeedForwardPolicy(ActorCriticPolicy):
 
         with tf.variable_scope("model", reuse=reuse):
             if feature_extraction == "cnn":
-                extracted_features = cnn_extractor(self.processed_x, **kwargs)
-                value_fn = linear(extracted_features, 'vf', 1)
-                pi_latent = extracted_features
-                vf_latent = extracted_features
+                pi_latent = vf_latent = cnn_extractor(self.processed_obs, **kwargs)
             else:
-                activ = tf.tanh
-                processed_x = tf.layers.flatten(self.processed_x)
-                pi_h = processed_x
-                vf_h = processed_x
-                for i, layer_size in enumerate(layers):
-                    pi_h = activ(linear(pi_h, 'pi_fc' + str(i), n_hidden=layer_size, init_scale=np.sqrt(2)))
-                    vf_h = activ(linear(vf_h, 'vf_fc' + str(i), n_hidden=layer_size, init_scale=np.sqrt(2)))
-                value_fn = linear(vf_h, 'vf', 1)
-                pi_latent = pi_h
-                vf_latent = vf_h
+                pi_latent, vf_latent = mlp_extractor(tf.layers.flatten(self.processed_obs), layers, act_fun)
+
+            self.value_fn = linear(vf_latent, 'vf', 1)
 
             self.proba_distribution, self.policy, self.q_value = \
                 self.pdtype.proba_distribution_from_latent(pi_latent, vf_latent, init_scale=0.01)
 
-        self.value_fn = value_fn
         self.initial_state = None
         self._setup_init()
 
