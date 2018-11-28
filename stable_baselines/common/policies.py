@@ -34,11 +34,7 @@ def mlp_extractor(flat_observations, layers_spec, act_fun):
     for idx, layer in enumerate(layers_spec):
         if isinstance(layer, int):  # Check that this is a shared layer
             layer_size = layer
-            n_input = latent.get_shape()[1].value
-            with tf.variable_scope("shared_{}".format(idx)):
-                weight = tf.get_variable("w", [n_input, layer_size], initializer=ortho_init(np.sqrt(2)))
-                bias = tf.get_variable("b", [layer_size], initializer=tf.constant_initializer(0.0))
-                latent = act_fun(tf.matmul(latent, weight) + bias)
+            latent = act_fun(linear(latent, "shared_fc{}".format(idx), layer_size, init_scale=np.sqrt(2)))
         else:
             assert isinstance(layer, dict)
             if 'pi' in layer:
@@ -50,26 +46,17 @@ def mlp_extractor(flat_observations, layers_spec, act_fun):
                 value_only_layers = layer['vf']
             break  # From here on the network splits up in policy and value network
 
-    latent_policy = latent
-    latent_value = latent
-
     # Build part of the network that exclusively belongs to the policy network
+    latent_policy = latent
     for idx, layer_size in enumerate(policy_only_layers):
         assert isinstance(layer_size, int)
-        n_input = latent_policy.get_shape()[1].value
-        with tf.variable_scope("policy_{}".format(idx)):
-            weight = tf.get_variable("w", [n_input, layer_size], initializer=ortho_init(np.sqrt(2)))
-            bias = tf.get_variable("b", [layer_size], initializer=tf.constant_initializer(0.0))
-            latent_policy = act_fun(tf.matmul(latent_policy, weight) + bias)
+        latent_policy = act_fun(linear(latent_policy, "pi_fc{}".format(idx), layer_size, init_scale=np.sqrt(2)))
 
     # Build part of the network that exclusively belongs to the value network
+    latent_value = latent
     for idx, layer_size in enumerate(value_only_layers):
         assert isinstance(layer_size, int)
-        n_input = latent_value.get_shape()[1].value
-        with tf.variable_scope("value_{}".format(idx)):
-            weight = tf.get_variable("w", [n_input, layer_size], initializer=ortho_init(np.sqrt(2)))
-            bias = tf.get_variable("b", [layer_size], initializer=tf.constant_initializer(0.0))
-            latent_value = act_fun(tf.matmul(latent_value, weight) + bias)
+        latent_value = act_fun(linear(latent_value, "vf_fc{}".format(idx), layer_size, init_scale=np.sqrt(2)))
 
     return latent_policy, latent_value
 
@@ -292,18 +279,27 @@ class FeedForwardPolicy(ActorCriticPolicy):
     :param kwargs: (dict) Extra keyword arguments for the nature CNN feature extraction
     """
 
-    def __init__(self, sess, ob_space, ac_space, n_env, n_steps, n_batch, reuse=False, layers=None, act_fun=tf.tanh,
+    def __init__(self, sess, ob_space, ac_space, n_env, n_steps, n_batch, reuse=False, layers=None, net_arch=None, act_fun=tf.tanh,
                  cnn_extractor=nature_cnn, feature_extraction="cnn", **kwargs):
         super(FeedForwardPolicy, self).__init__(sess, ob_space, ac_space, n_env, n_steps, n_batch, n_lstm=256,
                                                 reuse=reuse, scale=(feature_extraction == "cnn"))
-        if layers is None:
-            layers = [64, 64]
+
+        if layers is not None:
+            print("Warning: usage of the `layers` parameter is deprecated! Use net_arch instead "
+                  "(it has a different semantics though).")
+            if net_arch is not None:
+                print("Warning: the new `net_arch` overrides the `layers`!")
+
+        if net_arch is None:
+            if layers is None:
+                layers = [64, 64]
+            net_arch = [dict(vf=layers, pi=layers)]
 
         with tf.variable_scope("model", reuse=reuse):
             if feature_extraction == "cnn":
                 pi_latent = vf_latent = cnn_extractor(self.processed_obs, **kwargs)
             else:
-                pi_latent, vf_latent = mlp_extractor(tf.layers.flatten(self.processed_obs), layers, act_fun)
+                pi_latent, vf_latent = mlp_extractor(tf.layers.flatten(self.processed_obs), net_arch, act_fun)
 
             self.value_fn = linear(vf_latent, 'vf', 1)
 
