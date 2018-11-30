@@ -19,7 +19,7 @@ However, you can also easily define a custom architecture for the policy (or val
   class CustomPolicy(FeedForwardPolicy):
       def __init__(self, *args, **kwargs):
           super(CustomPolicy, self).__init__(*args, **kwargs,
-                                             layers=[128, 128, 128],
+                                             net_arch=[dict(pi=[128, 128, 128], vf=[128, 128, 128])],
                                              feature_extraction="mlp")
 
   # Create and wrap the environment
@@ -54,7 +54,7 @@ You can also registered your policy, to help with code simplicity: you can refer
   class CustomPolicy(FeedForwardPolicy):
       def __init__(self, *args, **kwargs):
           super(CustomPolicy, self).__init__(*args, **kwargs,
-                                             layers=[128, 128, 128],
+                                             net_arch=[dict(pi=[128, 128, 128], vf=[128, 128, 128])],
                                              feature_extraction="mlp")
 
   # Register the policy, it will check that the name is not already taken
@@ -65,6 +65,8 @@ You can also registered your policy, to help with code simplicity: you can refer
   model = A2C(policy='CustomPolicy', env='LunarLander-v2', verbose=1).learn(total_timesteps=100000)
 
 
+
+The net_arch parameter of `FeedForwardPolicy` allows for
 If however, your task requires a more granular control over the policy architecture, you can redefine the policy directly:
 
 .. code-block:: python

@@ -26,6 +26,26 @@ def nature_cnn(scaled_images, **kwargs):
 
 
 def mlp_extractor(flat_observations, layers_spec, act_fun):
+    """
+    Constructs an MLP that receives observations as an input and outputs a latent representation for the policy and
+    a value network. The `layers_spec` parameter allows to specify the amount and size of the hidden layers and how many
+    of them are shared between the policy network and the value network. It is assumed to be a list with the following
+    structure:
+    1. An arbitrary length (zero allowed) number of integers specifying each specifying the number of units in a shared
+    layer. If the number of ints is zero, there will be no shared layers.
+    2. The specification of the shared layers is followed by a dict, to specify the number of non-shared layers for the
+    value network and the policy network respectively. It is formatted like
+    `dict(vf=[<value layer sizes>], pi=[<policy layer sizes>])`. If either the dict is missing or it is missing any of
+    the keys (pi or vf), no non-shared layers are assumed.
+
+    For example to construct a network with one shared layer of size 55 followed by two non-shared layers for the value
+    network of size 255 and a single non-shared layer of size 128 for the policy network, the following layers_spec
+    would be used: `[55, dict(vf=[255, 255], pi=[128])]`.
+    :param flat_observations:
+    :param layers_spec:
+    :param act_fun:
+    :return:
+    """
     latent = flat_observations
     policy_only_layers = []  # Layer sizes of the network that only belongs to the policy network
     value_only_layers = []  # Layer sizes of the network that only belongs to the value network
@@ -272,7 +292,10 @@ class FeedForwardPolicy(ActorCriticPolicy):
     :param n_steps: (int) The number of steps to run for each environment
     :param n_batch: (int) The number of batch to run (n_envs * n_steps)
     :param reuse: (bool) If the policy is reusable or not
-    :param layers: ([int]) The size of the Neural network for the policy (if None, default to [64, 64]) TODO: fix documentation here
+    :param layers: ([int]) (deprecated, use net_arch instead) The size of the Neural network for the policy
+    (if None, default to [64, 64])
+    :param net_arch: (list) Specification of the actor-critic policy network architecture (see mlp_extractor
+    documentation for details).
     :param act_fun: the activation function to use in the neural network.
     :param cnn_extractor: (function (TensorFlow Tensor, ``**kwargs``): (TensorFlow Tensor)) the CNN feature extraction
     :param feature_extraction: (str) The feature extraction type ("cnn" or "mlp")
@@ -288,7 +311,7 @@ class FeedForwardPolicy(ActorCriticPolicy):
             print("Warning: usage of the `layers` parameter is deprecated! Use net_arch instead "
                   "(it has a different semantics though).")
             if net_arch is not None:
-                print("Warning: the new `net_arch` overrides the `layers`!")
+                print("Warning: the new `net_arch` parameter overrides the `layers` parameter!")
 
         if net_arch is None:
             if layers is None:
