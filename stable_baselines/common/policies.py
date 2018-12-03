@@ -59,7 +59,7 @@ def mlp_extractor(flat_observations, net_arch, act_fun):
             layer_size = layer
             latent = act_fun(linear(latent, "shared_fc{}".format(idx), layer_size, init_scale=np.sqrt(2)))
         else:
-            assert isinstance(layer, dict)
+            assert isinstance(layer, dict), "Error: the net_arch list can only contain ints and dicts"
             if 'pi' in layer:
                 assert isinstance(layer['pi'], list)
                 policy_only_layers = layer['pi']
