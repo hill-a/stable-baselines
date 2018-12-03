@@ -19,7 +19,8 @@ However, you can also easily define a custom architecture for the policy (or val
   class CustomPolicy(FeedForwardPolicy):
       def __init__(self, *args, **kwargs):
           super(CustomPolicy, self).__init__(*args, **kwargs,
-                                             net_arch=[dict(pi=[128, 128, 128], vf=[128, 128, 128])],
+                                             net_arch=[dict(pi=[128, 128, 128],
+                                                            vf=[128, 128, 128])],
                                              feature_extraction="mlp")
 
   # Create and wrap the environment
@@ -54,7 +55,8 @@ You can also registered your policy, to help with code simplicity: you can refer
   class CustomPolicy(FeedForwardPolicy):
       def __init__(self, *args, **kwargs):
           super(CustomPolicy, self).__init__(*args, **kwargs,
-                                             net_arch=[dict(pi=[128, 128, 128], vf=[128, 128, 128])],
+                                             net_arch=[dict(pi=[128, 128, 128],
+                                                            vf=[128, 128, 128])],
                                              feature_extraction="mlp")
 
   # Register the policy, it will check that the name is not already taken
@@ -66,7 +68,61 @@ You can also registered your policy, to help with code simplicity: you can refer
 
 
 
-The net_arch parameter of `FeedForwardPolicy` allows for
+The net_arch parameter of `FeedForwardPolicy` allows to specify the amount and size of the hidden layers and how many
+of them are shared between the policy network and the value network. It is assumed to be a list with the following
+structure:
+
+1. An arbitrary length (zero allowed) number of integers each specifying the number of units in a shared layer.
+   If the number of ints is zero, there will be no shared layers.
+2. An optional dict, to specify the following non-shared layers for the value network and the policy network.
+   It is formatted like `dict(vf=[<value layer sizes>], pi=[<policy layer sizes>])`.
+   If it is missing any of the keys (pi or vf), no non-shared layers (empty list) is assumed.
+
+In short: `[<shared layers>, dict(vf=[<non-shared value network layers>], pi=[<non-shared policy network layers>])]`.
+
+Examples
+~~~~~~~~
+
+Two shared layers of size 128: `net_arch=[128, 128]`
+
+.. code-block::
+
+                  obs
+                   |
+                 <128>
+                   |
+                 <128>
+           /               \
+        action            value
+
+Value network deeper than policy network, first layer shared: `net_arch=[128, dict(vf=[256, 256])]`
+
+.. code-block::
+
+                  obs
+                   |
+                 <128>
+           /               \
+        action             <256>
+                             |
+                           <256>
+                             |
+                           value
+
+
+Initially shared then diverging: `[128, dict(vf=[256], pi=[16])]`
+
+.. code-block::
+
+                  obs
+                   |
+                 <128>
+           /               \
+         <16>             <256>
+           |                |
+        action            value
+
+
 If however, your task requires a more granular control over the policy architecture, you can redefine the policy directly:
 
 .. code-block:: python
