@@ -4,9 +4,11 @@ import numpy as np
 import tensorflow as tf
 from gym.spaces import Discrete
 
-from stable_baselines.a2c.utils import conv, linear, conv_to_fc, batch_to_seq, seq_to_batch, lstm, ortho_init
+from stable_baselines.a2c.utils import conv, linear, conv_to_fc, batch_to_seq, seq_to_batch, lstm
 from stable_baselines.common.distributions import make_proba_dist_type
 from stable_baselines.common.input import observation_input
+
+import warnings
 
 
 def nature_cnn(scaled_images, **kwargs):
@@ -311,10 +313,11 @@ class FeedForwardPolicy(ActorCriticPolicy):
                                                 reuse=reuse, scale=(feature_extraction == "cnn"))
 
         if layers is not None:
-            print("Warning: usage of the `layers` parameter is deprecated! Use net_arch instead "
-                  "(it has a different semantics though).")
+            warnings.warn("Usage of the `layers` parameter is deprecated! Use net_arch instead "
+                          "(it has a different semantics though).", DeprecationWarning)
             if net_arch is not None:
-                print("Warning: the new `net_arch` parameter overrides the `layers` parameter!")
+                warnings.warn("The new `net_arch` parameter overrides the deprecated `layers` parameter!",
+                              DeprecationWarning)
 
         if net_arch is None:
             if layers is None:
