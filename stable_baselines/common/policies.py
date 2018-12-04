@@ -63,11 +63,11 @@ def mlp_extractor(flat_observations, net_arch, act_fun):
         else:
             assert isinstance(layer, dict), "Error: the net_arch list can only contain ints and dicts"
             if 'pi' in layer:
-                assert isinstance(layer['pi'], list)
+                assert isinstance(layer['pi'], list), "Error: net_arch[-1]['pi'] must contain a list of integers."
                 policy_only_layers = layer['pi']
 
             if 'vf' in layer:
-                assert isinstance(layer['vf'], list)
+                assert isinstance(layer['vf'], list), "Error: net_arch[-1]['vf'] must contain a list of integers."
                 value_only_layers = layer['vf']
             break  # From here on the network splits up in policy and value network
 
