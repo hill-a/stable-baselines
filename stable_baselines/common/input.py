@@ -40,9 +40,10 @@ def observation_input(ob_space, batch_size=None, name='Ob', scale=False):
 
     elif isinstance(ob_space, MultiDiscrete):
         observation_ph = tf.placeholder(shape=(batch_size, len(ob_space.nvec)), dtype=tf.int32, name=name)
-        processed_observations = tf.concat([tf.to_float(tf.one_hot(input_split, ob_space.nvec[i]))
-                                 for i, input_split in enumerate(tf.split(observation_ph, len(ob_space.nvec), axis=-1))],
-                                axis=-1)
+        processed_observations = tf.concat([
+            tf.to_float(tf.one_hot(input_split, ob_space.nvec[i])) for i, input_split
+            in enumerate(tf.split(observation_ph, len(ob_space.nvec), axis=-1))
+        ], axis=-1)
         return observation_ph, processed_observations
 
     else:
