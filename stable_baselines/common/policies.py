@@ -29,7 +29,7 @@ def nature_cnn(scaled_images, **kwargs):
 def mlp_extractor(flat_observations, net_arch, act_fun):
     """
     Constructs an MLP that receives observations as an input and outputs a latent representation for the policy and
-    a value network. The `layers_spec` parameter allows to specify the amount and size of the hidden layers and how many
+    a value network. The ``net_arch`` parameter allows to specify the amount and size of the hidden layers and how many
     of them are shared between the policy network and the value network. It is assumed to be a list with the following
     structure:
 
@@ -41,10 +41,10 @@ def mlp_extractor(flat_observations, net_arch, act_fun):
 
     For example to construct a network with one shared layer of size 55 followed by two non-shared layers for the value
     network of size 255 and a single non-shared layer of size 128 for the policy network, the following layers_spec
-    would be used: `[55, dict(vf=[255, 255], pi=[128])]`. A simple shared network topology with two layers of size 128
+    would be used: ``[55, dict(vf=[255, 255], pi=[128])]``. A simple shared network topology with two layers of size 128
     would be specified as [128, 128].
 
-    :param flat_observations: The observations to base policy and value function on.
+    :param flat_observations: (tf.Tensor) The observations to base policy and value function on.
     :param net_arch: The specification of the policy and value networks. See above for details on its formatting.
     :param act_fun: The activation function to use for the networks.
     :return: latent_policy, latent_value of the specified network. If all layers are shared,
