@@ -67,25 +67,30 @@ You can also registered your policy, to help with code simplicity: you can refer
   model = A2C(policy='CustomPolicy', env='LunarLander-v2', verbose=1).learn(total_timesteps=100000)
 
 
+.. deprecated:: 2.3.0
 
-The net_arch parameter of ``FeedForwardPolicy`` allows to specify the amount and size of the hidden layers and how many
+  Use ``net_arch`` instead of ``layers`` parameter to define the network architecture. It allows to have a greater control.
+
+
+The ``net_arch`` parameter of ``FeedForwardPolicy`` allows to specify the amount and size of the hidden layers and how many
 of them are shared between the policy network and the value network. It is assumed to be a list with the following
 structure:
 
 1. An arbitrary length (zero allowed) number of integers each specifying the number of units in a shared layer.
    If the number of ints is zero, there will be no shared layers.
 2. An optional dict, to specify the following non-shared layers for the value network and the policy network.
-   It is formatted like `dict(vf=[<value layer sizes>], pi=[<policy layer sizes>])`.
+   It is formatted like ``dict(vf=[<value layer sizes>], pi=[<policy layer sizes>])``.
    If it is missing any of the keys (pi or vf), no non-shared layers (empty list) is assumed.
 
-In short: `[<shared layers>, dict(vf=[<non-shared value network layers>], pi=[<non-shared policy network layers>])]`.
+In short: ``[<shared layers>, dict(vf=[<non-shared value network layers>], pi=[<non-shared policy network layers>])]``.
 
 Examples
 ~~~~~~~~
 
-Two shared layers of size 128: `net_arch=[128, 128]`
+Two shared layers of size 128: ``net_arch=[128, 128]``
 
-.. code-block::
+
+.. code-block:: none
 
                   obs
                    |
@@ -95,9 +100,10 @@ Two shared layers of size 128: `net_arch=[128, 128]`
            /               \
         action            value
 
-Value network deeper than policy network, first layer shared: `net_arch=[128, dict(vf=[256, 256])]`
 
-.. code-block::
+Value network deeper than policy network, first layer shared: ``net_arch=[128, dict(vf=[256, 256])]``
+
+.. code-block:: none
 
                   obs
                    |
@@ -110,9 +116,9 @@ Value network deeper than policy network, first layer shared: `net_arch=[128, di
                            value
 
 
-Initially shared then diverging: `[128, dict(vf=[256], pi=[16])]`
+Initially shared then diverging: ``[128, dict(vf=[256], pi=[16])]``
 
-.. code-block::
+.. code-block:: none
 
                   obs
                    |

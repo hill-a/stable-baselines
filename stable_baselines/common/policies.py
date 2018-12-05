@@ -37,7 +37,7 @@ def mlp_extractor(flat_observations, net_arch, act_fun):
     1. An arbitrary length (zero allowed) number of integers each specifying the number of units in a shared layer.
        If the number of ints is zero, there will be no shared layers.
     2. An optional dict, to specify the following non-shared layers for the value network and the policy network.
-       It is formatted like `dict(vf=[<value layer sizes>], pi=[<policy layer sizes>])`.
+       It is formatted like ``dict(vf=[<value layer sizes>], pi=[<policy layer sizes>])``.
        If it is missing any of the keys (pi or vf), no non-shared layers (empty list) is assumed.
 
     For example to construct a network with one shared layer of size 55 followed by two non-shared layers for the value
@@ -46,10 +46,11 @@ def mlp_extractor(flat_observations, net_arch, act_fun):
     would be specified as [128, 128].
 
     :param flat_observations: (tf.Tensor) The observations to base policy and value function on.
-    :param net_arch: The specification of the policy and value networks. See above for details on its formatting.
-    :param act_fun: The activation function to use for the networks.
-    :return: latent_policy, latent_value of the specified network. If all layers are shared,
-    `then latent_policy == latent_value`
+    :param net_arch: ([int or dict]) The specification of the policy and value networks.
+        See above for details on its formatting.
+    :param act_fun: (tf function) The activation function to use for the networks.
+    :return: (tf.Tensor, tf.Tensor) latent_policy, latent_value of the specified network.
+        If all layers are shared, then ``latent_policy == latent_value``
     """
     latent = flat_observations
     policy_only_layers = []  # Layer sizes of the network that only belongs to the policy network
