@@ -1,3 +1,4 @@
+import warnings
 from abc import ABC
 
 import numpy as np
@@ -7,8 +8,6 @@ from gym.spaces import Discrete
 from stable_baselines.a2c.utils import conv, linear, conv_to_fc, batch_to_seq, seq_to_batch, lstm
 from stable_baselines.common.distributions import make_proba_dist_type
 from stable_baselines.common.input import observation_input
-
-import warnings
 
 
 def nature_cnn(scaled_images, **kwargs):
