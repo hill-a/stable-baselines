@@ -68,7 +68,7 @@ You can also registered your policy, to help with code simplicity: you can refer
 
 
 
-The net_arch parameter of `FeedForwardPolicy` allows to specify the amount and size of the hidden layers and how many
+The net_arch parameter of ``FeedForwardPolicy`` allows to specify the amount and size of the hidden layers and how many
 of them are shared between the policy network and the value network. It is assumed to be a list with the following
 structure:
 
