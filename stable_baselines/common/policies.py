@@ -1,4 +1,5 @@
 import warnings
+from itertools import zip_longest
 from abc import ABC
 
 import numpy as np
@@ -70,17 +71,17 @@ def mlp_extractor(flat_observations, net_arch, act_fun):
                 value_only_layers = layer['vf']
             break  # From here on the network splits up in policy and value network
 
-    # Build part of the network that exclusively belongs to the policy network
+    # Build the non-shared part of the network
     latent_policy = latent
-    for idx, layer_size in enumerate(policy_only_layers):
-        assert isinstance(layer_size, int)
-        latent_policy = act_fun(linear(latent_policy, "pi_fc{}".format(idx), layer_size, init_scale=np.sqrt(2)))
-
-    # Build part of the network that exclusively belongs to the value network
     latent_value = latent
-    for idx, layer_size in enumerate(value_only_layers):
-        assert isinstance(layer_size, int)
-        latent_value = act_fun(linear(latent_value, "vf_fc{}".format(idx), layer_size, init_scale=np.sqrt(2)))
+    for idx, (pi_layer_size, vf_layer_size) in enumerate(zip_longest(policy_only_layers, value_only_layers)):
+        if pi_layer_size is not None:
+            assert isinstance(pi_layer_size, int), "Error: net_arch[-1]['pi'] must only contain integers."
+            latent_policy = act_fun(linear(latent_policy, "pi_fc{}".format(idx), pi_layer_size, init_scale=np.sqrt(2)))
+
+        if vf_layer_size is not None:
+            assert isinstance(vf_layer_size, int), "Error: net_arch[-1]['vf'] must only contain integers."
+            latent_value = act_fun(linear(latent_value, "vf_fc{}".format(idx), vf_layer_size, init_scale=np.sqrt(2)))
 
     return latent_policy, latent_value
 
