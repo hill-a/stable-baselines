@@ -489,4 +489,4 @@ def safe_mean(arr):
     :param arr: (np.ndarray)
     :return: (float)
     """
-    return np.nan if len(arr) == 0 else np.mean(arr)
+    return 0 if len(arr) == 0 else np.mean(arr)
