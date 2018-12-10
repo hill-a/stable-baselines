@@ -199,8 +199,6 @@ class FeedForwardPolicy(SACPolicy):
         assert len(layers) >= 1, "Error: must have at least one hidden layer for the policy."
 
         self.activ_fn = tf.nn.relu
-        # TODO: check perf with tanh instead of relu (original paper)
-        # self.activ_fn = tf.tanh
 
     def make_actor(self, obs=None, reuse=False, scope="pi"):
         if obs is None:
