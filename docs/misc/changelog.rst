@@ -11,7 +11,7 @@ Pre-Release 2.4.0a (WIP)
 - added Soft Actor-Critic (SAC) model
 - fixed a bug in DQN where prioritized_replay_beta_iters param was not used
 - fixed DDPG that did not save target network parameters
-
+- fixed bug related to shape of true_reward (@abhiskk)
 
 Release 2.3.0 (2018-12-05)
 --------------------------
