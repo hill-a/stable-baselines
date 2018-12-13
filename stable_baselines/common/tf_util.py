@@ -252,7 +252,9 @@ class _Function(object):
         :param inputs: (TensorFlow Tensor or Object with make_feed_dict) list of input arguments
         :param outputs: (TensorFlow Tensor) list of outputs or a single output to be returned from function. Returned
             value will also have the same shape.
-        :param updates: (list) update functions
+        :param updates: ([tf.Operation] or tf.Operation)
+        list of update functions or single update function that will be run whenever
+        the function is called. The return is ignored. 
         :param givens: (dict) the values known for the output
         """
         for inpt in inputs:
