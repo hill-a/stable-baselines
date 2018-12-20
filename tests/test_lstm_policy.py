@@ -13,7 +13,7 @@ LSTM_POLICIES = [MlpLstmPolicy]
 
 @pytest.mark.parametrize("model_class", MODELS)
 @pytest.mark.parametrize("policy", LSTM_POLICIES)
-def test_custom_lstm_policy(model_class, policy):
+def test_lstm_policy(model_class, policy):
     try:
         # create and train
         if model_class == PPO2:
