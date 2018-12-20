@@ -1,0 +1,37 @@
+import os
+
+import pytest
+
+from stable_baselines import A2C, ACER, ACKTR, PPO1, PPO2, TRPO
+from stable_baselines.common.policies import MlpLstmPolicy
+
+N_TRIALS = 100
+
+
+MODELS = [A2C, ACER, ACKTR, PPO1, PPO2, TRPO]  # TODO: test for GAIL?
+LSTM_POLICIES = [MlpLstmPolicy]
+
+
+@pytest.mark.parametrize("model_class", MODELS)
+@pytest.mark.parametrize("policy", LSTM_POLICIES)
+def test_custom_lstm_policy(model_class, policy):
+    try:
+        # create and train
+        model = model_class(policy, 'CartPole-v1')
+        model.learn(total_timesteps=100, seed=0)
+
+        env = model.get_env()
+        # predict and measure the acc reward
+        obs = env.reset()
+        for _ in range(N_TRIALS):
+            action, _ = model.predict(obs)
+            obs, _, _, _ = env.step(action)
+        # saving
+        model.save("./test_model")
+        del model, env
+        # loading
+        model = model_class.load("./test_model", policy=policy)
+
+    finally:
+        if os.path.exists("./test_model"):
+            os.remove("./test_model")
