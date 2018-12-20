@@ -2,13 +2,12 @@ import os
 
 import pytest
 
-from stable_baselines import A2C, ACER, ACKTR, PPO1, PPO2, TRPO
+from stable_baselines import A2C, ACER, PPO2
 from stable_baselines.common.policies import MlpLstmPolicy
 
 N_TRIALS = 100
 
-
-MODELS = [A2C, ACER, ACKTR, PPO1, PPO2, TRPO]  # TODO: test for GAIL?
+MODELS = [A2C, ACER, PPO2]  # TODO: test for GAIL?
 LSTM_POLICIES = [MlpLstmPolicy]
 
 
@@ -17,7 +16,10 @@ LSTM_POLICIES = [MlpLstmPolicy]
 def test_custom_lstm_policy(model_class, policy):
     try:
         # create and train
-        model = model_class(policy, 'CartPole-v1')
+        if model_class == PPO2:
+            model = model_class(policy, 'CartPole-v1', nminibatches=1)
+        else:
+            model = model_class(policy, 'CartPole-v1')
         model.learn(total_timesteps=100, seed=0)
 
         env = model.get_env()
