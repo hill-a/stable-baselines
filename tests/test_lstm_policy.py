@@ -7,7 +7,7 @@ from stable_baselines.common.policies import MlpLstmPolicy
 
 N_TRIALS = 100
 
-MODELS = [A2C, ACER, PPO2]  # TODO: test for GAIL?
+MODELS = [A2C, ACER, PPO2]
 LSTM_POLICIES = [MlpLstmPolicy]
 
 
