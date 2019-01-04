@@ -327,7 +327,7 @@ class LstmPolicy(ActorCriticPolicy):
                 for idx, vf_layer_size in enumerate(value_only_layers):
                     if vf_layer_size == "lstm":
                         raise NotImplementedError("LSTMs are only supported in the shared part of the value function "
-                                                  "netowork.")
+                                                   "network.")
                     assert isinstance(vf_layer_size, int), "Error: net_arch[-1]['vf'] must only contain integers."
                     latent_value = act_fun(
                         linear(latent_value, "vf_fc{}".format(idx), vf_layer_size, init_scale=np.sqrt(2)))
