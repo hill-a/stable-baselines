@@ -138,7 +138,9 @@ The ``LstmPolicy`` can be used to construct recurrent policies in a similar way:
                              net_arch=[8, 'lstm', dict(vf=[5, 10], pi=[10])],
                              layer_norm=True, feature_extraction="mlp", **_kwargs)
 
-Here the ``net_arch`` parameter takes an additional 'lstm' entry within the shared network section.
+Here the ``net_arch`` parameter takes an additional (mandatory) 'lstm' entry within the shared network section.
+The LSTM is shared between value network and policy network.
+
 
 
 
