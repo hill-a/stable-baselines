@@ -233,7 +233,7 @@ class LstmPolicy(ActorCriticPolicy):
     :param reuse: (bool) If the policy is reusable or not
     :param layers: ([int]) The size of the Neural network before the LSTM layer  (if None, default to [64, 64])
     :param net_arch: (list) Specification of the actor-critic policy network architecture. Notation similar to the
-    format described in mlp_extractor but with additional support for a 'lstm' entry in the shared network part.
+        format described in mlp_extractor but with additional support for a 'lstm' entry in the shared network part.
     :param cnn_extractor: (function (TensorFlow Tensor, ``**kwargs``): (TensorFlow Tensor)) the CNN feature extraction
     :param layer_norm: (bool) Whether or not to use layer normalizing LSTMs
     :param feature_extraction: (str) The feature extraction type ("cnn" or "mlp")
