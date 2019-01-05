@@ -248,8 +248,8 @@ class LstmPolicy(ActorCriticPolicy):
 
         with tf.variable_scope("input", reuse=True):
             self.masks_ph = tf.placeholder(tf.float32, [n_batch], name="masks_ph")  # mask (done t-1)
-             # n_lstm * 2 dim because of the cell and hidden states of the LSTM
-             self.states_ph = tf.placeholder(tf.float32, [self.n_env, n_lstm * 2], name="states_ph")  # states
+            # n_lstm * 2 dim because of the cell and hidden states of the LSTM
+            self.states_ph = tf.placeholder(tf.float32, [self.n_env, n_lstm * 2], name="states_ph")  # states
 
         if net_arch is None:  # Legacy mode
             warnings.warn("The layers parameter is deprecated. Use the net_arch parameter instead.")
