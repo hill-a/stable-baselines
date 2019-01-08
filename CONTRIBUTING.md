@@ -86,7 +86,7 @@ Note: in rare cases, we can create exception for codacy failure.
 
 All new features must add tests in the `tests/` folder ensuring that everything works fine.
 We use [pytest](https://pytest.org/).
-Also, when a bug fixed is proposed, one should add a test to avoid regression.
+Also, when a bug fix is proposed, tests should be added to avoid regression.
 
 To run tests:
 
