@@ -137,6 +137,7 @@ If however, your task requires a more granular control over the policy architect
   import tensorflow as tf
 
   from stable_baselines.common.policies import ActorCriticPolicy, register_policy, nature_cnn
+  from stable_baselines.common.atari_wrappers import wrap_deepmind
   from stable_baselines.common.vec_env import DummyVecEnv
   from stable_baselines import A2C
 
@@ -150,7 +151,7 @@ If however, your task requires a more granular control over the policy architect
           with tf.variable_scope("model", reuse=reuse):
               activ = tf.nn.relu
 
-              extracted_features = nature_cnn(self.self.processed_obs, **kwargs)
+              extracted_features = nature_cnn(self.obs_ph, **kwargs)
               extracted_features = tf.layers.flatten(extracted_features)
 
               pi_h = extracted_features
@@ -184,6 +185,7 @@ If however, your task requires a more granular control over the policy architect
 
   # Create and wrap the environment
   env = gym.make('Breakout-v0')
+  env = wrap_deepmind(env, scale=True)
   env = DummyVecEnv([lambda: env])
 
   model = A2C(CustomPolicy, env, verbose=1)
