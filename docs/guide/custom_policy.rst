@@ -152,8 +152,7 @@ If your task requires even more granular control over the policy architecture, y
   import tensorflow as tf
 
   from stable_baselines.common.policies import ActorCriticPolicy, register_policy, nature_cnn
-  from stable_baselines.common.atari_wrappers import wrap_deepmind
-  from stable_baselines.common.vec_env import DummyVecEnv
+  from stable_baselines.common.cmd_util import make_atari_env
   from stable_baselines import A2C
 
   # Custom MLP policy of three layers of size 128 each for the actor and 2 layers of 32 for the critic,
@@ -198,9 +197,7 @@ If your task requires even more granular control over the policy architecture, y
 
 
   # Create and wrap the environment
-  env = gym.make('Breakout-v0')
-  env = wrap_deepmind(env, scale=True)
-  env = DummyVecEnv([lambda: env])
+  env = make_atari_env('BreakoutNoFrameskip-v4', num_env=4, seed=0, wrapper_kwargs={"scale":True})
 
   model = A2C(CustomPolicy, env, verbose=1)
   # Train the agent
