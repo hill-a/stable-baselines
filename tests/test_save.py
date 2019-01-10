@@ -65,8 +65,8 @@ def test_model_manipulation(model_class, storage_method):
         actions = np.array([env.action_space.sample() for _ in range(10)])
         actions_probas = model.action_probability(observations, actions=actions)
         assert actions_probas.shape == (len(actions), 1), actions_probas.shape
-        assert actions_probas.min() >= 0, print(actions_probas.min())
-        assert actions_probas.max() <= 1, print(actions_probas.max())
+        assert actions_probas.min() >= 0, actions_probas.min()
+        assert actions_probas.max() <= 1, actions_probas.max()
 
         # saving
         if storage_method == "path":  # saving to a path
