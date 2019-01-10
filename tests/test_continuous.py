@@ -104,7 +104,7 @@ def test_model_manipulation(model_class):
 
         if model_class == DDPG:
             with pytest.raises(ValueError):
-                 model.action_probability(observations, actions=actions)
+                model.action_probability(observations, actions=actions)
         else:
             actions_probas = model.action_probability(observations, actions=actions)
             assert actions_probas.shape == (len(actions), 1), actions_probas.shape

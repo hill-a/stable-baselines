@@ -452,9 +452,9 @@ class SAC(OffPolicyRLModel):
         # A taylor young approximation of tanh could be used to get the distribution shape, but it would not be precise
         # Or, this function could return a funcion, although it would not be consistent with the base class.
         if actions is None:
-            warnings.warn("Warning: even thought SAC has a Gaussian policy, it cannot return a distribution as it " +
-                          "is squashed by an tanh before being scaled and ouputed. Therefore 'action_probability' will " +
-                          "only work with the 'actions' keyword argument being used. Returning None.")
+            warnings.warn("Warning: even thought SAC has a Gaussian policy, it cannot return a distribution as it "
+                          "is squashed by an tanh before being scaled and ouputed. Therefore 'action_probability' "
+                          "will only work with the 'actions' keyword argument being used. Returning None.")
             return None
 
         observation = np.array(observation)
