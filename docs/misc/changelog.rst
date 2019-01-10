@@ -16,6 +16,8 @@ Pre-Release 2.4.0a (WIP)
 - added learning rate schedule for SAC
 - fixed action probability for continuous actions with actor-critic models
 - added optional parameter to action_probability for likelihood calculation of given action being taken.
+- added more flexible custom LSTM policies
+- added auto entropy coefficient optimization for SAC
 
 
 Release 2.3.0 (2018-12-05)
