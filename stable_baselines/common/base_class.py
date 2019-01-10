@@ -170,13 +170,13 @@ class BaseRLModel(ABC):
             - Discrete: probability for each possible action
             - Box: mean and standard deviation of the action output
 
-        However if ``actions`` is not ``None``, this function will return the probability that the given actions are 
+        However if ``actions`` is not ``None``, this function will return the probability that the given actions are
         taken with the given parameters (observation, state, ...) on this model.
 
         :param observation: (np.ndarray) the input observation
         :param state: (np.ndarray) The last states (can be None, used in recurrent policies)
         :param mask: (np.ndarray) The last masks (can be None, used in recurrent policies)
-        :param actions: (np.ndarray) (OPTIONAL) For calculating the likelihood that the given actions are chosen by 
+        :param actions: (np.ndarray) (OPTIONAL) For calculating the likelihood that the given actions are chosen by
             the model for each of the given parameters. Must have the same number of actions and observations.
             (set to None to return the complete action probability distribution)
         :return: (np.ndarray) the model's action probability
@@ -310,6 +310,7 @@ class ActorCriticRLModel(BaseRLModel):
     :param policy_base: (BasePolicy) the base policy used by this method (default=ActorCriticPolicy)
     :param requires_vec_env: (bool) Does this model require a vectorized environment
     """
+
     def __init__(self, policy, env, _init_setup_model, verbose=0, policy_base=ActorCriticPolicy,
                  requires_vec_env=False):
         super(ActorCriticRLModel, self).__init__(policy, env, verbose=verbose, requires_vec_env=requires_vec_env,
@@ -340,12 +341,17 @@ class ActorCriticRLModel(BaseRLModel):
         observation = observation.reshape((-1,) + self.observation_space.shape)
         actions, _, states, _ = self.step(observation, state, mask, deterministic=deterministic)
 
+        clipped_actions = actions
+        # Clip the actions to avoid out of bound error
+        if isinstance(self.action_space, gym.spaces.Box):
+            clipped_actions = np.clip(actions, self.action_space.low, self.action_space.high)
+
         if not vectorized_env:
             if state is not None:
                 raise ValueError("Error: The environment must be vectorized when using recurrent policies.")
-            actions = actions[0]
+            clipped_actions = clipped_actions[0]
 
-        return actions, states
+        return clipped_actions, states
 
     def action_probability(self, observation, state=None, mask=None, actions=None):
         if state is None:
@@ -360,7 +366,7 @@ class ActorCriticRLModel(BaseRLModel):
 
         if len(actions_proba) == 0:  # empty list means not implemented
             warnings.warn("Warning: action probability is not implemented for {} action space. Returning None."
-                .format(type(self.action_space).__name__))
+                          .format(type(self.action_space).__name__))
             return None
 
         if actions is not None:  # comparing the action distribution, to given actions
@@ -391,12 +397,14 @@ class ActorCriticRLModel(BaseRLModel):
                     "Error: batch sizes differ for actions and observations."
                 act_mu, act_std = actions_proba
                 # gaussian probability distribution
-                actions_proba = (1 / (np.sqrt(2 * np.pi * act_std**2 + eps)) *
-                                 np.exp(-((actions - act_mu)**2) / (2 * act_std**2 + eps)))
+                actions_proba = (1 / (np.sqrt(2 * np.pi * act_std ** 2 + eps)) *
+                                 np.exp(-((actions - act_mu) ** 2) / (2 * act_std ** 2 + eps)))
             else:
                 warnings.warn("Warning: action_probability not implemented for {} actions space. Returning None."
-                    .format(type(self.action_space).__name__))
+                              .format(type(self.action_space).__name__))
                 return None
+            # normalize action proba shape for the different gym spaces
+            actions_proba = actions_proba.reshape((-1, 1))
 
         if not vectorized_env:
             if state is not None:
