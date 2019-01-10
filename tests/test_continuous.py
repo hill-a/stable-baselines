@@ -81,14 +81,36 @@ def test_model_manipulation(model_class):
             loaded_acc_reward += reward
         loaded_acc_reward = sum(loaded_acc_reward) / N_TRIALS
 
-        act_prob = model.action_probability(obs)
+        with pytest.warns(None) as record:
+            act_prob = model.action_probability(obs)
+
         if model_class in [DDPG, SAC]:
-            assert act_prob.shape == (1, 1), "Error: action_probability not returning correct shape"
+            # check that only one warning was raised
+            assert len(record) == 1, "No warning was raised for {}".format(model_class)
+            assert act_prob is None, "Error: action_probability should be None for {}".format(model_class)
         else:
             assert act_prob[0].shape == (1, 1) and act_prob[1].shape == (1, 1), \
                 "Error: action_probability not returning correct shape"
             assert np.prod(model.action_probability(obs, actions=env.action_space.sample()).shape) == 1, \
                 "Error: not scalar probability"
+
+        # test action probability for given (obs, action) pair
+        env = model.get_env()
+        obs = env.reset()
+        observations = np.array([obs for _ in range(10)])
+        observations = np.squeeze(observations)
+        observations = observations.reshape((-1, 1))
+        actions = np.array([env.action_space.sample() for _ in range(10)])
+
+        if model_class == DDPG:
+            with pytest.raises(ValueError):
+                 model.action_probability(observations, actions=actions)
+        else:
+            actions_probas = model.action_probability(observations, actions=actions)
+            assert actions_probas.shape == (len(actions), 1), actions_probas.shape
+            assert actions_probas.min() >= 0, print(actions_probas.min())
+            assert actions_probas.max() <= 1, print(actions_probas.max())
+
         # assert <15% diff
         assert abs(acc_reward - loaded_acc_reward) / max(acc_reward, loaded_acc_reward) < 0.15, \
             "Error: the prediction seems to have changed between loading and saving"

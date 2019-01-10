@@ -281,6 +281,8 @@ class DQN(OffPolicyRLModel):
             actions = actions.reshape((-1,))
             assert observation.shape[0] == actions.shape[0], "Error: batch sizes differ for actions and observations."
             actions_proba = actions_proba[np.arange(actions.shape[0]), actions]
+            # normalize action proba shape
+            actions_proba = actions_proba.reshape((-1, 1))
 
         if not vectorized_env:
             if state is not None:

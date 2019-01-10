@@ -960,13 +960,9 @@ class DDPG(OffPolicyRLModel):
         if actions is not None:
             raise ValueError("Error: DDPG does not have action probabilities.")
 
-        # here there are no action probabilities, as DDPG is continuous
-        warnings.warn("Warning: action probability is meaningless for DDPG. Returning simple prediction.")
-
-        if vectorized_env:
-            return self.sess.run(self.actor_tf, feed_dict={self.obs_train: observation})
-        else:
-            return self.sess.run(self.actor_tf, feed_dict={self.obs_train: observation})[0]
+        # here there are no action probabilities, as DDPG does not use a probability distribution
+        warnings.warn("Warning: action probability is meaningless for DDPG. Returning None")
+        return None
 
     def save(self, save_path):
         data = {
