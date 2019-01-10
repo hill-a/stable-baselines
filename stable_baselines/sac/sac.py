@@ -466,13 +466,13 @@ class SAC(OffPolicyRLModel):
         act_std = act_std.reshape((-1,) + self.action_space.shape)  # reshape to the correct action shape
 
         assert isinstance(self.action_space, gym.spaces.Box)
-        eps = 1e-10  # epsilon value for the act_std division
         actions = actions.reshape((-1,) + self.action_space.shape)
         assert observation.shape[0] == actions.shape[0], \
             "Error: batch sizes differ for actions and observations."
 
+        eps = 1e-6  # epsilon value to avoid division by zero
         # returning to the gaussian distribution, before squashing and scaling
-        actions = np.arctanh(actions / np.abs(self.action_space.low))
+        actions = np.arctanh(actions / (np.abs(self.action_space.low) + eps))
 
         # gaussian probability distribution
         actions_proba = (1 / (np.sqrt(2 * np.pi * act_std ** 2 + eps)) *
