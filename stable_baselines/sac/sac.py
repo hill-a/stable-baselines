@@ -450,7 +450,7 @@ class SAC(OffPolicyRLModel):
     def action_probability(self, observation, state=None, mask=None, actions=None):
         # SAC's tanh makes this hard to precisely calculate mean and std of action output
         # A taylor young approximation of tanh could be used to get the distribution shape, but it would not be precise
-        # Or, this function could return a funcion, although it would not be consistent with the base class.
+        # Or, this function could return a function, although it would not be consistent with the base class.
         if actions is None:
             warnings.warn("Warning: even thought SAC has a Gaussian policy, it cannot return a distribution as it "
                           "is squashed by an tanh before being scaled and ouputed. Therefore 'action_probability' "
