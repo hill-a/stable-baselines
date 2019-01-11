@@ -448,40 +448,18 @@ class SAC(OffPolicyRLModel):
             return self
 
     def action_probability(self, observation, state=None, mask=None, actions=None):
-        # SAC's tanh makes this hard to precisely calculate mean and std of action output
-        # A taylor young approximation of tanh could be used to get the distribution shape, but it would not be precise
-        # Or, this function could return a funcion, although it would not be consistent with the base class.
         if actions is None:
-            warnings.warn("Warning: even thought SAC has a Gaussian policy, it cannot return a distribution as it "
+            warnings.warn("Even thought SAC has a Gaussian policy, it cannot return a distribution as it "
                           "is squashed by an tanh before being scaled and ouputed. Therefore 'action_probability' "
                           "will only work with the 'actions' keyword argument being used. Returning None.")
             return None
 
         observation = np.array(observation)
-        vectorized_env = self._is_vectorized_observation(observation, self.observation_space)
 
-        observation = observation.reshape((-1,) + self.observation_space.shape)
-        act_mu, act_std = self.policy_tf.proba_step(observation)
-        act_mu = act_mu.reshape((-1,) + self.action_space.shape)  # reshape to the correct action shape
-        act_std = act_std.reshape((-1,) + self.action_space.shape)  # reshape to the correct action shape
+        warnings.warn("The probabilty of taken a given action is exactly zero for a continuous distribution."
+                      "See http://blog.christianperone.com/2019/01/ for a good explanation")
 
-        assert isinstance(self.action_space, gym.spaces.Box)
-        actions = actions.reshape((-1,) + self.action_space.shape)
-        assert observation.shape[0] == actions.shape[0], \
-            "Error: batch sizes differ for actions and observations."
-
-        eps = 1e-6  # epsilon value to avoid division by zero
-        # returning to the gaussian distribution, before squashing and scaling
-        actions = np.arctanh(actions / (np.abs(self.action_space.low) + eps))
-
-        # gaussian probability distribution
-        actions_proba = (1 / (np.sqrt(2 * np.pi * act_std ** 2 + eps)) *
-                         np.exp(-((actions - act_mu) ** 2) / (2 * act_std ** 2 + eps)))
-
-        if not vectorized_env:
-            actions_proba = actions_proba[0]
-
-        return actions_proba
+        return np.zeros((observation.shape[0], 1), dtype=np.float32)
 
     def predict(self, observation, state=None, mask=None, deterministic=True):
         observation = np.array(observation)

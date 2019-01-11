@@ -173,6 +173,11 @@ class BaseRLModel(ABC):
         However if ``actions`` is not ``None``, this function will return the probability that the given actions are
         taken with the given parameters (observation, state, ...) on this model.
 
+        .. warning::
+            When working with continuous probability distribution (e.g. Gaussian distribution for continuous action)
+            the probability of taking a particular action is exactly zero.
+            See http://blog.christianperone.com/2019/01/ for a good explanation
+
         :param observation: (np.ndarray) the input observation
         :param state: (np.ndarray) The last states (can be None, used in recurrent policies)
         :param mask: (np.ndarray) The last masks (can be None, used in recurrent policies)
@@ -376,6 +381,7 @@ class ActorCriticRLModel(BaseRLModel):
                 assert observation.shape[0] == actions.shape[0], \
                     "Error: batch sizes differ for actions and observations."
                 actions_proba = actions_proba[np.arange(actions.shape[0]), actions]
+
             elif isinstance(self.action_space, gym.spaces.MultiDiscrete):
                 actions = actions.reshape((-1, len(self.action_space.nvec)))
                 assert observation.shape[0] == actions.shape[0], \
@@ -384,21 +390,18 @@ class ActorCriticRLModel(BaseRLModel):
                 actions = np.swapaxes(actions, 0, 1)  # swap axis for easier categorical split
                 actions_proba = np.prod([proba[np.arange(act.shape[0]), act]
                                          for proba, act in zip(actions_proba, actions)], axis=0)
+
             elif isinstance(self.action_space, gym.spaces.MultiBinary):
                 actions = actions.reshape((-1, self.action_space.n))
                 assert observation.shape[0] == actions.shape[0], \
                     "Error: batch sizes differ for actions and observations."
                 # Bernoulli action probability, for every action
                 actions_proba = np.prod(actions_proba * actions + (1 - actions_proba) * (1 - actions), axis=1)
+
             elif isinstance(self.action_space, gym.spaces.Box):
-                eps = 1e-10  # epsilon value for the act_std division
-                actions = actions.reshape((-1,) + self.action_space.shape)
-                assert observation.shape[0] == actions.shape[0], \
-                    "Error: batch sizes differ for actions and observations."
-                act_mu, act_std = actions_proba
-                # gaussian probability distribution
-                actions_proba = (1 / (np.sqrt(2 * np.pi * act_std ** 2 + eps)) *
-                                 np.exp(-((actions - act_mu) ** 2) / (2 * act_std ** 2 + eps)))
+                warnings.warn("The probabilty of taken a given action is exactly zero for a continuous distribution."
+                              "See http://blog.christianperone.com/2019/01/ for a good explanation")
+                actions_proba = np.zeros((observation.shape[0], 1), dtype=np.float32)
             else:
                 warnings.warn("Warning: action_probability not implemented for {} actions space. Returning None."
                               .format(type(self.action_space).__name__))

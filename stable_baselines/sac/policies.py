@@ -10,9 +10,9 @@ LOG_STD_MAX = 2
 LOG_STD_MIN = -20
 
 
-def gaussian_logp(input_, mu_, log_std):
+def gaussian_likelihood(input_, mu_, log_std):
     """
-    Helper to computer log probability of a gaussian.
+    Helper to computer log likelihood of a gaussian.
     Here we assume this is a Diagonal Gaussian.
 
     :param input_: (tf.Tensor)
@@ -149,12 +149,12 @@ class SACPolicy(BasePolicy):
 
     def proba_step(self, obs, state=None, mask=None):
         """
-        Returns the action probability for a single step
+        Returns the action probability params (mean, std) for a single step
 
         :param obs: ([float] or [int]) The current observation of the environment
         :param state: ([float]) The last states (used in recurrent policies)
         :param mask: ([float]) The last masks (used in recurrent policies)
-        :return: ([float]) the action probability
+        :return: ([float], [float])
         """
         raise NotImplementedError
 
@@ -230,7 +230,7 @@ class FeedForwardPolicy(SACPolicy):
         self.std = std = tf.exp(log_std)
         # Reparameterization trick
         pi_ = mu_ + tf.random_normal(tf.shape(mu_)) * std
-        logp_pi = gaussian_logp(pi_, mu_, log_std)
+        logp_pi = gaussian_likelihood(pi_, mu_, log_std)
         self.entropy = gaussian_entropy(log_std)
         # MISSING: reg params for log and mu
         # Apply squashing and account for it in the probabilty

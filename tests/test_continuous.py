@@ -95,21 +95,20 @@ def test_model_manipulation(model_class):
                 "Error: not scalar probability"
 
         # test action probability for given (obs, action) pair
+        # must return zero and raise a warning or raise an exception if not defined
         env = model.get_env()
         obs = env.reset()
-        observations = np.array([obs for _ in range(10)])
-        observations = np.squeeze(observations)
-        observations = observations.reshape((-1, 1))
+        observations = np.concatenate([obs for _ in range(10)])
         actions = np.array([env.action_space.sample() for _ in range(10)])
 
         if model_class == DDPG:
             with pytest.raises(ValueError):
                 model.action_probability(observations, actions=actions)
         else:
-            actions_probas = model.action_probability(observations, actions=actions)
+            with pytest.warns(UserWarning):
+                actions_probas = model.action_probability(observations, actions=actions)
             assert actions_probas.shape == (len(actions), 1), actions_probas.shape
-            assert actions_probas.min() >= 0, actions_probas.min()
-            assert actions_probas.max() <= 1, actions_probas.max()
+            assert np.all(actions_probas == 0.0), actions_probas
 
         # assert <15% diff
         assert abs(acc_reward - loaded_acc_reward) / max(acc_reward, loaded_acc_reward) < 0.15, \
