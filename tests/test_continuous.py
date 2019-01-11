@@ -98,7 +98,9 @@ def test_model_manipulation(model_class):
         # must return zero and raise a warning or raise an exception if not defined
         env = model.get_env()
         obs = env.reset()
-        observations = np.concatenate([obs for _ in range(10)])
+        observations = np.array([obs for _ in range(10)])
+        observations = np.squeeze(observations)
+        observations = observations.reshape((-1, 1))
         actions = np.array([env.action_space.sample() for _ in range(10)])
 
         if model_class == DDPG:
