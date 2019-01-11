@@ -953,9 +953,6 @@ class DDPG(OffPolicyRLModel):
 
     def action_probability(self, observation, state=None, mask=None, actions=None):
         observation = np.array(observation)
-        vectorized_env = self._is_vectorized_observation(observation, self.observation_space)
-
-        observation = observation.reshape((-1,) + self.observation_space.shape)
 
         if actions is not None:
             raise ValueError("Error: DDPG does not have action probabilities.")

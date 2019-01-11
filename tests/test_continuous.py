@@ -91,8 +91,6 @@ def test_model_manipulation(model_class):
         else:
             assert act_prob[0].shape == (1, 1) and act_prob[1].shape == (1, 1), \
                 "Error: action_probability not returning correct shape"
-            assert np.prod(model.action_probability(obs, actions=env.action_space.sample()).shape) == 1, \
-                "Error: not scalar probability"
 
         # test action probability for given (obs, action) pair
         # must return zero and raise a warning or raise an exception if not defined
