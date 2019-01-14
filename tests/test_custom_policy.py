@@ -58,7 +58,7 @@ def test_custom_policy(model_name):
     """
 
     try:
-        model_class, policy, policy_kwargs = MODEL_DICT[model_name]
+        model_class, policy, _ = MODEL_DICT[model_name]
         env = 'MountainCarContinuous-v0' if model_name in ['ddpg', 'sac'] else 'CartPole-v1'
 
         # create and train
