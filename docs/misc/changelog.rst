@@ -18,7 +18,7 @@ Pre-Release 2.4.0a (WIP)
 - added optional parameter to action_probability for likelihood calculation of given action being taken.
 - added more flexible custom LSTM policies
 - added auto entropy coefficient optimization for SAC
-- clip continuous actions at test time too for all algorithms (except SAC/DDPG where it is not needed
+- clip continuous actions at test time too for all algorithms (except SAC/DDPG where it is not needed)
 - added a mean to pass kwargs to policy when creating a model (+ save those kwargs)
 
 

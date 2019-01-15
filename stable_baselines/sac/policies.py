@@ -183,6 +183,8 @@ class FeedForwardPolicy(SACPolicy):
                  layer_norm=False, **kwargs):
         super(FeedForwardPolicy, self).__init__(sess, ob_space, ac_space, n_env, n_steps, n_batch,
                                                 reuse=reuse, scale=(feature_extraction == "cnn"))
+
+        self._kwargs_check(feature_extraction, kwargs)
         self.layer_norm = layer_norm
         self.feature_extraction = feature_extraction
         self.cnn_kwargs = kwargs

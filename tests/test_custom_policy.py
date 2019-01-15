@@ -110,6 +110,10 @@ def test_custom_policy_kwargs(model_name):
         model_class, policy, policy_kwargs = MODEL_DICT[model_name]
         env = 'MountainCarContinuous-v0' if model_name in ['ddpg', 'sac'] else 'CartPole-v1'
 
+        # Should raise an error when a wrong keyword is passed
+        with pytest.raises(ValueError):
+            model_class(policy, env, policy_kwargs=dict(this_throws_error='maybe'))
+
         # create and train
         model = model_class(policy, env, policy_kwargs=policy_kwargs)
         model.learn(total_timesteps=100, seed=0)

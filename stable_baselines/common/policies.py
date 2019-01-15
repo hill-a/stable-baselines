@@ -123,6 +123,16 @@ class BasePolicy(ABC):
         self.ob_space = ob_space
         self.ac_space = ac_space
 
+    def _kwargs_check(self, feature_extraction, kwargs):
+        """
+        Ensure that the user is not passing wrong keywords
+        when using policy_kwargs
+        :param feature_extraction: (str)
+        :param kwargs: (dict)
+        """
+        if feature_extraction == 'mlp' and len(kwargs) > 0:
+            raise ValueError("Unknown keywords for policy: {}".format(kwargs))
+
     def step(self, obs, state=None, mask=None):
         """
         Returns the policy for a single step
@@ -254,6 +264,8 @@ class LstmPolicy(ActorCriticPolicy):
                  **kwargs):
         super(LstmPolicy, self).__init__(sess, ob_space, ac_space, n_env, n_steps, n_batch, reuse,
                                          scale=(feature_extraction == "cnn"))
+
+        self._kwargs_check(feature_extraction, kwargs)
 
         with tf.variable_scope("input", reuse=True):
             self.masks_ph = tf.placeholder(tf.float32, [n_batch], name="masks_ph")  # mask (done t-1)
@@ -393,6 +405,8 @@ class FeedForwardPolicy(ActorCriticPolicy):
                  act_fun=tf.tanh, cnn_extractor=nature_cnn, feature_extraction="cnn", **kwargs):
         super(FeedForwardPolicy, self).__init__(sess, ob_space, ac_space, n_env, n_steps, n_batch, reuse=reuse,
                                                 scale=(feature_extraction == "cnn"))
+
+        self._kwargs_check(feature_extraction, kwargs)
 
         if layers is not None:
             warnings.warn("Usage of the `layers` parameter is deprecated! Use net_arch instead "
