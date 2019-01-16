@@ -135,7 +135,7 @@ def test_custom_policy_kwargs(model_name):
         model.learn(total_timesteps=100, seed=0)
         del model
 
-        # Load wit different wrong policy_kwargs
+        # Load with different wrong policy_kwargs
         with pytest.raises(ValueError):
             _ = model_class.load("./test_model", policy=policy, env=env, policy_kwargs=dict(wrong="kwargs"))
 

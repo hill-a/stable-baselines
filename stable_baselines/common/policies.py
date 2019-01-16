@@ -126,10 +126,17 @@ class BasePolicy(ABC):
     def _kwargs_check(self, feature_extraction, kwargs):
         """
         Ensure that the user is not passing wrong keywords
-        when using policy_kwargs
+        when using policy_kwargs.
+
         :param feature_extraction: (str)
         :param kwargs: (dict)
         """
+        # When using policy_kwargs parameter on model creation,
+        # all keywords arguments must be consumed by the policy constructor except
+        # the ones for the cnn_extractor network (cf nature_cnn()), where the keywords arguments
+        # are not passed explicitely (using **kwargs to forward the arguments)
+        # that's why there should be not kwargs left when using the mlp_extractor
+        # (in that case the keywords arguments are passed explicitely)
         if feature_extraction == 'mlp' and len(kwargs) > 0:
             raise ValueError("Unknown keywords for policy: {}".format(kwargs))
 
