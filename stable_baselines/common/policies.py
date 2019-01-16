@@ -123,7 +123,8 @@ class BasePolicy(ABC):
         self.ob_space = ob_space
         self.ac_space = ac_space
 
-    def _kwargs_check(self, feature_extraction, kwargs):
+    @staticmethod
+    def _kwargs_check(feature_extraction, kwargs):
         """
         Ensure that the user is not passing wrong keywords
         when using policy_kwargs.
@@ -357,7 +358,7 @@ class LstmPolicy(ActorCriticPolicy):
                 for idx, vf_layer_size in enumerate(value_only_layers):
                     if vf_layer_size == "lstm":
                         raise NotImplementedError("LSTMs are only supported in the shared part of the value function "
-                                                   "network.")
+                                                  "network.")
                     assert isinstance(vf_layer_size, int), "Error: net_arch[-1]['vf'] must only contain integers."
                     latent_value = act_fun(
                         linear(latent_value, "vf_fc{}".format(idx), vf_layer_size, init_scale=np.sqrt(2)))
