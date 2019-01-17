@@ -6,7 +6,8 @@ Custom Policy Network
 Stable baselines provides default policy networks (see :ref:`Policies <policies>` ) for images (CNNPolicies)
 and other type of input features (MlpPolicies).
 
-One way of customising the policy network architecture is to pass argument using ``policy_kwargs`` parameter:
+One way of customising the policy network architecture is to pass arguments when creating the model,
+using ``policy_kwargs`` parameter:
 
 .. code-block:: python
 
@@ -32,6 +33,13 @@ One way of customising the policy network architecture is to pass argument using
 
 
 You can also easily define a custom architecture for the policy (or value) network:
+
+.. note::
+
+	Defining a custom policy class is equivalent to passing ``policy_kwargs``. However,
+  it lets you name the policy and so makes usually the code clearer. ``policy_kwargs`` should be rather used
+  when doing hyperparameter search.
+
 
 .. code-block:: python
 
