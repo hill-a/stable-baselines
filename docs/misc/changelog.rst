@@ -19,6 +19,7 @@ Release 2.4.1 (2019-02-11)
 - fixed custom policy examples in the doc for DQN and DDPG
 - remove gym spaces patch for equality functions
 - fixed tensorflow dependency: cpu version was installed overwritting tensorflow-gpu when present.
+- fixed a bug in ``traj_segment_generator`` (used in ppo1 and trpo) where ``new`` was not updated. (spotted by @junhyeokahn)
 
 
 Release 2.4.0 (2019-01-17)
@@ -235,4 +236,4 @@ Contributors (since v2.0.0):
 In random order...
 
 Thanks to @bjmuld @iambenzo @iandanforth @r7vme @brendenpetersen @huvar @abhiskk @JohannesAck
-@EliasHasle @mrakgr @Bleyddyn @antoine-galataud
+@EliasHasle @mrakgr @Bleyddyn @antoine-galataud @junhyeokahn
