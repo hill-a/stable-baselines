@@ -236,4 +236,4 @@ Contributors (since v2.0.0):
 In random order...
 
 Thanks to @bjmuld @iambenzo @iandanforth @r7vme @brendenpetersen @huvar @abhiskk @JohannesAck
-@EliasHasle @mrakgr @Bleyddyn @antoine-galataud @junhyeokahn
+@EliasHasle @mrakgr @Bleyddyn @antoine-galataud @junhyeokahn @keshaviyengar
