@@ -5,6 +5,14 @@ Changelog
 
 For download links, please look at `Github release page <https://github.com/hill-a/stable-baselines/releases>`_.
 
+Pre-release 2.4.2a (WIP)
+------------------------
+
+- added support for Dict spaces in DummyVecEnv and SubprocVecEnv. (@AdamGleave) 
+- made SubprocVecEnv thread-safe by default; support arbitrary multiprocessing start methods. (@AdamGleave)
+- fixed a bug in ``ddpg.py`` in ``combined_stats`` for eval. Computed mean on ``eval_episode_rewards`` and ``eval_qs``
+
+
 Release 2.4.1 (2019-02-11)
 --------------------------
 
@@ -20,7 +28,6 @@ Release 2.4.1 (2019-02-11)
 - remove gym spaces patch for equality functions
 - fixed tensorflow dependency: cpu version was installed overwritting tensorflow-gpu when present.
 - fixed a bug in ``traj_segment_generator`` (used in ppo1 and trpo) where ``new`` was not updated. (spotted by @junhyeokahn)
-- fixed a bug in ``ddpg.py`` in ``combined_stats`` for eval. Computed mean on ``eval_episode_rewards`` and ``eval_qs``
 
 
 Release 2.4.0 (2019-01-17)
@@ -237,4 +244,4 @@ Contributors (since v2.0.0):
 In random order...
 
 Thanks to @bjmuld @iambenzo @iandanforth @r7vme @brendenpetersen @huvar @abhiskk @JohannesAck
-@EliasHasle @mrakgr @Bleyddyn @antoine-galataud @junhyeokahn @keshaviyengar
+@EliasHasle @mrakgr @Bleyddyn @antoine-galataud @junhyeokahn @AdamGleave @keshaviyengar

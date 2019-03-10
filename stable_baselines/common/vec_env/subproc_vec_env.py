@@ -1,5 +1,7 @@
-from multiprocessing import Process, Pipe
+import multiprocessing
+from collections import OrderedDict
 
+import gym
 import numpy as np
 
 from stable_baselines.common.vec_env import VecEnv, CloudpickleWrapper
@@ -45,20 +47,36 @@ class SubprocVecEnv(VecEnv):
     Creates a multiprocess vectorized wrapper for multiple environments
 
     :param env_fns: ([Gym Environment]) Environments to run in subprocesses
+    :param start_method: (str) method used to start the subprocesses.
+           Must be one of the methods returned by multiprocessing.get_all_start_methods().
+           Defaults to 'forkserver' on available platforms, and 'spawn' otherwise.
+           Both 'forkserver' and 'spawn' are thread-safe, which is important when TensorFlow
+           sessions or other non thread-safe libraries are used in the parent (see issue #217).
+           However, compared to 'fork' they incur a small start-up cost and have restrictions on
+           global variables. For more information, see the multiprocessing documentation.
     """
 
-    def __init__(self, env_fns):
+    def __init__(self, env_fns, start_method=None):
         self.waiting = False
         self.closed = False
         n_envs = len(env_fns)
-        self.remotes, self.work_remotes = zip(*[Pipe() for _ in range(n_envs)])
-        self.processes = [Process(target=_worker, args=(work_remote, remote, CloudpickleWrapper(env_fn)))
-                          for (work_remote, remote, env_fn) in zip(self.work_remotes, self.remotes, env_fns)]
-        for process in self.processes:
-            process.daemon = True  # if the main process crashes, we should not cause things to hang
+
+        if start_method is None:
+            # Use thread safe method, see issue #217.
+            # forkserver faster than spawn but not always available.
+            forkserver_available = 'forkserver' in multiprocessing.get_all_start_methods()
+            start_method = 'forkserver' if forkserver_available else 'spawn'
+        ctx = multiprocessing.get_context(start_method)
+
+        self.remotes, self.work_remotes = zip(*[ctx.Pipe() for _ in range(n_envs)])
+        self.processes = []
+        for work_remote, remote, env_fn in zip(self.work_remotes, self.remotes, env_fns):
+            args = (work_remote, remote, CloudpickleWrapper(env_fn))
+            # daemon=True: if the main process crashes, we should not cause things to hang
+            process = ctx.Process(target=_worker, args=args, daemon=True)
             process.start()
-        for remote in self.work_remotes:
-            remote.close()
+            self.processes.append(process)
+            work_remote.close()
 
         self.remotes[0].send(('get_spaces', None))
         observation_space, action_space = self.remotes[0].recv()
@@ -73,12 +91,13 @@ class SubprocVecEnv(VecEnv):
         results = [remote.recv() for remote in self.remotes]
         self.waiting = False
         obs, rews, dones, infos = zip(*results)
-        return np.stack(obs), np.stack(rews), np.stack(dones), infos
+        return _flatten_obs(obs, self.observation_space), np.stack(rews), np.stack(dones), infos
 
     def reset(self):
         for remote in self.remotes:
             remote.send(('reset', None))
-        return np.stack([remote.recv() for remote in self.remotes])
+        obs = [remote.recv() for remote in self.remotes]
+        return _flatten_obs(obs, self.observation_space)
 
     def close(self):
         if self.closed:
@@ -161,3 +180,29 @@ class SubprocVecEnv(VecEnv):
         for remote in [self.remotes[i] for i in indices]:
             remote.send(('set_attr', (attr_name, value)))
         return [remote.recv() for remote in [self.remotes[i] for i in indices]]
+
+
+def _flatten_obs(obs, space):
+    """
+    Flatten observations, depending on the observation space.
+
+    :param obs: (list<X> or tuple<X> where X is dict<ndarray>, tuple<ndarray> or ndarray) observations.
+                A list or tuple of observations, one per environment.
+                Each environment observation may be a NumPy array, or a dict or tuple of NumPy arrays.
+    :return (OrderedDict<ndarray>, tuple<ndarray> or ndarray) flattened observations.
+            A flattened NumPy array or an OrderedDict or tuple of flattened numpy arrays.
+            Each NumPy array has the environment index as its first axis.
+    """
+    assert isinstance(obs, (list, tuple)), "expected list or tuple of observations per environment"
+    assert len(obs) > 0, "need observations from at least one environment"
+
+    if isinstance(space, gym.spaces.Dict):
+        assert isinstance(space.spaces, OrderedDict), "Dict space must have ordered subspaces"
+        assert isinstance(obs[0], dict), "non-dict observation for environment with Dict observation space"
+        return OrderedDict([(k, np.stack([o[k] for o in obs])) for k in space.spaces.keys()])
+    elif isinstance(space, gym.spaces.Tuple):
+        assert isinstance(obs[0], tuple), "non-tuple observation for environment with Tuple observation space"
+        obs_len = len(space.spaces)
+        return tuple((np.stack([o[i] for o in obs]) for i in range(obs_len)))
+    else:
+        return np.stack(obs)
