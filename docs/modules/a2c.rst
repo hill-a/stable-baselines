@@ -14,7 +14,7 @@ Notes
 -----
 
 -  Original paper:  https://arxiv.org/abs/1602.01783
--  OpenAI blog post: https://blog.openai.com/openai-baselines-ppo/
+-  OpenAI blog post: https://openai.com/blog/baselines-acktr-a2c/
 -  ``python -m stable_baselines.a2c.run_atari`` runs the algorithm for 40M
    frames = 10M timesteps on an Atari game. See help (``-h``) for more
    options.
