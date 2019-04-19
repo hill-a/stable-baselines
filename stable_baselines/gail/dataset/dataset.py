@@ -34,6 +34,8 @@ class ExpertDataset(object):
                  traj_limitation=-1, randomize=True, verbose=1, sequential_preprocessing=False):
         if traj_data is not None and expert_path is not None:
             raise ValueError("Cannot specify both 'traj_data' and 'expert_path'")
+        if traj_data is None and expert_path is None:
+            raise ValueError("Must specify one of 'traj_data' or 'expert_path'")
         if traj_data is None:
             traj_data = np.load(expert_path)
 
