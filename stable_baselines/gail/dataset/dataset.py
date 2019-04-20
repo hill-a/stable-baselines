@@ -13,10 +13,11 @@ class ExpertDataset(object):
     """
     Dataset for using behavior cloning or GAIL.
 
-    Data structure of the expert dataset, an ".npz" archive:
-    the data is saved in python dictionary format with keys: 'actions', 'episode_returns',
-    'rewards', 'obs', 'episode_starts'
-    In case of images, 'obs' contains the relative path to the images.
+    The structure of the expert dataset is a dict, saved as an ".npz" archive.
+    The dictionary contains the keys 'actions', 'episode_returns', 'rewards', 'obs' and 'episode_starts'.
+    The corresponding values have data concatenated across episode: the first axis is the timestep,
+    the remaining axes index into the data. In case of images, 'obs' contains the relative path to
+    the images, to enable space saving from image compression.
 
     :param expert_path: (str) The path to trajectory data (.npz file). Mutually exclusive with traj_data.
     :param traj_data: (dict) Trajectory data, in format described above. Mutually exclusive with expert_path.
