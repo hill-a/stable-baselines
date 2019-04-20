@@ -56,6 +56,10 @@ def generate_expert_traj(model, save_path=None, env=None, n_timesteps=0,
     obs_space = env.observation_space
     record_images = len(obs_space.shape) == 3 and obs_space.shape[-1] in [1, 3, 4] \
                     and obs_space.dtype == np.uint8
+    if record_images and save_path is None:
+        warnings.warn("Observations are images but no save path, so will save in numpy archive; "
+                      "this can lead to higher memory usage.")
+        record_images = False
 
     if not record_images and len(obs_space.shape) == 3 and obs_space.dtype == np.uint8:
         warnings.warn("The observations looks like images (shape = {}) "
@@ -64,7 +68,6 @@ def generate_expert_traj(model, save_path=None, env=None, n_timesteps=0,
 
     image_ext = 'jpg'
     if record_images:
-        assert save_path is not None
         # We save images as jpg or png, that have only 3/4 color channels
         if isinstance(env, VecFrameStack) and env.n_stack == 4:
             # assert env.n_stack < 5, "The current data recorder does no support"\
