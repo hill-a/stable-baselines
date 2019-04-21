@@ -16,11 +16,11 @@ EXPERT_PATH_DISCRETE = "stable_baselines/gail/dataset/expert_cartpole.npz"
 @pytest.mark.parametrize("expert_env", [('Pendulum-v0', EXPERT_PATH_PENDULUM, True),
                                         ('CartPole-v1', EXPERT_PATH_DISCRETE, False)])
 def test_gail(expert_env):
-    env_id, expert_path, we_load = expert_env
+    env_id, expert_path, load_from_memory = expert_env
     env = gym.make(env_id)
 
     traj_data = None
-    if we_load:
+    if load_from_memory:
         traj_data = np.load(expert_path)
         expert_path = None
     dataset = ExpertDataset(traj_data=traj_data, expert_path=expert_path, traj_limitation=10,
@@ -128,7 +128,7 @@ def test_behavior_cloning_discrete(model_class):
     model.save("test-pretrain")
     del dataset, model
 
-def test_dataset_parameter_validation():
+def test_dataset_param_validation():
     with pytest.raises(ValueError):
         ExpertDataset()
 
