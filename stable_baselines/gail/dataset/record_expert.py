@@ -57,7 +57,7 @@ def generate_expert_traj(model, save_path=None, env=None, n_timesteps=0,
     record_images = len(obs_space.shape) == 3 and obs_space.shape[-1] in [1, 3, 4] \
                     and obs_space.dtype == np.uint8
     if record_images and save_path is None:
-        warnings.warn("Observations are images but no save path, so will save in numpy archive; "
+        warnings.warn("Observations are images but no save path was specified, so will save in numpy archive; "
                       "this can lead to higher memory usage.")
         record_images = False
 
