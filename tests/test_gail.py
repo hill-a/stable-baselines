@@ -1,6 +1,7 @@
 import shutil
 
 import gym
+import numpy as np
 import pytest
 
 from stable_baselines import A2C, ACER, ACKTR, GAIL, DDPG, DQN, PPO1, PPO2, TRPO, SAC
@@ -12,12 +13,17 @@ EXPERT_PATH_PENDULUM = "stable_baselines/gail/dataset/expert_pendulum.npz"
 EXPERT_PATH_DISCRETE = "stable_baselines/gail/dataset/expert_cartpole.npz"
 
 
-@pytest.mark.parametrize("expert_env", [('Pendulum-v0', EXPERT_PATH_PENDULUM),
-                                        ('CartPole-v1', EXPERT_PATH_DISCRETE)])
+@pytest.mark.parametrize("expert_env", [('Pendulum-v0', EXPERT_PATH_PENDULUM, True),
+                                        ('CartPole-v1', EXPERT_PATH_DISCRETE, False)])
 def test_gail(expert_env):
-    env_id, expert_path = expert_env
+    env_id, expert_path, we_load = expert_env
     env = gym.make(env_id)
-    dataset = ExpertDataset(expert_path=expert_path, traj_limitation=10,
+
+    traj_data = None
+    if we_load:
+        traj_data = np.load(expert_path)
+        expert_path = None
+    dataset = ExpertDataset(traj_data=traj_data, expert_path=expert_path, traj_limitation=10,
                             sequential_preprocessing=True)
 
     # Note: train for 1M steps to have a working policy
@@ -45,7 +51,6 @@ def test_gail(expert_env):
                                             (A2C, 'MlpLstmPolicy', 'CartPole-v1', 1, 10),
                                             (A2C, 'CnnPolicy', 'BreakoutNoFrameskip-v4', 8, 1),
                                           ])
-
 def test_generate(generate_env):
     model, policy, env_name, n_env, n_episodes = generate_env
 
@@ -55,8 +60,21 @@ def test_generate(generate_env):
     else:
         model = model(policy, env_name, verbose=0)
 
-    generate_expert_traj(model, 'expert', n_timesteps=1000, n_episodes=n_episodes,
-                             image_folder='test_recorded_images')
+    dataset = generate_expert_traj(model, 'expert', n_timesteps=1000, n_episodes=n_episodes,
+                                   image_folder='test_recorded_images')
+
+    assert set(dataset.keys()).issuperset(['actions', 'obs', 'rewards', 'episode_returns', 'episode_starts'])
+    assert sum(dataset['episode_starts']) == n_episodes
+    assert len(dataset['episode_returns']) == n_episodes
+    n_timesteps = len(dataset['episode_starts'])
+    for key, val in dataset.items():
+        if key != 'episode_returns':
+            assert val.shape[0] == n_timesteps, "inconsistent number of timesteps at '{}'".format(key)
+
+    dataset_loaded = np.load('expert.npz')
+    assert dataset.keys() == dataset_loaded.keys()
+    for key in dataset.keys():
+        assert (dataset[key] == dataset_loaded[key]).all(), "different data at '{}'".format(key)
 
 
 def test_generate_callable():
@@ -109,3 +127,11 @@ def test_behavior_cloning_discrete(model_class):
     model.pretrain(dataset, n_epochs=10)
     model.save("test-pretrain")
     del dataset, model
+
+def test_dataset_parameter_validation():
+    with pytest.raises(ValueError):
+        ExpertDataset()
+
+    traj_data = np.load(EXPERT_PATH_PENDULUM)
+    with pytest.raises(ValueError):
+        ExpertDataset(traj_data=traj_data, expert_path=EXPERT_PATH_PENDULUM)
