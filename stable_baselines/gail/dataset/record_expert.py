@@ -30,7 +30,7 @@ def generate_expert_traj(model, save_path=None, env=None, n_timesteps=0,
     :param n_timesteps: (int) Number of training timesteps
     :param n_episodes: (int) Number of trajectories (episodes) to record
     :param image_folder: (str) When using images, folder that will be used to record images.
-    :return the generated expert trajectories.
+    :return: (dict) the generated expert trajectories.
     """
 
     # Retrieve the environment using the RL model
