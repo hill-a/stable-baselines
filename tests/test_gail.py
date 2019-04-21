@@ -88,7 +88,6 @@ def test_generate_callable():
     generate_expert_traj(dummy_expert, 'dummy_expert_cartpole', env, n_timesteps=0, n_episodes=10)
 
 
-# @pytest.mark.parametrize("model_class", [A2C, ACER, ACKTR, DQN, PPO1, PPO2, TRPO])
 def test_pretrain_images():
     env = make_atari_env("PongNoFrameskip-v4", num_env=1, seed=0)
     env = VecFrameStack(env, n_stack=4)
@@ -127,6 +126,7 @@ def test_behavior_cloning_discrete(model_class):
     model.pretrain(dataset, n_epochs=10)
     model.save("test-pretrain")
     del dataset, model
+
 
 def test_dataset_param_validation():
     with pytest.raises(ValueError):
