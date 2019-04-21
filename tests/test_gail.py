@@ -93,14 +93,14 @@ def test_pretrain_images():
     env = VecFrameStack(env, n_stack=4)
     model = PPO2('CnnPolicy', env)
     generate_expert_traj(model, 'expert_pong', n_timesteps=0, n_episodes=1,
-                         image_folder='recorded_images/')
+                         image_folder='pretrain_recorded_images')
 
     expert_path = 'expert_pong.npz'
     dataset = ExpertDataset(expert_path=expert_path, traj_limitation=1, batch_size=32,
                             sequential_preprocessing=True)
     model.pretrain(dataset, n_epochs=2)
 
-    shutil.rmtree('recorded_images/')
+    shutil.rmtree('pretrain_recorded_images')
     env.close()
     del dataset, model, env
 
