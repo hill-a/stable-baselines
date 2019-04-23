@@ -207,6 +207,13 @@ class VecEnvWrapper(VecEnv):
     def env_method(self, method_name, *method_args, indices=None, **method_kwargs):
         return self.venv.env_method(method_name, *method_args, indices=indices, **method_kwargs)
 
+    def __getattr__(self, name):
+        """Get attribute from wrapped venv if this wrapper does not have it.
+        Useful for accessing attributes from venvs which are wrapped with multiple wrappers
+        which have unique attributes of interest.
+        """
+        return getattr(self.venv, name)
+
 
 class CloudpickleWrapper(object):
     def __init__(self, var):
