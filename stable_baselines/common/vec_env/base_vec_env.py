@@ -158,7 +158,7 @@ class VecEnv(ABC):
         :return: (str or None) blocked_venv_class
         """
         if hasattr(self, name) and already_found:
-            blocked_venv_class = f"{type(self).__module__}.{type(self).__name__}"
+            blocked_venv_class = "{0}.{1}".format(type(self).__module__, type(self).__name__)
         else:
             blocked_venv_class = None
         return blocked_venv_class
@@ -245,9 +245,9 @@ class VecEnvWrapper(VecEnv):
         if top_level:
             blocked_class = self.getattr_depth_check(name, already_found=False)
             if blocked_class is not None:
-                own_class = f"{type(self).__module__}.{type(self).__name__}"
-                msg = f"""Error: Recursive attribute lookup for {name} from {own_class} is
-                ambiguous and hides attribute from {blocked_class}"""
+                own_class = "{0}.{1}".format(type(self).__module__, type(self).__name__)
+                msg = """Error: Recursive attribute lookup for {0} from {1} is
+                ambiguous and hides attribute from {2}""".format(name, own_class, blocked_class)
                 raise AttributeError(msg)
 
         return attr
@@ -259,12 +259,12 @@ class VecEnvWrapper(VecEnv):
         """
         if hasattr(self, name) and already_found:
             # this venv's attribute is being hidden because of a higher venv.
-            blocked_wrapper_class = f"{type(self).__module__}.{type(self).__name__}"
+            blocked_wrapped_class = "{0}.{1}".format(type(self).__module__, type(self).__name__)
         elif hasattr(self, name) and not already_found:
             # we have found the first reference to the attribute. Now check for duplicates.
             blocked_wrapper_class = self.venv.getattr_depth_check(True, name)
         else:
-            # this wrapped does not have the attribute. Keep searching.
+            # this wrapper does not have the attribute. Keep searching.
             blocked_wrapper_class = self.venv.getattr_depth_check(already_found, name)
 
         return blocked_wrapper_class
