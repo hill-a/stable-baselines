@@ -7,7 +7,8 @@ import pytest
 import gym
 import numpy as np
 
-from stable_baselines.common.vec_env import DummyVecEnv, SubprocVecEnv, VecNormalize, VecFrameStack
+from stable_baselines.common.vec_env import (DummyVecEnv, SubprocVecEnv, VecEnv,
+                                             VecEnvWrapper, VecNormalize, VecFrameStack)
 
 N_ENVS = 3
 VEC_ENV_CLASSES = [DummyVecEnv, SubprocVecEnv]
@@ -212,3 +213,29 @@ def test_subproc_start_method():
     with pytest.raises(ValueError, match="cannot find context for 'illegal_method'"):
         vec_env_class = functools.partial(SubprocVecEnv, start_method='illegal_method')
         check_vecenv_spaces(vec_env_class, space, obs_assert)
+
+
+class CustomWrapperA(VecNormalize):
+    def __init__(self, venv):
+        VecEnvWrapper.__init__(self, venv)
+        self.a = 'a'
+
+class CustomWrapperB(VecNormalize):
+    def __init__(self, venv):
+        VecEnvWrapper.__init__(self, venv)
+        self.b = 'b'
+
+def test_vecenv_wrapper_getattr():
+    def make_env():
+        return CustomGymEnv(gym.spaces.Box(low=np.zeros(2), high=np.ones(2)))
+    vec_env = DummyVecEnv([make_env for _ in range(N_ENVS)])
+    wrapped = CustomWrapperA(CustomWrapperB(vec_env))
+    assert wrapped.b == 'b'
+    assert wrapped.a == 'a'
+
+    double_wrapped = CustomWrapperA(CustomWrapperB(wrapped))
+    try:
+        b = double_wrapped.b
+        raise AssertionError("Attribute reference should have raised AttributeError")
+    except AttributeError:
+        pass

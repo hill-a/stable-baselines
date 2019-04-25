@@ -237,7 +237,9 @@ class VecEnvWrapper(VecEnv):
                Used to avoid unnecessary calls to self.getattr_depth_check.
         :return: (object) attr
         """
-        if hasattr(self.venv, 'getattr_recursive'):
+        if name in self.__dict__:
+            attr = self.__dict__[name]
+        elif 'getattr_recursive' in self.__dict__:
             attr = self.venv.getattr_recursive(name, top_level=False)
         else:
             attr = getattr(self.venv, name)  # get from an unwrapped venv
@@ -257,15 +259,15 @@ class VecEnvWrapper(VecEnv):
 
         :return: (str or None) blocked_wrapper_class
         """
-        if hasattr(self, name) and already_found:
+        if name in self.__dict__ and already_found:
             # this venv's attribute is being hidden because of a higher venv.
             blocked_wrapper_class = "{0}.{1}".format(type(self).__module__, type(self).__name__)
-        elif hasattr(self, name) and not already_found:
+        elif name in self.__dict__ and not already_found:
             # we have found the first reference to the attribute. Now check for duplicates.
-            blocked_wrapper_class = self.venv.getattr_depth_check(True, name)
+            blocked_wrapper_class = self.venv.getattr_depth_check(name, True)
         else:
             # this wrapper does not have the attribute. Keep searching.
-            blocked_wrapper_class = self.venv.getattr_depth_check(already_found, name)
+            blocked_wrapper_class = self.venv.getattr_depth_check(name, already_found)
 
         return blocked_wrapper_class
 
