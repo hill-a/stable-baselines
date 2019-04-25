@@ -15,11 +15,13 @@ Pre-Release 2.5.1a0 (WIP)
 - added support for multi env recording to ``generate_expert_traj`` (@XMaster96)
 - added support for LSTM model recording to ``generate_expert_traj`` (@XMaster96)
 - ``GAIL``: remove mandatory matplotlib dependency and refactor as subclass of ``TRPO`` (@kantneel and @AdamGleave)
-- added ``get_attr()``, ``env_method()`` and ``set_attr()`` methods for all VecEnv. 
+- added ``get_attr()``, ``env_method()`` and ``set_attr()`` methods for all VecEnv.
   Those methods now all accept ``indices`` keyword to select a subset of envs.
   ``set_attr`` now returns ``None`` rather than a list of ``None``. (@kantneel)
 - ``GAIL``: ``gail.dataset.ExpertDataset` supports loading from memory rather than file, and
   ``gail.dataset.record_expert`` supports returning in-memory rather than saving to file.
+- added support in ``VecEnvWrapper`` for accessing attributes of arbitrarily deeply nested instances of ``VecEnvWrapper`` and ``VecEnv``.
+  This is allowed as long as the attribute belongs to exactly one of the nested instances i.e. it must be unambiguous. (@kantneel)
 
 
 Release 2.5.0 (2019-03-28)
