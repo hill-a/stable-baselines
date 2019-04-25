@@ -7,8 +7,7 @@ import pytest
 import gym
 import numpy as np
 
-from stable_baselines.common.vec_env import (DummyVecEnv, SubprocVecEnv, VecEnvWrapper,
-                                             VecNormalize, VecFrameStack)
+from stable_baselines.common.vec_env import DummyVecEnv, SubprocVecEnv, VecNormalize, VecFrameStack
 
 N_ENVS = 3
 VEC_ENV_CLASSES = [DummyVecEnv, SubprocVecEnv]
