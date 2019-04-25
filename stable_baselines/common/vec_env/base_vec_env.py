@@ -259,7 +259,7 @@ class VecEnvWrapper(VecEnv):
         """
         if hasattr(self, name) and already_found:
             # this venv's attribute is being hidden because of a higher venv.
-            blocked_wrapped_class = "{0}.{1}".format(type(self).__module__, type(self).__name__)
+            blocked_wrapper_class = "{0}.{1}".format(type(self).__module__, type(self).__name__)
         elif hasattr(self, name) and not already_found:
             # we have found the first reference to the attribute. Now check for duplicates.
             blocked_wrapper_class = self.venv.getattr_depth_check(True, name)
