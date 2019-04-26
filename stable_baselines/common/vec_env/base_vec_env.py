@@ -163,7 +163,6 @@ class VecEnv(ABC):
             blocked_venv_class = None
         return blocked_venv_class
 
-
     def _get_indices(self, indices):
         """
         Convert a flexibly-typed reference to environment indices to an implied list of indices.
@@ -226,31 +225,29 @@ class VecEnvWrapper(VecEnv):
         Useful for accessing attributes from venvs which are wrapped with multiple wrappers
         which have unique attributes of interest.
         """
-        return self.getattr_recursive(name, top_level=True)
+        blocked_class = self.getattr_depth_check(name, already_found=False)
+        if blocked_class is not None:
+            own_class = "{0}.{1}".format(type(self).__module__, type(self).__name__)
+            fstr = ("Error: Recursive attribute lookup for {0} from {1} is"
+                    "ambiguous and hides attribute from {2}")
+            raise AttributeError(fstr.format(name, own_class, blocked_class))
 
-    def getattr_recursive(self, name, top_level):
-        """Recursively check wrappers to find attribute. Also ensure that there is no
-        ambiguity about which wrapper's attribute is being referenced.
+        return self.getattr_recursive(name)
+
+    def getattr_recursive(self, name):
+        """Recursively check wrappers to find attribute.
 
         :param name (str) name of attribute to look for
-        :param top_level (bool) whether this was the first call to this recursive function.
-               Used to avoid unnecessary calls to self.getattr_depth_check.
-        :return: (object) attr
+        :return: (object) attribute
         """
-        if name in self.__dict__:
+        if name in self.__dict__:  # attribute is present in this wrapper
             attr = self.__dict__[name]
-        elif 'getattr_recursive' in self.__dict__:
-            attr = self.venv.getattr_recursive(name, top_level=False)
-        else:
-            attr = getattr(self.venv, name)  # get from an unwrapped venv
-
-        if top_level:
-            blocked_class = self.getattr_depth_check(name, already_found=False)
-            if blocked_class is not None:
-                own_class = "{0}.{1}".format(type(self).__module__, type(self).__name__)
-                msg = """Error: Recursive attribute lookup for {0} from {1} is
-                ambiguous and hides attribute from {2}""".format(name, own_class, blocked_class)
-                raise AttributeError(msg)
+        elif hasattr(self.venv, 'getattr_recursive'):
+            # Attribute not present, child is wrapper. Call getattr_recursive rather than getattr
+            # to avoid a duplicate call to getattr_depth_check.
+            attr = self.venv.getattr_recursive(name)
+        else:  # attribute not present, child is an unwrapped VecEnv
+            attr = getattr(self.venv, name)
 
         return attr
 

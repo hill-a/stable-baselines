@@ -219,10 +219,12 @@ class CustomWrapperA(VecNormalize):
         VecNormalize.__init__(self, venv)
         self.var_a = 'a'
 
+
 class CustomWrapperB(VecNormalize):
     def __init__(self, venv):
         VecNormalize.__init__(self, venv)
         self.var_b = 'b'
+
 
 def test_vecenv_wrapper_getattr():
     def make_env():
@@ -233,9 +235,8 @@ def test_vecenv_wrapper_getattr():
     assert wrapped.var_a == 'a'
 
     double_wrapped = CustomWrapperA(CustomWrapperB(wrapped))
-    try:
-        var_b = double_wrapped.var_b
-        del var_b
-        raise AssertionError("Attribute reference should have raised AttributeError")
-    except AttributeError:
-        pass
+    double_wrapped.var_a  # should not raise as it is directly defined here
+    with pytest.raises(AttributeError):  # should raise due to ambiguity
+        double_wrapped.var_b
+    with pytest.raises(AttributeError):  # should raise as does not exist
+        double_wrapped.nonexistent_attribute
