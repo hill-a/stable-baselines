@@ -20,8 +20,9 @@ Pre-Release 2.5.1a0 (WIP)
   ``set_attr`` now returns ``None`` rather than a list of ``None``. (@kantneel)
 - ``GAIL``: ``gail.dataset.ExpertDataset` supports loading from memory rather than file, and
   ``gail.dataset.record_expert`` supports returning in-memory rather than saving to file.
-- added support in ``VecEnvWrapper`` for accessing attributes of arbitrarily deeply nested instances of ``VecEnvWrapper`` and ``VecEnv``.
-  This is allowed as long as the attribute belongs to exactly one of the nested instances i.e. it must be unambiguous. (@kantneel)
+- added support in ``VecEnvWrapper`` for accessing attributes of arbitrarily deeply nested 
+  instances of ``VecEnvWrapper`` and ``VecEnv``. This is allowed as long as the attribute belongs 
+  to exactly one of the nested instances i.e. it must be unambiguous. (@kantneel)
 
 
 Release 2.5.0 (2019-03-28)
