@@ -101,7 +101,7 @@ def plot_results(dirs, num_timesteps, xaxis, task_name):
     plot the results
 
     :param dirs: ([str]) the save location of the results to plot
-    :param num_timesteps: (int) only plot the points below this value
+    :param num_timesteps: (int or None) only plot the points below this value
     :param xaxis: (str) the axis for the x and y output
         (can be X_TIMESTEPS='timesteps', X_EPISODES='episodes' or X_WALLTIME='walltime_hrs')
     :param task_name: (str) the title of the task to plot
@@ -110,7 +110,8 @@ def plot_results(dirs, num_timesteps, xaxis, task_name):
     tslist = []
     for folder in dirs:
         timesteps = load_results(folder)
-        timesteps = timesteps[timesteps.l.cumsum() <= num_timesteps]
+        if num_timesteps is not None:
+            timesteps = timesteps[timesteps.l.cumsum() <= num_timesteps]
         tslist.append(timesteps)
     xy_list = [ts2xy(timesteps_item, xaxis) for timesteps_item in tslist]
     plot_curves(xy_list, xaxis, task_name)
