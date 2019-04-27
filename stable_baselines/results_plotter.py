@@ -84,8 +84,11 @@ def plot_curves(xy_list, xaxis, title):
     for (i, (x, y)) in enumerate(xy_list):
         color = COLORS[i]
         plt.scatter(x, y, s=2)
-        x, y_mean = window_func(x, y, EPISODES_WINDOW, np.mean)  # So returns average of last EPISODE_WINDOW episodes
-        plt.plot(x, y_mean, color=color)
+        # Do not plot the smoothed curve at all if the timeseries is shorter than window size.
+        if x.shape[0] >= EPISODES_WINDOW:
+            # Compute and plot rolling mean with window of size EPISODE_WINDOW
+            x, y_mean = window_func(x, y, EPISODES_WINDOW, np.mean)
+            plt.plot(x, y_mean, color=color)
     plt.xlim(minx, maxx)
     plt.title(title)
     plt.xlabel(xaxis)
