@@ -364,6 +364,13 @@ class RecurrentActorCriticPolicy(ActorCriticPolicy):
     def states_ph(self):
         """tf.Tensor: placeholder for states, shape (self.n_env, ) + state_shape."""
         return self._states_ph
+    
+    @abstractmethod
+    def value(self, obs, state=None, mask=None):
+        """
+        Cf base class doc.
+        """
+        raise NotImplementedError
 
 
 class LstmPolicy(RecurrentActorCriticPolicy):
