@@ -23,6 +23,10 @@ Pre-Release 2.5.1a0 (WIP)
 - added support in ``VecEnvWrapper`` for accessing attributes of arbitrarily deeply nested 
   instances of ``VecEnvWrapper`` and ``VecEnv``. This is allowed as long as the attribute belongs 
   to exactly one of the nested instances i.e. it must be unambiguous. (@kantneel)
+- fixed bug where result plotter would crash on very short runs (@Pastafarianist)
+- added option to not trim output of result plotter by number of timesteps (@Pastafarianist)
+- clarified the public interface of ``BasePolicy`` and ``ActorCriticPolicy``. **Breaking change** when using custom policies: ``masks_ph`` is now called ``dones_ph``.
+- support for custom stateful policies.
 
 
 Release 2.5.0 (2019-03-28)
@@ -285,4 +289,4 @@ In random order...
 
 Thanks to @bjmuld @iambenzo @iandanforth @r7vme @brendenpetersen @huvar @abhiskk @JohannesAck
 @EliasHasle @mrakgr @Bleyddyn @antoine-galataud @junhyeokahn @AdamGleave @keshaviyengar @tperol
-@XMaster96 @kantneel
+@XMaster96 @kantneel @Pastafarianist
