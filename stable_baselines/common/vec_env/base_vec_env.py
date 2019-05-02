@@ -227,7 +227,7 @@ class VecEnvWrapper(VecEnv):
         blocked_class = self.getattr_depth_check(name, already_found=False)
         if blocked_class is not None:
             own_class = "{0}.{1}".format(type(self).__module__, type(self).__name__)
-            format_str = ("Error: Recursive attribute lookup for {0} from {1} is"
+            format_str = ("Error: Recursive attribute lookup for {0} from {1} is "
                           "ambiguous and hides attribute from {2}")
             raise AttributeError(format_str.format(name, own_class, blocked_class))
 
