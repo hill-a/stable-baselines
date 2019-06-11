@@ -61,8 +61,8 @@ And the worst of all, Tensorflow will not signal anything
   val = a / b  # this will raise an exception and halt.
   print(val)
 
- Unfortunately, most of the floating point operations are handled by Tensorflow and numpy,
- meaning you might get little to no warning when a invalid value occurs.
+Unfortunately, most of the floating point operations are handled by Tensorflow and numpy,
+meaning you might get little to no warning when a invalid value occurs.
 
 Numpy parameters
 ----------------
@@ -112,6 +112,71 @@ but will not avoid the propagation issues:
   b = np.float64(1.0)
   val = a + b  # this will neither warn nor raise anything
   print(val)
+  
+Tensorflow parameters
+---------------------
+
+Tensorflow can add checks for detecting and dealing with invalid value: `tf.add_check_numerics_ops <https://www.tensorflow.org/api_docs/python/tf/add_check_numerics_ops>`_ and `tf.check_numerics <https://www.tensorflow.org/api_docs/python/tf/debugging/check_numerics>`_,
+however they will add operations to the Tensorflow graph and raise the computation time.
+
+.. code-block:: python
+
+  import tensorflow as tf
+
+  print("tensorflow test:")
+
+  a = tf.constant(1.0)
+  b = tf.constant(0.0)
+  c = a / b
+  
+  check_nan = tf.add_check_numerics_ops()  # add after your graph definition.
+
+  sess = tf.Session()
+  val, _ = sess.run([c, check_nan])  # this will now raise an exception
+  print(val)
+  sess.close()
+
+but this will also avoid overflow issues on floating point numbers:
+
+.. code-block:: python
+
+  import tensorflow as tf
+  
+  print("tensorflow overflow test:")
+  
+  check_nan = []  # the list of check_numerics operations
+
+  a = tf.constant(10)
+  b = tf.constant(1000)
+  c = a ** b  
+  
+  check_nan.append(tf.check_numerics(c, ""))  # check the 'c' operations
+  
+  sess = tf.Session()
+  val, _ = sess.run([c] + check_nan)  # this will now raise an exception
+  print(val)
+  sess.close()
+
+and catch propagation issues:
+
+.. code-block:: python
+
+  import tensorflow as tf
+
+  print("tensorflow propagation test:")
+  
+  check_nan = []  # the list of check_numerics operations
+
+  a = tf.constant('NaN')
+  b = tf.constant(1.0)
+  c = a + b
+  
+  check_nan.append(tf.check_numerics(c, ""))  # check the 'c' operations
+  
+  sess = tf.Session()
+  val, _ = sess.run([c] + check_nan)  # this will now raise an exception
+  print(val)
+  sess.close()
 
 
 VecCheckNan Wrapper
