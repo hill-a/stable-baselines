@@ -31,6 +31,10 @@ Pre-Release 2.6.0a1 (WIP)
 - fixed ``num_timesteps`` (total_timesteps) variable in PPO2 that was wrongly computed.
 - fixed a bug in DDPG/DQN/SAC, when there were the number of samples in the replay buffer was lesser than the batch size
   (thanks to @dwiel for spotting the bug)
+- **removed** ``a2c.utils.find_trainable_params`` please use ``common.tf_util.get_trainable_vars`` instead.
+  ``find_trainable_params`` was returning all trainable variables, discarding the scope argument.
+  This bug was causing the model to save duplicated parameters (for DDPG and SAC)
+  but did not affect the performance.
 - added guide for managing ``NaN`` and ``inf``
 - added ``VecCheckNan`` wrapper
 - updated ven_env doc
