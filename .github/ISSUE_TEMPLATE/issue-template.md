@@ -24,6 +24,11 @@ from stable_baselines import ...
 
 ```
 
+```bash
+Traceback (most recent call last): File ...
+
+```
+
 **System Info**
 Describe the characteristic of your environment:
  * Describe how the library was installed (pip, docker, source, ...)
