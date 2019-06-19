@@ -16,6 +16,14 @@ A clear and concise description of what the bug is.
 **Code example**
 Please try to provide a minimal example to reproduce the bug. Error messages and stack traces are also helpful.
 
+Please use the [markdown code blocks](https://help.github.com/en/articles/creating-and-highlighting-code-blocks)
+for both code and stack traces.
+
+```python
+from stable_baselines import ...
+
+```
+
 **System Info**
 Describe the characteristic of your environment:
  * Describe how the library was installed (pip, docker, source, ...)
