@@ -143,7 +143,7 @@ class DQN(OffPolicyRLModel):
                 self.summary = tf.summary.merge_all()
 
     def learn(self, total_timesteps, callback=None, seed=None, log_interval=100, tb_log_name="DQN",
-              reset_num_timesteps=True, replay_wrapper=None):
+              reset_num_timesteps=True, replay_wrapper=None, render=False):
 
         new_tb_log = self._init_num_timesteps(reset_num_timesteps)
 
@@ -209,6 +209,8 @@ class DQN(OffPolicyRLModel):
                 env_action = action
                 reset = False
                 new_obs, rew, done, info = self.env.step(env_action)
+                if render:
+                    self.env.render()
                 # Store transition in the replay buffer.
                 self.replay_buffer.add(obs, action, rew, new_obs, float(done))
                 obs = new_obs
