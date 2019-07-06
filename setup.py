@@ -117,7 +117,7 @@ setup(name='stable_baselines',
       ] + tf_dependency,
       extras_require={
         'tests': [
-            'pytest==3.5.1',
+            'pytest>=4.4.0',
             'pytest-cov',
             'pytest-env',
             'pytest-xdist',

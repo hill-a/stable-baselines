@@ -25,7 +25,7 @@ RUN \
     pip install opencv-python && \
     pip install numpy && \
     pip install pandas && \
-    pip install pytest==3.5.1 && \
+    pip install pytest>=4.4.0 && \
     pip install pytest-cov && \
     pip install pytest-env && \
     pip install pytest-xdist && \
