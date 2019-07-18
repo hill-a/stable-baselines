@@ -639,7 +639,7 @@ class ActorCriticRLModel(BaseRLModel):
                 mean, logstd = actions_proba
                 std = np.exp(logstd)
 
-                n_elts = np.prod(mean.shape[1:])
+                n_elts = np.prod(mean.shape[1:])  # first dimension is batch size
                 log_normalizer = n_elts/2 * np.log(2 * np.pi) + 1/2 * np.sum(logstd, axis=1)
 
                 # Diagonal Gaussian action probability, for every action
