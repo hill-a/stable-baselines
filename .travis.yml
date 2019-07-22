@@ -8,10 +8,24 @@ notifications:
 services:
   - docker
 
-install:
-  - docker pull araffin/stable-baselines-cpu
+matrix:
+  include:
+    - name: "Unit Tests"
 
-script:
-  # For pull requests from fork, Codacy token is not available, leading to build failure
-  - 'if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then docker run -it --rm --network host --ipc=host --mount src=$(pwd),target=/root/code/stable-baselines,type=bind araffin/stable-baselines-cpu bash -c "cd /root/code/stable-baselines/ && pytest --cov-config .coveragerc --cov-report term --cov=. -v tests/"; fi'
-  - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then docker run -it --env CODACY_PROJECT_TOKEN=$CODACY_PROJECT_TOKEN --rm --network host --ipc=host --mount src=$(pwd),target=/root/code/stable-baselines,type=bind araffin/stable-baselines-cpu bash -c "cd /root/code/stable-baselines/ && pytest --cov-config .coveragerc --cov-report term --cov-report xml --cov=. -v tests/ && python-codacy-coverage -r coverage.xml --token=$CODACY_PROJECT_TOKEN"; fi'
+      install:
+        - docker pull araffin/stable-baselines-cpu
+
+      script:
+        # For pull requests from fork, Codacy token is not available, leading to build failure
+        - 'if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then docker run -it --rm --network host --ipc=host --mount src=$(pwd),target=/root/code/stable-baselines,type=bind araffin/stable-baselines-cpu bash -c "cd /root/code/stable-baselines/ && pytest --cov-config .coveragerc --cov-report term --cov=. -v tests/"; fi'
+        - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then docker run -it --env CODACY_PROJECT_TOKEN=$CODACY_PROJECT_TOKEN --rm --network host --ipc=host --mount src=$(pwd),target=/root/code/stable-baselines,type=bind araffin/stable-baselines-cpu bash -c "cd /root/code/stable-baselines/ && pytest --cov-config .coveragerc --cov-report term --cov-report xml --cov=. -v tests/ && python-codacy-coverage -r coverage.xml --token=$CODACY_PROJECT_TOKEN"; fi'
+
+    - name: "Sphinx Documentation"
+
+      install:
+        - pip install '.[docs]'
+
+      script:
+        - pushd docs/
+        - make clean
+        - make html
