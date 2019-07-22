@@ -15,6 +15,12 @@ Breaking Changes:
 New Features:
 ^^^^^^^^^^^^^
 
+- Add support for continuous action spaces to `action_probability`, computing the PDF of a Gaussian
+  policy in addition to the existing support for categorical stochastic policies.
+- Add flag to `action_probability` to return log-probabilities.
+- Added support for python lists and numpy arrays in ``logger.writekvs``. (@dwiel)
+- The info dicts returned by VecEnvs now include a ``terminal_observation`` key providing access to the last observation in a trajectory. (@qxcv)
+
 Bug Fixes:
 ^^^^^^^^^^
 - fixed a bug in ``traj_segment_generator`` where the ``episode_starts`` was wrongly recorded,
@@ -45,7 +51,6 @@ Breaking Changes:
 ^^^^^^^^^^^^^^^^^
 
 - **breaking change** removed ``stable_baselines.ddpg.memory`` in favor of ``stable_baselines.deepq.replay_buffer`` (see fix below)
-
 
 **Breaking Change:** DDPG replay buffer was unified with DQN/SAC replay buffer. As a result,
 when loading a DDPG model trained with stable_baselines<2.6.0, it throws an import error.
@@ -404,4 +409,4 @@ In random order...
 Thanks to @bjmuld @iambenzo @iandanforth @r7vme @brendenpetersen @huvar @abhiskk @JohannesAck
 @EliasHasle @mrakgr @Bleyddyn @antoine-galataud @junhyeokahn @AdamGleave @keshaviyengar @tperol
 @XMaster96 @kantneel @Pastafarianist @GerardMaggiolino @PatrickWalter214 @yutingsz @sc420 @Aaahh @billtubbs
-@Miffyli @dwiel @miguelrass
+@Miffyli @dwiel @miguelrass @qxcv
