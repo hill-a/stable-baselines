@@ -360,7 +360,7 @@ class TD3(OffPolicyRLModel):
                         frac = 1.0 - step / total_timesteps
                         current_lr = self.learning_rate(frac)
                         # Update policy and critics (q functions)
-                        # Npte: the policy is updated less frequently than the Q functions
+                        # Note: the policy is updated less frequently than the Q functions
                         # this is controlled by the `policy_delay` parameter
                         mb_infos_vals.append(
                             self._train_step(step, writer, current_lr, (step + grad_step) % self.policy_delay == 0))
