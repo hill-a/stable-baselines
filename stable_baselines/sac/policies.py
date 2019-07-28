@@ -175,7 +175,6 @@ class FeedForwardPolicy(SACPolicy):
     :param feature_extraction: (str) The feature extraction type ("cnn" or "mlp")
     :param layer_norm: (bool) enable layer normalisation
     :param reg_weight: (float) Regularization loss weight for the policy parameters
-    :param reg_weight: (float) Regularization loss weight for the policy parameters
     :param act_fun: (tf.func) the activation function to use in the neural network.
     :param kwargs: (dict) Extra keyword arguments for the nature CNN feature extraction
     """
