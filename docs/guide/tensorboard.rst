@@ -80,7 +80,7 @@ It will display information such as the model graph, the episode reward, the mod
 Logging More Values
 -------------------
 
-Using a callback, you can easily log more values with tensorboard.
+Using a callback, you can easily log more values with TensorBoard.
 Here is a simple example on how to log both additional tensor or arbitrary scalar value:
 
 .. code-block:: python
