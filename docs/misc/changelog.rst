@@ -6,7 +6,7 @@ Changelog
 For download links, please look at `Github release page <https://github.com/hill-a/stable-baselines/releases>`_.
 
 
-Pre-Release 2.7.0 (WIP)
+Release 2.7.0 (2019-07-31)
 --------------------------
 
 **Twin Delayed DDPG (TD3) and GAE bug fix (TRPO, PPO1, GAIL)**
