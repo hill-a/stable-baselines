@@ -13,6 +13,8 @@ from tensorflow.python import pywrap_tensorflow
 from tensorflow.core.util import event_pb2
 from tensorflow.python.util import compat
 
+from stable_baselines.common.misc_util import mpi_rank_or_zero
+
 DEBUG = 10
 INFO = 20
 WARN = 30
@@ -578,16 +580,16 @@ def configure(folder=None, format_strs=None):
     assert isinstance(folder, str)
     os.makedirs(folder, exist_ok=True)
 
-    log_suffix = ''
-    from mpi4py import MPI
-    rank = MPI.COMM_WORLD.Get_rank()
-    if rank > 0:
-        log_suffix = "-rank%03i" % rank
-
+    # PR NOTE: not quite the same behavior w.r.t. log_suffix after refactoring
+    # in the case that MPI is installed and rank == 0, but it looks like changing
+    # that case doesn't disrupt anthing important downstread. Ask to please check
+    # for sanity.
     if format_strs is None:
-        if rank == 0:
+        if mpi_rank_or_zero() == 0:
+            log_suffix = ''
             format_strs = os.getenv('OPENAI_LOG_FORMAT', 'stdout,log,csv').split(',')
         else:
+            log_suffix = "-rank%03i" % rank
             format_strs = os.getenv('OPENAI_LOG_FORMAT_MPI', 'log').split(',')
     format_strs = filter(None, format_strs)
     output_formats = [make_output_format(f, folder, log_suffix) for f in format_strs]
