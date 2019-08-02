@@ -580,10 +580,6 @@ def configure(folder=None, format_strs=None):
     assert isinstance(folder, str)
     os.makedirs(folder, exist_ok=True)
 
-    # PR NOTE: not quite the same behavior w.r.t. log_suffix after refactoring
-    # in the case that MPI is installed and rank == 0, but it looks like changing
-    # that case doesn't disrupt anthing important downstread. Ask to please check
-    # for sanity.
     if format_strs is None:
         if mpi_rank_or_zero() == 0:
             log_suffix = ''
