@@ -580,9 +580,9 @@ def configure(folder=None, format_strs=None):
     assert isinstance(folder, str)
     os.makedirs(folder, exist_ok=True)
 
+    log_suffix = ''
     if format_strs is None:
         if mpi_rank_or_zero() == 0:
-            log_suffix = ''
             format_strs = os.getenv('OPENAI_LOG_FORMAT', 'stdout,log,csv').split(',')
         else:
             log_suffix = "-rank%03i" % rank
