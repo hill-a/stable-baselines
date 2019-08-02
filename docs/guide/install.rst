@@ -56,7 +56,7 @@ interactions with Tensorflow in the past (see
 `Issue #430 <https://github.com/hill-a/stable-baselines/issues/430>`) and so is disabled by
 default.
 
-To enable OpenMPI in ``stable_baselines`` install the mpi extras: ``pip install .[mpi]``
+To enable OpenMPI in ``stable_baselines`` install the mpi extras: ``pip install stable_baselines[mpi]``
 To disable OpenMPI, uninstall ``mpi4py`` with ``pip uninstall mpi4py``.
 
 
