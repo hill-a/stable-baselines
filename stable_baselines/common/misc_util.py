@@ -253,5 +253,4 @@ def mpi_rank_or_zero():
         from mpi4py import MPI
         return MPI.COMM_WORLD.Get_rank()
     except ImportError:
-        pass
-    return 0
+        return 0
