@@ -1,5 +1,5 @@
 from contextlib import contextmanager
-from sys import modules
+import sys
 
 
 def _assert_eq(left, right):
@@ -21,12 +21,12 @@ def _maybe_disable_mpi(mpi_disabled):
         disable_mpi (bool): If True, then this context temporarily removes
             the mpi4py import from `sys.modules`
     """
-    if mpi_disabled and "mpi4py" in modules:
-        temp = modules["mpi4py"]
+    if mpi_disabled and "mpi4py" in sys.modules:
+        temp = sys.modules["mpi4py"]
         try:
-            modules["mpi4py"] = None
+            sys.modules["mpi4py"] = None
             yield
         finally:
-            modules["mpi4py"] = temp
+            sys.modules["mpi4py"] = temp
     else:
         yield
