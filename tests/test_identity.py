@@ -2,8 +2,8 @@ import pytest
 import numpy as np
 
 from stable_baselines import A2C, ACER, ACKTR, DQN, DDPG, SAC, PPO1, PPO2, TD3, TRPO
+from stable_baselines.ddpg import NormalActionNoise
 from stable_baselines.common.identity_env import IdentityEnv, IdentityEnvBox
-from stable_baselines.common.noise import NormalActionNoise
 from stable_baselines.common.vec_env import DummyVecEnv
 from stable_baselines.common import set_global_seeds
 

@@ -467,7 +467,7 @@ The parking env is a goal-conditioned continuous control task, in which the vehi
   import numpy as np
 
   from stable_baselines import HER, SAC, DDPG, TD3
-  from stable_baselines.common.noise import NormalActionNoise
+  from stable_baselines.ddpg import NormalActionNoise
 
   env = gym.make("parking-v0")
 
