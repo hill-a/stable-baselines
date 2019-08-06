@@ -85,15 +85,14 @@ brew install cmake openmpi
 To install stable-baselines on Windows, please look at the [documentation](https://stable-baselines.readthedocs.io/en/master/guide/install.html#prerequisites).
 
 ### Install using pip
-Install the Stable Baselines package
-
-Using pip from pypi:
-```
-pip install stable-baselines
-```
-If you need one of the algorithms depending on MPI, then install using:
+Install the Stable Baselines package:
 ```
 pip install stable-baselines[mpi]
+```
+
+This includes an optional dependency on MPI, enabling algorithms DDPG, GAIL, PPO1 and TRPO. If you do not need these algorithms, you can install without MPI:
+```
+pip install stable-baselines
 ```
 
 Please read the [documentation](https://stable-baselines.readthedocs.io/) for more details and alternatives (from source, using docker).
