@@ -8,23 +8,26 @@ from .test_common import _maybe_disable_mpi
 
 def test_no_mpi_no_crash():
     with _maybe_disable_mpi(True):
-        rreload(stable_baselines)
+        _rreload(stable_baselines)
 
 
-def rreload(module):
+def _rreload(root_module):
     """Recursively reload a module and all its submodules.
 
     Graph DFS strategy modified from
     https://stackoverflow.com/questions/15506971/recursive-version-of-reload
     """
     visited = set()
-    def visit(m):
-        if m in visited:
+    prefix = root_module.__name__
+
+    def visit(module):
+        if module in visited or not module.__name__.startswith(prefix):
             return
-        visited.add(m)
+        visited.add(module)
         reload(module)
-        for attribute_name in dir(m):
-            attribute = getattr(m, attribute_name)
-            if type(attribute) is ModuleType:
+        for attribute_name in dir(module):
+            attribute = getattr(module, attribute_name)
+            if isinstance(attribute, ModuleType):
                 visit(attribute)
-    visit(module)
+
+    visit(root_module)
