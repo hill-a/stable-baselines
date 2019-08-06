@@ -12,7 +12,7 @@ from stable_baselines import A2C, SAC, DDPG, PPO1, PPO2, TRPO, TD3
 from stable_baselines.common import set_global_seeds
 from stable_baselines.common.vec_env import DummyVecEnv
 from stable_baselines.common.identity_env import IdentityEnvBox
-from stable_baselines.ddpg import AdaptiveParamNoiseSpec, NormalActionNoise
+from stable_baselines.common.noise import AdaptiveParamNoiseSpec, NormalActionNoise
 from tests.test_common import _assert_eq
 
 

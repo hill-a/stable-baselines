@@ -70,7 +70,7 @@ Example
   from stable_baselines import TD3
   from stable_baselines.td3.policies import MlpPolicy
   from stable_baselines.common.vec_env import DummyVecEnv
-  from stable_baselines.ddpg.noise import NormalActionNoise, OrnsteinUhlenbeckActionNoise
+  from stable_baselines.common.noise import NormalActionNoise, OrnsteinUhlenbeckActionNoise
 
   env = gym.make('Pendulum-v0')
   env = DummyVecEnv([lambda: env])
@@ -138,8 +138,8 @@ You can easily define a custom architecture for the policy network:
 
   from stable_baselines import TD3
   from stable_baselines.td3.policies import FeedForwardPolicy
+  from stable_baselines.common.noise import NormalActionNoise, OrnsteinUhlenbeckActionNoise
   from stable_baselines.common.vec_env import DummyVecEnv
-  from stable_baselines.ddpg.noise import NormalActionNoise, OrnsteinUhlenbeckActionNoise
 
   # Custom MLP policy with two layers
   class CustomTD3Policy(FeedForwardPolicy):
