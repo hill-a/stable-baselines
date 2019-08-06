@@ -16,9 +16,6 @@ Breaking Changes:
   OpenMPI-dependent algorithms.
   See :ref:`installation notes <openmpi>` and
   `Issue #430 <https://github.com/hill-a/stable-baselines/issues/430>`.
-- `stable_baselines.ddpg.noise` module was moved to
-  `stable_baselines.common.noise`. (Decouples ActionNoise from `ddpg` module's
-  `mpi4py` requirement.)
 
 New Features:
 ^^^^^^^^^^^^^
