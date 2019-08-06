@@ -11,3 +11,4 @@ def test_no_mpi_no_crash():
             del sys.modules[name]
         import stable_baselines
         del stable_baselines  # appease Codacy
+
