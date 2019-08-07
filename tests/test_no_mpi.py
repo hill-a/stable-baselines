@@ -18,4 +18,4 @@ def test_no_mpi_no_crash():
 
         # Restore old version of stable baselines (with MPI imported)
         for name, mod in old_modules.items():
-          sys.modules[name] = mod
+            sys.modules[name] = mod
