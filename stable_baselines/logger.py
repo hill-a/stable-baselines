@@ -585,6 +585,7 @@ def configure(folder=None, format_strs=None):
         if mpi_rank_or_zero() == 0:
             format_strs = os.getenv('OPENAI_LOG_FORMAT', 'stdout,log,csv').split(',')
         else:
+            rank = mpi_rank_or_zero()
             log_suffix = "-rank%03i" % rank
             format_strs = os.getenv('OPENAI_LOG_FORMAT_MPI', 'log').split(',')
     format_strs = filter(None, format_strs)
