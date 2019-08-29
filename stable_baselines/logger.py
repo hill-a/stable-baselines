@@ -579,13 +579,13 @@ def configure(folder=None, format_strs=None):
         folder = os.path.join(tempfile.gettempdir(), datetime.datetime.now().strftime("openai-%Y-%m-%d-%H-%M-%S-%f"))
     assert isinstance(folder, str)
     os.makedirs(folder, exist_ok=True)
+    rank = mpi_rank_or_zero()
 
     log_suffix = ''
     if format_strs is None:
-        if mpi_rank_or_zero() == 0:
+        if rank == 0:
             format_strs = os.getenv('OPENAI_LOG_FORMAT', 'stdout,log,csv').split(',')
         else:
-            rank = mpi_rank_or_zero()
             log_suffix = "-rank%03i" % rank
             format_strs = os.getenv('OPENAI_LOG_FORMAT_MPI', 'log').split(',')
     format_strs = filter(None, format_strs)
