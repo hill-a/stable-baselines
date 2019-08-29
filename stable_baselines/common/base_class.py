@@ -230,8 +230,9 @@ class BaseRLModel(ABC):
         """
         continuous_actions = isinstance(self.action_space, gym.spaces.Box)
         discrete_actions = isinstance(self.action_space, gym.spaces.Discrete)
-
-        assert discrete_actions or continuous_actions, 'Only Discrete and Box action spaces are supported'
+        multidiscrete_actions = isinstance(self.action_space, gym.spaces.MultiDiscrete)
+        assert discrete_actions or continuous_actions or multidiscrete_actions, (
+            'Only Discrete, Box, or MultiDiscrete action spaces are supported')
 
         # Validate the model every 10% of the total number of iteration
         if val_interval is None:
@@ -246,7 +247,7 @@ class BaseRLModel(ABC):
                 if continuous_actions:
                     obs_ph, actions_ph, deterministic_actions_ph = self._get_pretrain_placeholders()
                     loss = tf.reduce_mean(tf.square(actions_ph - deterministic_actions_ph))
-                else:
+                elif discrete_actions:
                     obs_ph, actions_ph, actions_logits_ph = self._get_pretrain_placeholders()
                     # actions_ph has a shape if (n_batch,), we reshape it to (n_batch, 1)
                     # so no additional changes is needed in the dataloader
@@ -257,6 +258,28 @@ class BaseRLModel(ABC):
                         labels=tf.stop_gradient(one_hot_actions)
                     )
                     loss = tf.reduce_mean(loss)
+                elif multidiscrete_actions:
+                    losses = []
+                    obs_ph, actions_ph, logits = _get_pretrain_placeholders(self)
+
+                    n_actions = len(self.action_space.nvec)
+                    action_indices = [0] + np.cumsum(self.action_space.nvec).tolist()
+                    action_phs = [tf.one_hot(actions_ph[:,i], depth=self.action_space.nvec[i]) for i in range(n_actions)]
+
+                    action_logits_phs = [
+                        logits[:, action_indices[i]:action_indices[i+1]] for i in range(n_actions)
+                    ]
+
+                    for one_hot_actions, action_logits_ph in zip(action_phs, action_logits_phs):
+                        print(one_hot_actions, action_logits_ph)
+                        loss_for_subspace = tf.nn.softmax_cross_entropy_with_logits_v2(
+                            logits=action_logits_ph,
+                            labels=tf.stop_gradient(one_hot_actions)
+                        )
+                        loss_for_subspace = tf.reduce_mean(loss_for_subspace)
+                        losses.append(loss_for_subspace)
+
+                    loss = tf.math.add_n(losses)
                 optimizer = tf.train.AdamOptimizer(learning_rate=learning_rate, epsilon=adam_epsilon)
                 optim_op = optimizer.minimize(loss, var_list=self.params)
 

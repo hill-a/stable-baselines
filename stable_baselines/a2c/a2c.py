@@ -87,7 +87,8 @@ class A2C(ActorCriticRLModel):
 
     def _get_pretrain_placeholders(self):
         policy = self.train_model
-        if isinstance(self.action_space, gym.spaces.Discrete):
+        if (isinstance(self.action_space, gym.spaces.Discrete) 
+            or isinstance(self.action_space, gym.spaces.MultiDiscrete)):
             return policy.obs_ph, self.actions_ph, policy.policy
         return policy.obs_ph, self.actions_ph, policy.deterministic_action
 
