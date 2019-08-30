@@ -26,19 +26,28 @@ STORE_METHODS = [
     "file-like"
 ]
 
+STORE_FORMAT = [
+    "zip",
+    "cloudpickle"
+]
 
 @pytest.mark.slow
 @pytest.mark.parametrize("model_class", MODEL_LIST)
 @pytest.mark.parametrize("storage_method", STORE_METHODS)
-def test_model_manipulation(request, model_class, storage_method):
+@pytest.mark.parametrize("store_format", STORE_FORMAT)
+def test_model_manipulation(request, model_class, storage_method, store_format):
     """
     Test if the algorithm (with a given policy) can be loaded and saved without any issues, the environment switching
     works and that the action prediction works
 
     :param model_class: (BaseRLModel) A RL model
+    :param storage_method: (str) Should file be saved to a file ("path") or to a buffer ("file-like")
+    :param store_format: (str) Save format, either "zip" or "cloudpickle".
     """
-
-    model_fname = './test_model_{}.pkl'.format(request.node.name)
+    
+    # Use postfix ".model" so we can remove the file later
+    model_fname = './test_model_{}.model'.format(request.node.name)
+    store_as_cloudpickle = store_format == "cloudpickle"
 
     try:
         env = DummyVecEnv([lambda: IdentityEnv(10)])
@@ -72,10 +81,10 @@ def test_model_manipulation(request, model_class, storage_method):
 
         # saving
         if storage_method == "path":  # saving to a path
-            model.save(model_fname)
+            model.save(model_fname, cloudpickle=store_as_cloudpickle)
         else:  # saving to a file-like object (BytesIO in this case)
             b_io = BytesIO()
-            model.save(b_io)
+            model.save(b_io, cloudpickle=store_as_cloudpickle)
             model_bytes = b_io.getvalue()
             b_io.close()
 
@@ -127,6 +136,33 @@ def test_model_manipulation(request, model_class, storage_method):
             obs, _, _, _ = env.step(action)
 
         del model, env
+
+    finally:
+        if os.path.exists(model_fname):
+            os.remove(model_fname)
+
+@pytest.mark.parametrize("model_class", MODEL_LIST)
+def test_save_custom_objects(request, model_class):
+    """
+    Test feeding custom_objects in model.load(...) function
+    """
+    model_fname = './test_model_{}.model'.format(request.node.name)
+
+    try:
+        env = DummyVecEnv([lambda: IdentityEnv(10)])
+        model = model_class(policy="MlpPolicy", env=env)
+        model.save(model_fname)
+
+        del model, env
+
+        model = model_class.load(
+            model_fname,
+            custom_objects={"n_envs": 10}
+        )
+
+        # Num envs should be now 10
+        assert model.n_envs == 10
+        del model
 
     finally:
         if os.path.exists(model_fname):
