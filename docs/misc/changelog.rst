@@ -37,6 +37,8 @@ Others:
   to `stable_baselines.common.noise`. The API remains backward-compatible;
   for example `from stable_baselines.ddpg.noise import NormalActionNoise` is still
   okay. (@shwang)
+- **important change** Switch to using zip-archived JSON and Numpy `savez` for 
+  storing models for better support across library/Python verions. (@Miffyli)
 
 Documentation:
 ^^^^^^^^^^^^^^
