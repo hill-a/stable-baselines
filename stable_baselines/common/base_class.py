@@ -588,8 +588,9 @@ class BaseRLModel(ABC):
                 data = None
                 params = None
                 if "data" in namelist and load_data:
-                    # Load class parameters
-                    json_data = file.read("data")
+                    # Load class parameters and convert to string
+                    # (Required for json library in Python 3.5)
+                    json_data = file.read("data").decode()
                     data = json_to_data(json_data, custom_objects=custom_objects)
 
                 if "parameters" in namelist:
