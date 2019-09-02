@@ -68,7 +68,7 @@ def data_to_json(data):
             if hasattr(data_item, "__dict__") or isinstance(data_item, dict):
                 # Take elements from __dict__ for custom classes
                 item_generator = (
-                    data_item.__dict__.items if isinstance(data_item, dict) else data_item.items
+                    data_item.items if isinstance(data_item, dict) else data_item.__dict__.items
                 )
                 for variable_name, variable_item in item_generator():
                     # Check if serializable. If not, just include the
