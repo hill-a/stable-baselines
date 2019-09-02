@@ -7,6 +7,7 @@ import pickle
 import cloudpickle
 import numpy as np
 
+
 def is_json_serializable(item):
     """
     Test if an object is serializable into JSON
@@ -21,6 +22,7 @@ def is_json_serializable(item):
     except TypeError:
         json_serializable = False
     return json_serializable
+
 
 def data_to_json(data):
     """
@@ -57,15 +59,17 @@ def data_to_json(data):
                 ":type:": str(type(data_item)),
                 ":serialized:": base64_encoded
             }
-            
+
             # Add first-level JSON-serializable items of the
             # object for further details (but not deeper than this to
             # avoid deep nesting).
             # First we check that object has attributes (not all do,
             # e.g. numpy scalars)
-            if hasattr(data_item, "__dict__") or type(data_item) == dict:
+            if hasattr(data_item, "__dict__") or isinstance(data_item, dict):
                 # Take elements from __dict__ for custom classes
-                item_generator = data_item.__dict__.items if type(data_item) != dict else data_item.items
+                item_generator = (
+                    data_item.__dict__.items if isinstance(data_item, dict) else data_item.items
+                )
                 for variable_name, variable_item in item_generator():
                     # Check if serializable. If not, just include the
                     # string-representation of the object.
@@ -78,21 +82,25 @@ def data_to_json(data):
     json_string = json.dumps(serializable_data, indent=4)
     return json_string
 
-def json_to_data(json_string, custom_objects={}):
+
+def json_to_data(json_string, custom_objects=None):
     """
     Turn JSON serialization of class-parameters back into dictionary.
 
     :param json_string: (str) JSON serialization of the class-parameters
         that should be loaded.
-    :param custom_objects: 
+    :param custom_objects:
     :return: (dict) Loaded class parameters.
     """
+    if custom_objects is not None and not isinstance(custom_objects, dict):
+        raise ValueError("custom_objects argument must be a dict or None")
+
     # TODO test custom_objects
     json_dict = json.loads(json_string)
     # This will be filled with data deserialized data
     return_data = {}
     for data_key, data_item in json_dict.items():
-        if data_key in custom_objects.keys():
+        if custom_objects is not None and data_key in custom_objects.keys():
             # If item is provided in custom_objects, replace
             # the one from JSON with the one in custom_objects
             return_data[data_key] = custom_objects[data_key]
@@ -119,6 +127,7 @@ def json_to_data(json_string, custom_objects={}):
             return_data[data_key] = data_item
     return return_data
 
+
 def params_to_bytes(params):
     """
     Turn params (OrderedDict of variable name -> ndarray) into
@@ -127,30 +136,31 @@ def params_to_bytes(params):
     Note: `numpy.savez` does not save the ordering.
 
     :param params: (OrderedDict) Dictionary mapping variable
-        names to numpy arrays of the current parameters of the 
+        names to numpy arrays of the current parameters of the
         model.
     :return: (bytes) Bytes object of the serialized content.
     """
-    # Create byte-buffer and save params with 
-    # savez function, and return the bytes. 
-    f = io.BytesIO()
-    np.savez(f, **params)
-    serialized_params = f.getvalue()
+    # Create byte-buffer and save params with
+    # savez function, and return the bytes.
+    byte_file = io.BytesIO()
+    np.savez(byte_file, **params)
+    serialized_params = byte_file.getvalue()
     return serialized_params
+
 
 def bytes_to_params(serialized_params, param_list):
     """
     Turn serialized parameters (bytes) back into OrderedDictionary.
 
-    :param serialized_params: (byte) Serialized parameters 
+    :param serialized_params: (byte) Serialized parameters
         with `numpy.savez`.
     :param param_list: (list) List of strings, representing
         the order of parameters in which they should be returned
-    :return: (OrderedDict) Dictionary mapping variable name to 
+    :return: (OrderedDict) Dictionary mapping variable name to
         numpy array of the parameters.
     """
-    f = io.BytesIO(serialized_params)
-    params = np.load(f)
+    byte_file = io.BytesIO(serialized_params)
+    params = np.load(byte_file)
     return_dictionary = OrderedDict()
     # Assign parameters to return_dictionary
     # in the order specified by param_list

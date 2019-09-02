@@ -1100,7 +1100,7 @@ class DDPG(OffPolicyRLModel):
                            cloudpickle=cloudpickle)
 
     @classmethod
-    def load(cls, load_path, env=None, custom_objects={}, **kwargs):
+    def load(cls, load_path, env=None, custom_objects=None, **kwargs):
         data, params = cls._load_from_file(load_path, custom_objects=custom_objects)
 
         if 'policy_kwargs' in kwargs and kwargs['policy_kwargs'] != data['policy_kwargs']:

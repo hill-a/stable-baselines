@@ -440,7 +440,7 @@ class BaseRLModel(ABC):
 
     @classmethod
     @abstractmethod
-    def load(cls, load_path, env=None, custom_objects={}, **kwargs):
+    def load(cls, load_path, env=None, custom_objects=None, **kwargs):
         """
         Load the model from file
 
@@ -508,13 +508,13 @@ class BaseRLModel(ABC):
         # Create a zip-archive and write our objects
         # there. This works when save_path
         # is either str or a file-like
-        with zipfile.ZipFile(save_path, "w") as file:
+        with zipfile.ZipFile(save_path, "w") as file_:
             # Do not try to save "None" elements
             if data is not None:
-                file.writestr("data", serialized_data)
+                file_.writestr("data", serialized_data)
             if params is not None:
-                file.writestr("parameters", serialized_params)
-                file.writestr("parameter_list", serialized_param_list)
+                file_.writestr("parameters", serialized_params)
+                file_.writestr("parameter_list", serialized_param_list)
 
     @staticmethod
     def _save_to_file(save_path, data=None, params=None, cloudpickle=False):
@@ -523,8 +523,8 @@ class BaseRLModel(ABC):
         :param save_path: (str or file-like) Where to store the model
         :param data: (OrderedDict) Class parameters being stored
         :param params: (OrderedDict) Model parameters being stored
-        :param cloudpickle: (bool) Use older cloudpickle format instead of a
-            zip archive.
+        :param cloudpickle: (bool) Use old cloudpickle format 
+            (stable-baselines<=2.7.0) instead of a zip archive.
         """
         if cloudpickle:
             BaseRLModel._save_to_file_cloudpickle(save_path, data, params)
@@ -545,8 +545,8 @@ class BaseRLModel(ABC):
                 else:
                     raise ValueError("Error: the file {} could not be found".format(load_path))
 
-            with open(load_path, "rb") as file:
-                data, params = cloudpickle.load(file)
+            with open(load_path, "rb") as file_:
+                data, params = cloudpickle.load(file_)
         else:
             # Here load_path is a file-like object, not a path
             data, params = cloudpickle.load(load_path)
@@ -554,7 +554,7 @@ class BaseRLModel(ABC):
         return data, params
 
     @staticmethod
-    def _load_from_file(load_path, load_data=True, custom_objects={}):
+    def _load_from_file(load_path, load_data=True, custom_objects=None):
         """Load model data from a .zip archive
 
         :param load_path: (str or file-like) Where to load model from
@@ -820,7 +820,7 @@ class ActorCriticRLModel(BaseRLModel):
         pass
 
     @classmethod
-    def load(cls, load_path, env=None, custom_objects={}, **kwargs):
+    def load(cls, load_path, env=None, custom_objects=None, **kwargs):
         """
         Load the model from file
 
@@ -895,7 +895,7 @@ class OffPolicyRLModel(BaseRLModel):
         pass
 
     @classmethod
-    def load(cls, load_path, env=None, custom_objects={}, **kwargs):
+    def load(cls, load_path, env=None, custom_objects=None, **kwargs):
         """
         Load the model from file
 
