@@ -104,7 +104,7 @@ def json_to_data(json_string, custom_objects=None):
             # If item is provided in custom_objects, replace
             # the one from JSON with the one in custom_objects
             return_data[data_key] = custom_objects[data_key]
-        elif type(data_item) == dict and ":serialized:" in data_item.keys():
+        elif isinstance(data_item, dict) and ":serialized:" in data_item.keys():
             # If item is dictionary with ":serialized:"
             # key, this means it is serialized with cloudpickle.
             serialization = data_item[":serialized:"]
