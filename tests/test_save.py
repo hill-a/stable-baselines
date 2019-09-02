@@ -41,7 +41,8 @@ def test_model_manipulation(request, model_class, storage_method, store_format):
     works and that the action prediction works
 
     :param model_class: (BaseRLModel) A RL model
-    :param storage_method: (str) Should file be saved to a file ("path") or to a buffer ("file-like")
+    :param storage_method: (str) Should file be saved to a file ("path") or to a buffer 
+        ("file-like")
     :param store_format: (str) Save format, either "zip" or "cloudpickle".
     """
     
