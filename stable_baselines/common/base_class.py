@@ -595,7 +595,8 @@ class BaseRLModel(ABC):
 
                 if "parameters" in namelist:
                     # Load parameter list and and parameters
-                    parameter_list = json.loads(file.read("parameter_list"))
+                    parameter_list_json = file.read("parameter_list").decode()
+                    parameter_list = json.loads(parameter_list_json)
                     serialized_params = file.read("parameters")
                     params = bytes_to_params(
                         serialized_params, parameter_list
