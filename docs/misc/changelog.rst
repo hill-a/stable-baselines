@@ -30,6 +30,9 @@ Bug Fixes:
 
 Deprecations:
 ^^^^^^^^^^^^^
+- Models saved with cloudpickle format (stable-baselines<=2.7.0) are now 
+  depracated in favor of zip-archive format for better support across
+  Python/Tensorflow versions. (@Miffyli)
 
 Others:
 ^^^^^^^
