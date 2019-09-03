@@ -89,15 +89,19 @@ def json_to_data(json_string, custom_objects=None):
 
     :param json_string: (str) JSON serialization of the class-parameters
         that should be loaded.
-    :param custom_objects:
+    :param custom_objects: (dict) Dictionary of objects to replace
+        upon loading. If a variable is present in this dictionary as a
+        key, it will not be deserialized and the corresponding item
+        will be used instead. Similar to custom_objects in
+        `keras.models.load_model`. Useful when you have an object in
+        file that can not be deserialized.
     :return: (dict) Loaded class parameters.
     """
     if custom_objects is not None and not isinstance(custom_objects, dict):
         raise ValueError("custom_objects argument must be a dict or None")
 
-    # TODO test custom_objects
     json_dict = json.loads(json_string)
-    # This will be filled with data deserialized data
+    # This will be filled with deserialized data
     return_data = {}
     for data_key, data_item in json_dict.items():
         if custom_objects is not None and data_key in custom_objects.keys():

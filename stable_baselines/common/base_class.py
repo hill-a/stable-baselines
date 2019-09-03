@@ -580,8 +580,8 @@ class BaseRLModel(ABC):
 
         # Open the zip archive and load data.
         try:
-            with zipfile.ZipFile(load_path, "r") as file:
-                namelist = file.namelist()
+            with zipfile.ZipFile(load_path, "r") as file_:
+                namelist = file_.namelist()
                 # If data or parameters is not in the
                 # zip archive, assume they were stored
                 # as None (_save_to_file allows this).
@@ -590,14 +590,14 @@ class BaseRLModel(ABC):
                 if "data" in namelist and load_data:
                     # Load class parameters and convert to string
                     # (Required for json library in Python 3.5)
-                    json_data = file.read("data").decode()
+                    json_data = file_.read("data").decode()
                     data = json_to_data(json_data, custom_objects=custom_objects)
 
                 if "parameters" in namelist:
                     # Load parameter list and and parameters
-                    parameter_list_json = file.read("parameter_list").decode()
+                    parameter_list_json = file_.read("parameter_list").decode()
                     parameter_list = json.loads(parameter_list_json)
-                    serialized_params = file.read("parameters")
+                    serialized_params = file_.read("parameters")
                     params = bytes_to_params(
                         serialized_params, parameter_list
                     )
