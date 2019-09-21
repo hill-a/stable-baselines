@@ -6,9 +6,10 @@ import pytest
 
 from stable_baselines import A2C, ACER, ACKTR, GAIL, DDPG, DQN, PPO1, PPO2,\
  TD3, TRPO, SAC
+
 from stable_baselines.common.cmd_util import make_atari_env
-from stable_baselines.common.vec_env import VecFrameStack
-from stable_baselines.gail import ExpertDataset, generate_expert_traj
+from stable_baselines.common.vec_env import VecFrameStack, DummyVecEnv
+from stable_baselines.gail import ExpertDataset, ExpertDatasetLSTM, generate_expert_traj
 
 EXPERT_PATH_PENDULUM = "stable_baselines/gail/dataset/expert_pendulum.npz"
 EXPERT_PATH_DISCRETE = "stable_baselines/gail/dataset/expert_cartpole.npz"
@@ -106,28 +107,60 @@ def test_pretrain_images():
     del dataset, model, env
 
 
-@pytest.mark.parametrize("model_class", [A2C, GAIL, DDPG, PPO1, PPO2, SAC, TD3, TRPO])
-def test_behavior_cloning_box(model_class):
-    """
-    Behavior cloning with continuous actions.
-    """
-    dataset = ExpertDataset(expert_path=EXPERT_PATH_PENDULUM, traj_limitation=10,
-                            sequential_preprocessing=True, verbose=0)
-    model = model_class("MlpPolicy", "Pendulum-v0")
-    model.pretrain(dataset, n_epochs=20)
+@pytest.mark.parametrize("model_class_data", [[A2C, 4, True, "CartPole-v1", 32, 4],
+                                              [ACER, 4, True, "CartPole-v1", 1, 4],
+                                              [ACKTR, 4, True, "CartPole-v1", 16, 4],
+                                              [PPO2, 8, True, "CartPole-v1", 16, 2],
+                                              [A2C, 1, False, "CartPole-v1", 32, 1],
+                                              [ACER, 1, False, "CartPole-v1", 32, 1],
+                                              [ACKTR, 1, False, "CartPole-v1", 32, 1],
+                                              [DQN, 1, False, "CartPole-v1", 32, 1],
+                                              [GAIL, 1, False, "CartPole-v1", 32, 1],
+                                              [PPO1, 1, False, "CartPole-v1", 32, 1],
+                                              [PPO2, 1, False, "CartPole-v1", 32, 1],
+                                              [TRPO, 1, False, "CartPole-v1", 32, 1],
+                                              [A2C, 4, True, "Pendulum-v0", 32, 4],
+                                              [PPO2, 8, True, "Pendulum-v0", 16, 2],
+                                              [A2C, 1, False, "Pendulum-v0", 32, 1],
+                                              [GAIL, 1, False, "Pendulum-v0", 32, 1],
+                                              [PPO1, 1, False, "Pendulum-v0", 32, 1],
+                                              [PPO2, 1, False, "Pendulum-v0", 32, 1],
+                                              [TRPO, 1, False, "Pendulum-v0", 32, 1],
+                                              [TD3, 1, False, "Pendulum-v0", 32, 1]
+                                              ])
+
+def test_behavior_cloning(model_class_data):
+
+    model_class, num_env, lstm, game, batch_size, envs_per_batch = model_class_data
+
+    if game == "CartPole-v1":
+        load_data = EXPERT_PATH_DISCRETE
+    else:
+        load_data = EXPERT_PATH_PENDULUM
+
+    if lstm:
+        dataset = ExpertDatasetLSTM(expert_path=load_data, traj_limitation=3,
+                                sequential_preprocessing=True, verbose=0,
+                                batch_size=batch_size, envs_per_batch=envs_per_batch)
+        policy = "MlpLstmPolicy"
+
+    else:
+        dataset = ExpertDataset(expert_path=load_data, traj_limitation=3,
+                                sequential_preprocessing=True, verbose=0,
+                                batch_size=batch_size)
+        policy = "MlpPolicy"
+
+    env = DummyVecEnv([lambda: gym.make(game) for i in range(num_env)])
+
+    try:
+        model = model_class(policy, env, n_steps=batch_size)
+    except TypeError:
+        model = model_class(policy, env)
+
+    model.pretrain(dataset, n_epochs=3)
     model.save("test-pretrain")
-    del dataset, model
 
-
-@pytest.mark.parametrize("model_class", [A2C, ACER, ACKTR, DQN, GAIL, PPO1, PPO2, TRPO])
-def test_behavior_cloning_discrete(model_class):
-    dataset = ExpertDataset(expert_path=EXPERT_PATH_DISCRETE, traj_limitation=10,
-                            sequential_preprocessing=True, verbose=0)
-    model = model_class("MlpPolicy", "CartPole-v1")
-    model.pretrain(dataset, n_epochs=10)
-    model.save("test-pretrain")
-    del dataset, model
-
+    del dataset, model, env
 
 def test_dataset_param_validation():
     with pytest.raises(ValueError):

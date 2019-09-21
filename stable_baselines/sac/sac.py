@@ -134,7 +134,7 @@ class SAC(OffPolicyRLModel):
         policy = self.policy_tf
         # Rescale
         deterministic_action = self.deterministic_action * np.abs(self.action_space.low)
-        return policy.obs_ph, self.actions_ph, deterministic_action
+        return policy.obs_ph, self.actions_ph, None, None, None, deterministic_action
 
     def setup_model(self):
         with SetVerbosity(self.verbose):

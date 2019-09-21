@@ -308,7 +308,7 @@ class DDPG(OffPolicyRLModel):
         policy = self.policy_tf
         # Rescale
         deterministic_action = self.actor_tf * np.abs(self.action_space.low)
-        return policy.obs_ph, self.actions, deterministic_action
+        return policy.obs_ph, self.actions, None, None, None, deterministic_action
 
     def setup_model(self):
         with SetVerbosity(self.verbose):

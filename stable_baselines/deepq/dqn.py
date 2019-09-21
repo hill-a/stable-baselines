@@ -98,7 +98,7 @@ class DQN(OffPolicyRLModel):
 
     def _get_pretrain_placeholders(self):
         policy = self.step_model
-        return policy.obs_ph, tf.placeholder(tf.int32, [None]), policy.q_values
+        return policy.obs_ph, tf.placeholder(tf.int32, [None]), None, None, None, policy.q_values
 
     def setup_model(self):
 

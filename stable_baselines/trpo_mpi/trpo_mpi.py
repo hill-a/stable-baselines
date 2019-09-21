@@ -99,9 +99,19 @@ class TRPO(ActorCriticRLModel):
     def _get_pretrain_placeholders(self):
         policy = self.policy_pi
         action_ph = policy.pdtype.sample_placeholder([None])
+
+        if self.initial_state is None:
+            states_ph = None
+            snew_ph = None
+            dones_ph = None
+        else:
+            states_ph = policy.states_ph
+            snew_ph = policy.snew
+            dones_ph = policy.dones_ph
+
         if isinstance(self.action_space, gym.spaces.Discrete):
-            return policy.obs_ph, action_ph, policy.policy
-        return policy.obs_ph, action_ph, policy.deterministic_action
+            return policy.obs_ph, action_ph, states_ph, snew_ph, dones_ph, policy.policy
+        return policy.obs_ph, action_ph, states_ph, snew_ph, dones_ph, policy.deterministic_action
 
     def setup_model(self):
         # prevent import loops
@@ -436,7 +446,8 @@ class TRPO(ActorCriticRLModel):
                                                                       include_final_partial_batch=False,
                                                                       batch_size=batch_size,
                                                                       shuffle=True):
-                            ob_expert, ac_expert = self.expert_dataset.get_next_batch()
+                            ob_expert, ac_expert, _ = self.expert_dataset.get_next_batch()
+
                             # update running mean/std for reward_giver
                             if self.reward_giver.normalize:
                                 self.reward_giver.obs_rms.update(np.concatenate((ob_batch, ob_expert), 0))

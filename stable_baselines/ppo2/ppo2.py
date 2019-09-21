@@ -100,10 +100,21 @@ class PPO2(ActorCriticRLModel):
             self.setup_model()
 
     def _get_pretrain_placeholders(self):
-        policy = self.act_model
+
+        if self.policy.recurrent:
+            policy = self.train_model
+            states_ph = policy.states_ph
+            snew_ph = policy.snew
+            dones_ph = policy.dones_ph
+        else:
+            policy = self.act_model
+            states_ph = None
+            snew_ph = None
+            dones_ph = None
+
         if isinstance(self.action_space, gym.spaces.Discrete):
-            return policy.obs_ph, self.action_ph, policy.policy
-        return policy.obs_ph, self.action_ph, policy.deterministic_action
+            return policy.obs_ph, self.action_ph, states_ph, snew_ph, dones_ph, policy.policy
+        return policy.obs_ph, self.action_ph, states_ph, snew_ph, dones_ph, policy.deterministic_action
 
     def setup_model(self):
         with SetVerbosity(self.verbose):
