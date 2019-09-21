@@ -16,7 +16,7 @@ from stable_baselines.a2c.utils import total_episode_reward_logger
 class DQN(OffPolicyRLModel):
     """
     The DQN model class.
-    DQN paper: https://arxiv.org/pdf/1312.5602.pdf
+    DQN paper: https://arxiv.org/abs/1312.5602
     Dueling DQN: https://arxiv.org/abs/1511.06581
     Double-Q Learning: https://arxiv.org/abs/1509.06461
     Prioritized Experience Replay: https://arxiv.org/abs/1511.05952
