@@ -34,9 +34,9 @@ Notes
 
 .. note::
 
-	By default, the DQN class has double q learning and dueling extensions enabled.
-  See `Issue #406 <https://github.com/hill-a/stable-baselines/issues/406>`_ for disabling dueling.
-  To disable double-q learning, you can change the default value in the constructor.
+    By default, the DQN class has double q learning and dueling extensions enabled.
+    See `Issue #406 <https://github.com/hill-a/stable-baselines/issues/406>`_ for disabling dueling.
+    To disable double-q learning, you can change the default value in the constructor.
 
 
 Can I use?
