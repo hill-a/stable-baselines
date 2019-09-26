@@ -39,7 +39,7 @@ class ACKTR(ActorCriticRLModel):
     :param async_eigen_decomp: (bool) Use async eigen decomposition
     :param kfac_update: (int) update kfac after kfac_update steps
     :param policy_kwargs: (dict) additional arguments to be passed to the policy on creation
-    :param lam: (float) Factor for trade-off of bias vs variance for Generalized Advantage Estimator
+    :param gae_lambda: (float) Factor for trade-off of bias vs variance for Generalized Advantage Estimator
         If negative (default), then the classic advantage will be used instead of GAE
     :param full_tensorboard_log: (bool) enable additional logging when using tensorboard
         WARNING: this logging can take a lot of space quickly
@@ -48,7 +48,7 @@ class ACKTR(ActorCriticRLModel):
     def __init__(self, policy, env, gamma=0.99, nprocs=1, n_steps=20, ent_coef=0.01, vf_coef=0.25, vf_fisher_coef=1.0,
                  learning_rate=0.25, max_grad_norm=0.5, kfac_clip=0.001, lr_schedule='linear', verbose=0,
                  tensorboard_log=None, _init_setup_model=True, async_eigen_decomp=False, kfac_update=1,
-                 lam=-1, policy_kwargs=None, full_tensorboard_log=False):
+                 gae_lambda=-1, policy_kwargs=None, full_tensorboard_log=False):
 
         super(ACKTR, self).__init__(policy=policy, env=env, verbose=verbose, requires_vec_env=True,
                                     _init_setup_model=_init_setup_model, policy_kwargs=policy_kwargs)
@@ -67,7 +67,7 @@ class ACKTR(ActorCriticRLModel):
         self.async_eigen_decomp = async_eigen_decomp
         self.full_tensorboard_log = full_tensorboard_log
         self.kfac_update = kfac_update
-        self.lam = lam
+        self.gae_lambda = gae_lambda
 
         self.graph = None
         self.sess = None
@@ -302,8 +302,8 @@ class ACKTR(ActorCriticRLModel):
             self.trained = True
 
             # Use GAE
-            if self.lam > 0:
-                runner = PPO2Runner(env=self.env, model=self, n_steps=self.n_steps, gamma=self.gamma, lam=self.lam)
+            if self.gae_lambda > 0:
+                runner = PPO2Runner(env=self.env, model=self, n_steps=self.n_steps, gamma=self.gamma, lam=self.gae_lambda)
             else:
                 runner = A2CRunner(self.env, self, n_steps=self.n_steps, gamma=self.gamma)
 
@@ -370,7 +370,7 @@ class ACKTR(ActorCriticRLModel):
     def save(self, save_path, cloudpickle=False):
         data = {
             "gamma": self.gamma,
-            "lam": self.lam,
+            "gae_lambda": self.gae_lambda,
             "nprocs": self.nprocs,
             "n_steps": self.n_steps,
             "vf_coef": self.vf_coef,
