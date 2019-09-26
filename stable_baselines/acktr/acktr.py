@@ -16,20 +16,6 @@ from stable_baselines.common.policies import ActorCriticPolicy, RecurrentActorCr
 from stable_baselines.ppo2.ppo2 import safe_mean
 
 
-# Tricks present in the previous continuous version:
-# - time feature for the critic
-# - based on episode for rollout
-# - normalized advantage (done)
-# - two seperate networks (and elu for critic)
-# - automatic step size adaptation using kl_desired (for the actor)
-# - different hyperparams for actor/critic optimizer KfacOptimizer
-# - action rescaled as if they were in [-1, 1]
-# - they normalize the input (VecNormalize should do the trick)
-# - value function updated for 25 iterations after the policy
-# - GAE used
-# mujoco params: gamma=0.99, lam=0.97, timesteps_per_batch=2500, desired_kl=0.002
-
-
 class ACKTR(ActorCriticRLModel):
     """
     The ACKTR (Actor Critic using Kronecker-Factored Trust Region) model class, https://arxiv.org/abs/1708.05144

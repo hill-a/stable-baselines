@@ -22,7 +22,10 @@ Breaking Changes:
   by explicitly setting `start_method = 'fork'`. See
   `PR #428 <https://github.com/hill-a/stable-baselines/pull/428>`_.
 - Updated dependencies: tensorflow v1.8.0 is now required
-- Remove `checkpoint_path` and `checkpoint_freq` argument from `DQN` that were not used
+- Removed `checkpoint_path` and `checkpoint_freq` argument from `DQN` that were not used
+- Removed `bench/benchmark.py` that was not used
+- Removed several functions from `common/tf_util.py` that were not used
+- Removed `ppo1/run_humanoid.py`
 
 New Features:
 ^^^^^^^^^^^^^
