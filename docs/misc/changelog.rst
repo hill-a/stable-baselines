@@ -42,7 +42,7 @@ Bug Fixes:
   `Issue #430 <https://github.com/hill-a/stable-baselines/issues/430>`_.
 - Fix a bug when calling `logger.configure()` with MPI enabled (@keshaviyengar)
 - set `allow_pickle=True` for numpy>=1.17.0 when loading expert dataset
-- Fix a bug when use VecCheckNan to check env and use numpy ndarray as state.  `Issue #489 <https://github.com/hill-a/stable-baselines/issues/489>`_.
+- Fix a bug when using VecCheckNan with numpy ndarray as state.  `Issue #489 <https://github.com/hill-a/stable-baselines/issues/489>`_.
 
 Deprecations:
 ^^^^^^^^^^^^^
