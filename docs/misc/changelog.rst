@@ -29,7 +29,7 @@ Documentation:
 
 
 Release 2.8.0 (2019-09-29)
--------------------------
+--------------------------
 
 **MPI dependency optional, new save format, ACKTR with continuous actions**
 
