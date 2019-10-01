@@ -48,6 +48,7 @@ class TRPO(ActorCriticRLModel):
                                    _init_setup_model=_init_setup_model, policy_kwargs=policy_kwargs)
 
         self.using_gail = False
+        self.iters_so_far = 0
         self.timesteps_per_batch = timesteps_per_batch
         self.cg_iters = cg_iters
         self.cg_damping = cg_damping
@@ -261,8 +262,8 @@ class TRPO(ActorCriticRLModel):
                     tf_util.function([observation, old_policy.obs_ph, action, atarg, ret],
                                      [self.summary, tf_util.flatgrad(optimgain, var_list)] + losses)
 
-    def learn(self, total_timesteps, callback=None, seed=None, log_interval=100, tb_log_name="TRPO",
-              reset_num_timesteps=True):
+    def learn(self, total_timesteps, total_iters=None, callback=None, seed=None, log_interval=100, tb_log_name="TRPO",
+              reset_num_timesteps=True, save_path=None, save_per_iter=10):
 
         new_tb_log = self._init_num_timesteps(reset_num_timesteps)
 
@@ -276,7 +277,7 @@ class TRPO(ActorCriticRLModel):
 
                 episodes_so_far = 0
                 timesteps_so_far = 0
-                iters_so_far = 0
+                # iters_so_far = 0
                 t_start = time.time()
                 len_buffer = deque(maxlen=40)  # rolling buffer for episode lengths
                 reward_buffer = deque(maxlen=40)  # rolling buffer for episode rewards
@@ -304,8 +305,15 @@ class TRPO(ActorCriticRLModel):
                             break
                     if total_timesteps and timesteps_so_far >= total_timesteps:
                         break
+                    if total_iters and self.iters_so_far >= total_iters:
+                        break
 
-                    logger.log("********** Iteration %i ************" % iters_so_far)
+                    # Save model
+                    if not self.iters_so_far == 0 and self.iters_so_far % save_per_iter == 0 and save_path is not None:
+                        self.save(save_path)
+                        print("Saving model", self.iters_so_far)
+
+                    logger.log("********** Iteration %i ************" % self.iters_so_far)
 
                     def fisher_vector_product(vec):
                         return self.allmean(self.compute_fvp(vec, *fvpargs, sess=self.sess)) + self.cg_damping * vec
@@ -402,10 +410,13 @@ class TRPO(ActorCriticRLModel):
                             else:
                                 logger.log("couldn't compute a good step")
                                 self.set_from_flat(thbefore)
-                            if self.nworkers > 1 and iters_so_far % 20 == 0:
+                            if self.nworkers > 1 and self.iters_so_far % 20 == 0:
                                 # list of tuples
                                 paramsums = MPI.COMM_WORLD.allgather((thnew.sum(), self.vfadam.getflat().sum()))
                                 assert all(np.allclose(ps, paramsums[0]) for ps in paramsums[1:])
+
+                            for (loss_name, loss_val) in zip(self.loss_names, mean_losses):
+                                logger.record_tabular(loss_name, loss_val)
 
                         with self.timed("vf"):
                             for _ in range(self.vf_iters):
@@ -416,9 +427,6 @@ class TRPO(ActorCriticRLModel):
                                                                          shuffle=True):
                                     grad = self.allmean(self.compute_vflossandgrad(mbob, mbob, mbret, sess=self.sess))
                                     self.vfadam.update(grad, self.vf_stepsize)
-
-                    for (loss_name, loss_val) in zip(self.loss_names, mean_losses):
-                        logger.record_tabular(loss_name, loss_val)
 
                     logger.record_tabular("explained_variance_tdlam_before",
                                           explained_variance(vpredbefore, tdlamret))
@@ -476,7 +484,7 @@ class TRPO(ActorCriticRLModel):
                     current_it_timesteps = MPI.COMM_WORLD.allreduce(seg["total_timestep"])
                     timesteps_so_far += current_it_timesteps
                     self.num_timesteps += current_it_timesteps
-                    iters_so_far += 1
+                    self.iters_so_far += 1
 
                     logger.record_tabular("EpisodesSoFar", episodes_so_far)
                     logger.record_tabular("TimestepsSoFar", self.num_timesteps)
@@ -514,7 +522,8 @@ class TRPO(ActorCriticRLModel):
             "action_space": self.action_space,
             "n_envs": self.n_envs,
             "_vectorize_action": self._vectorize_action,
-            "policy_kwargs": self.policy_kwargs
+            "policy_kwargs": self.policy_kwargs,
+            "iters_so_far": self.iters_so_far
         }
 
         params_to_save = self.get_parameters()
