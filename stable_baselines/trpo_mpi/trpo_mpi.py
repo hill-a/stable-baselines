@@ -1,20 +1,19 @@
 import time
-from contextlib import contextmanager
 from collections import deque
+from contextlib import contextmanager
 
 import gym
-from mpi4py import MPI
-import tensorflow as tf
 import numpy as np
-
 import stable_baselines.common.tf_util as tf_util
+import tensorflow as tf
+from mpi4py import MPI
+from stable_baselines import logger
+from stable_baselines.a2c.utils import total_episode_reward_logger
 from stable_baselines.common import explained_variance, zipsame, dataset, fmt_row, colorize, ActorCriticRLModel, \
     SetVerbosity, TensorboardWriter
-from stable_baselines import logger
-from stable_baselines.common.mpi_adam import MpiAdam
 from stable_baselines.common.cg import conjugate_gradient
+from stable_baselines.common.mpi_adam import MpiAdam
 from stable_baselines.common.policies import ActorCriticPolicy
-from stable_baselines.a2c.utils import total_episode_reward_logger
 from stable_baselines.trpo_mpi.utils import traj_segment_generator, add_vtarg_and_adv, flatten_lists
 
 
@@ -325,7 +324,6 @@ class TRPO(ActorCriticRLModel):
                         # ob, ac, atarg, ret, td1ret = map(np.concatenate, (obs, acs, atargs, rets, td1rets))
                         observation, action = seg["observations"], seg["actions"]
                         atarg, tdlamret = seg["adv"], seg["tdlamret"]
-
 
                         vpredbefore = seg["vpred"]  # predicted value function before update
                         atarg = (atarg - atarg.mean()) / atarg.std()  # standardized advantage function estimate
