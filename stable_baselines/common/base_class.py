@@ -39,7 +39,7 @@ class BaseRLModel(ABC):
     """
 
     def __init__(self, policy, env, verbose=0, *, requires_vec_env, policy_base,
-                 policy_kwargs=None, seed=0, n_cpu_tf_sess=None):
+                 policy_kwargs=None, seed=None, n_cpu_tf_sess=None):
         if isinstance(policy, str) and policy_base is not None:
             self.policy = get_policy_from_name(policy_base, policy)
         else:
@@ -161,6 +161,9 @@ class BaseRLModel(ABC):
         """
         :param seed: (int) Seed for the pseudo-random generators.
         """
+        # Ignore if the seed is None
+        if seed is None:
+            return
         # Seed python, numpy and tf random generator
         set_global_seeds(seed)
         if self.env is not None:
@@ -719,7 +722,7 @@ class ActorCriticRLModel(BaseRLModel):
     """
 
     def __init__(self, policy, env, _init_setup_model, verbose=0, policy_base=ActorCriticPolicy,
-                 requires_vec_env=False, policy_kwargs=None, seed=0, n_cpu_tf_sess=None):
+                 requires_vec_env=False, policy_kwargs=None, seed=None, n_cpu_tf_sess=None):
         super(ActorCriticRLModel, self).__init__(policy, env, verbose=verbose, requires_vec_env=requires_vec_env,
                                                  policy_base=policy_base, policy_kwargs=policy_kwargs,
                                                  seed=seed, n_cpu_tf_sess=n_cpu_tf_sess)
@@ -904,7 +907,7 @@ class OffPolicyRLModel(BaseRLModel):
 
     def __init__(self, policy, env, replay_buffer=None, _init_setup_model=False, verbose=0, *,
                  requires_vec_env=False, policy_base=None,
-                 policy_kwargs=None, seed=0, n_cpu_tf_sess=None):
+                 policy_kwargs=None, seed=None, n_cpu_tf_sess=None):
         super(OffPolicyRLModel, self).__init__(policy, env, verbose=verbose, requires_vec_env=requires_vec_env,
                                                policy_base=policy_base, policy_kwargs=policy_kwargs,
                                                seed=seed, n_cpu_tf_sess=n_cpu_tf_sess)

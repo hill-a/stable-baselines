@@ -59,7 +59,7 @@ class DQN(OffPolicyRLModel):
                  prioritized_replay_alpha=0.6, prioritized_replay_beta0=0.4, prioritized_replay_beta_iters=None,
                  prioritized_replay_eps=1e-6, param_noise=False,
                  n_cpu_tf_sess=None, verbose=0, tensorboard_log=None,
-                 _init_setup_model=True, policy_kwargs=None, full_tensorboard_log=False, seed=0):
+                 _init_setup_model=True, policy_kwargs=None, full_tensorboard_log=False, seed=None):
 
         # TODO: replay_buffer refactoring
         super(DQN, self).__init__(policy=policy, env=env, replay_buffer=None, verbose=verbose, policy_base=DQNPolicy,
@@ -359,8 +359,9 @@ class DQN(OffPolicyRLModel):
             "observation_space": self.observation_space,
             "action_space": self.action_space,
             "policy": self.policy,
-            "n_cpu_tf_sess": self.n_cpu_tf_sess,
             "n_envs": self.n_envs,
+            "n_cpu_tf_sess": self.n_cpu_tf_sess,
+            "seed": self.seed,
             "_vectorize_action": self._vectorize_action,
             "policy_kwargs": self.policy_kwargs
         }

@@ -203,7 +203,7 @@ class DDPG(OffPolicyRLModel):
                  return_range=(-np.inf, np.inf), actor_lr=1e-4, critic_lr=1e-3, clip_norm=None, reward_scale=1.,
                  render=False, render_eval=False, memory_limit=None, buffer_size=50000, random_exploration=0.0,
                  verbose=0, tensorboard_log=None, _init_setup_model=True, policy_kwargs=None,
-                 full_tensorboard_log=False, seed=0, n_cpu_tf_sess=1):
+                 full_tensorboard_log=False, seed=None, n_cpu_tf_sess=1):
 
         super(DDPG, self).__init__(policy=policy, env=env, replay_buffer=None,
                                    verbose=verbose, policy_base=DDPGPolicy,
@@ -1092,8 +1092,9 @@ class DDPG(OffPolicyRLModel):
             "buffer_size": self.buffer_size,
             "random_exploration": self.random_exploration,
             "policy": self.policy,
-            "n_cpu_tf_sess": self.n_cpu_tf_sess,
             "n_envs": self.n_envs,
+            "n_cpu_tf_sess": self.n_cpu_tf_sess,
+            "seed": self.seed,
             "_vectorize_action": self._vectorize_action,
             "policy_kwargs": self.policy_kwargs
         }

@@ -53,7 +53,7 @@ class ACKTR(ActorCriticRLModel):
     def __init__(self, policy, env, gamma=0.99, nprocs=None, n_steps=20, ent_coef=0.01, vf_coef=0.25, vf_fisher_coef=1.0,
                  learning_rate=0.25, max_grad_norm=0.5, kfac_clip=0.001, lr_schedule='linear', verbose=0,
                  tensorboard_log=None, _init_setup_model=True, async_eigen_decomp=False, kfac_update=1,
-                 gae_lambda=None, policy_kwargs=None, full_tensorboard_log=False, seed=0, n_cpu_tf_sess=1):
+                 gae_lambda=None, policy_kwargs=None, full_tensorboard_log=False, seed=None, n_cpu_tf_sess=1):
 
         super(ACKTR, self).__init__(policy=policy, env=env, verbose=verbose, requires_vec_env=True,
                                     _init_setup_model=_init_setup_model, policy_kwargs=policy_kwargs,
@@ -395,8 +395,9 @@ class ACKTR(ActorCriticRLModel):
             "policy": self.policy,
             "observation_space": self.observation_space,
             "action_space": self.action_space,
-            "n_cpu_tf_sess": self.n_cpu_tf_sess,
             "n_envs": self.n_envs,
+            "n_cpu_tf_sess": self.n_cpu_tf_sess,
+            "seed": self.seed,
             "kfac_update": self.kfac_update,
             "_vectorize_action": self._vectorize_action,
             "policy_kwargs": self.policy_kwargs

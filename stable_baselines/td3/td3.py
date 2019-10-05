@@ -64,7 +64,7 @@ class TD3(OffPolicyRLModel):
                  target_policy_noise=0.2, target_noise_clip=0.5,
                  random_exploration=0.0, verbose=0, tensorboard_log=None,
                  _init_setup_model=True, policy_kwargs=None,
-                 full_tensorboard_log=False, seed=0, n_cpu_tf_sess=None):
+                 full_tensorboard_log=False, seed=None, n_cpu_tf_sess=None):
 
         super(TD3, self).__init__(policy=policy, env=env, replay_buffer=None, verbose=verbose,
                                   policy_base=TD3Policy, requires_vec_env=False, policy_kwargs=policy_kwargs,
@@ -468,6 +468,7 @@ class TD3(OffPolicyRLModel):
             "policy": self.policy,
             "n_envs": self.n_envs,
             "n_cpu_tf_sess": self.n_cpu_tf_sess,
+            "seed": self.seed,
             "action_noise": self.action_noise,
             "random_exploration": self.random_exploration,
             "_vectorize_action": self._vectorize_action,
