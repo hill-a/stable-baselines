@@ -32,8 +32,8 @@ class BaseRLModel(ABC):
     :param policy_base: (BasePolicy) the base policy used by this method
     :param policy_kwargs: (dict) additional arguments to be passed to the policy on creation
     :param seed: (int) Seed for the pseudo-random generators (python, numpy, tensorflow).
-        Note that if you want completely deterministic results, you must set
-        `n_cpu_tf_sess` to 1
+        If None (default), use random seed. Note that if you want completely deterministic
+        results, you must set `n_cpu_tf_sess` to 1.
     :param n_cpu_tf_sess: (int) The number of threads for TensorFlow operations
         If None, the number of cpu of the current machine will be used.
     """
@@ -159,7 +159,8 @@ class BaseRLModel(ABC):
 
     def set_random_seed(self, seed):
         """
-        :param seed: (int) Seed for the pseudo-random generators.
+        :param seed: (int) Seed for the pseudo-random generators. If None,
+            do not change the seeds.
         """
         # Ignore if the seed is None
         if seed is None:
@@ -715,8 +716,8 @@ class ActorCriticRLModel(BaseRLModel):
     :param requires_vec_env: (bool) Does this model require a vectorized environment
     :param policy_kwargs: (dict) additional arguments to be passed to the policy on creation
     :param seed: (int) Seed for the pseudo-random generators (python, numpy, tensorflow).
-        Note that if you want completely deterministic results, you must set
-        `n_cpu_tf_sess` to 1
+        If None (default), use random seed. Note that if you want completely deterministic
+        results, you must set `n_cpu_tf_sess` to 1.
     :param n_cpu_tf_sess: (int) The number of threads for TensorFlow operations
         If None, the number of cpu of the current machine will be used.
     """
@@ -899,8 +900,8 @@ class OffPolicyRLModel(BaseRLModel):
     :param policy_base: (BasePolicy) the base policy used by this method
     :param policy_kwargs: (dict) additional arguments to be passed to the policy on creation
     :param seed: (int) Seed for the pseudo-random generators (python, numpy, tensorflow).
-        Note that if you want completely deterministic results, you must set
-        `n_cpu_tf_sess` to 1
+        If None (default), use random seed. Note that if you want completely deterministic
+        results, you must set `n_cpu_tf_sess` to 1.
     :param n_cpu_tf_sess: (int) The number of threads for TensorFlow operations
         If None, the number of cpu of the current machine will be used.
     """

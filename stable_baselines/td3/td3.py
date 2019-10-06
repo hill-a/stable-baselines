@@ -53,8 +53,8 @@ class TD3(OffPolicyRLModel):
     :param full_tensorboard_log: (bool) enable additional logging when using tensorboard
         Note: this has no effect on TD3 logging for now
     :param seed: (int) Seed for the pseudo-random generators (python, numpy, tensorflow).
-        Note that if you want completely deterministic results, you must set
-        `n_cpu_tf_sess` to 1
+        If None (default), use random seed. Note that if you want completely deterministic
+        results, you must set `n_cpu_tf_sess` to 1.
     :param n_cpu_tf_sess: (int) The number of threads for TensorFlow operations
         If None, the number of cpu of the current machine will be used.
     """

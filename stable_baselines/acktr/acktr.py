@@ -48,6 +48,11 @@ class ACKTR(ActorCriticRLModel):
         If None (default), then the classic advantage will be used instead of GAE
     :param full_tensorboard_log: (bool) enable additional logging when using tensorboard
         WARNING: this logging can take a lot of space quickly
+    :param seed: (int) Seed for the pseudo-random generators (python, numpy, tensorflow).
+        If None (default), use random seed. Note that if you want completely deterministic
+        results, you must set `n_cpu_tf_sess` to 1.
+    :param n_cpu_tf_sess: (int) The number of threads for TensorFlow operations
+        If None, the number of cpu of the current machine will be used.
     """
 
     def __init__(self, policy, env, gamma=0.99, nprocs=None, n_steps=20, ent_coef=0.01, vf_coef=0.25, vf_fisher_coef=1.0,
