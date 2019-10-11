@@ -39,6 +39,8 @@ Homebrew installed, run the following:
 Windows 10
 ~~~~~~~~~~
 
+We recommend using `Anaconda <https://conda.io/docs/user-guide/install/windows.html>`_ for Windows users for easier installation of Python packages and required libraries. You need an environment with Python version 3.5 or above.
+
 For a quick start you can move straight to installing Stable-Baselines in the next step (without MPI). This supports most but not all algorithms.
 
 To support all algorithms, Install `MPI for Windows <https://www.microsoft.com/en-us/download/details.aspx?id=57467>`_ (you need to download and install ``msmpisetup.exe``) and follow the instructions on how to install Stable-Baselines with MPI support in following section.
