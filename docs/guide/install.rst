@@ -45,12 +45,15 @@ We recommend using `Anaconda <https://conda.io/docs/user-guide/install/windows.h
 
 1. Install `MPI for Windows <https://www.microsoft.com/en-us/download/details.aspx?id=57467>`_ (you need to download and install ``msmpisetup.exe``)
 
-2. Clone Stable-Baselines Github repo and replace the line ``gym[atari,classic_control]>=0.10.9`` in ``setup.py`` by this one: ``gym[classic_control]>=0.10.9``
+2. Clone Stable-Baselines Github repo.
 
 3. Install Stable-Baselines from source, inside the folder, run ``pip install -e .``
 
-4. [Optional] If you want to use atari environments, you need to install this package: https://github.com/j8lp/atari-py
-(using again ``pip install -e .``)
+
+.. note::
+
+	Trying to create Atari environments my result to vague errors related to DLL files and modules. This is an
+	issue with atari-py package. `See this discussion for more information <https://github.com/openai/atari-py/issues/65>`_
 
 
 .. _openmpi:
