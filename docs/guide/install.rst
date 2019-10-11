@@ -39,9 +39,9 @@ Homebrew installed, run the following:
 Windows 10
 ~~~~~~~~~~
 
-For a quick start you can move straight to installing Stable-Baselines in the next step. Note that all algorithms may not work out of the box. 
+For a quick start you can move straight to installing Stable-Baselines in the next step (without MPI). This supports most but not all algorithms.
 
-To support all algorithms, Install `MPI for Windows <https://www.microsoft.com/en-us/download/details.aspx?id=57467>`_ (you need to download and install ``msmpisetup.exe``). The list of algorithms depending on MPI is listed in next step.
+To support all algorithms, Install `MPI for Windows <https://www.microsoft.com/en-us/download/details.aspx?id=57467>`_ (you need to download and install ``msmpisetup.exe``) and follow the instructions on how to install Stable-Baselines with MPI support in following section.
 
 .. note::
 
