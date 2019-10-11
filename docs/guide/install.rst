@@ -43,7 +43,7 @@ We recommend using `Anaconda <https://conda.io/docs/user-guide/install/windows.h
 
 0. Create a new environment in the Anaconda Navigator (at least python 3.5) and install ``zlib`` in this environment.
 
-1. Install `MPI for Windows <https://www.microsoft.com/en-us/download/details.aspx?id=57467>`_ (you need to download and install ``msmpisetup.exe``)
+1. (Optional) Install `MPI for Windows <https://www.microsoft.com/en-us/download/details.aspx?id=57467>`_ (you need to download and install ``msmpisetup.exe``). Some of the algorithms depend on MPI and will not be available if MPI is not installed (TRPO, DDPG and CPU version of PPO)
 
 2. Clone Stable-Baselines Github repo.
 
