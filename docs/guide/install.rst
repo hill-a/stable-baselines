@@ -39,21 +39,14 @@ Homebrew installed, run the following:
 Windows 10
 ~~~~~~~~~~
 
-We recommend using `Anaconda <https://conda.io/docs/user-guide/install/windows.html>`_ for windows users.
+For a quick start you can move straight to installing Stable-Baselines in the next step. Note that all algorithms may not work out of the box. 
 
-0. Create a new environment in the Anaconda Navigator (at least python 3.5) and install ``zlib`` in this environment.
-
-1. (Optional) Install `MPI for Windows <https://www.microsoft.com/en-us/download/details.aspx?id=57467>`_ (you need to download and install ``msmpisetup.exe``). Some of the algorithms depend on MPI and will not be available if MPI is not installed (TRPO, DDPG and CPU version of PPO)
-
-2. Clone Stable-Baselines Github repo.
-
-3. Install Stable-Baselines from source, inside the folder, run ``pip install -e .``
-
+To support all algorithms, Install `MPI for Windows <https://www.microsoft.com/en-us/download/details.aspx?id=57467>`_ (you need to download and install ``msmpisetup.exe``). The list of algorithms depending on MPI is listed in next step.
 
 .. note::
 
-	Trying to create Atari environments my result to vague errors related to DLL files and modules. This is an
-	issue with atari-py package. `See this discussion for more information <https://github.com/openai/atari-py/issues/65>`_
+	Trying to create Atari environments may result to vague errors related to missing DLL files and modules. This is an
+	issue with atari-py package. `See this discussion for more information <https://github.com/openai/atari-py/issues/65>`_.
 
 
 .. _openmpi:
