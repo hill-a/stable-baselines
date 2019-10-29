@@ -131,7 +131,6 @@ Multiprocessing: Unleashing the Power of Vectorized Environments
           action, _states = model.predict(obs)
           obs, rewards, dones, info = env.step(action)
           env.render()
-      env.close()
 
 
 
