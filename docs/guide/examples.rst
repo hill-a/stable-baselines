@@ -237,7 +237,7 @@ If your callback returns False, training is aborted early.
     # Because we use parameter noise, we should use a MlpPolicy with layer normalization
     model = DDPG(LnMlpPolicy, env, param_noise=param_noise, verbose=0)
     # Train the agent
-    model.learn(total_timesteps=int(1.5e4), callback=callback)
+    model.learn(total_timesteps=int(1e5), callback=callback)
 
     plot_results(log_dir)
 
