@@ -34,6 +34,7 @@ Deprecations:
 Others:
 ^^^^^^^
 - Add upper bound for Tensorflow version (<2.0.0).
+- Add pull request template
 
 Documentation:
 ^^^^^^^^^^^^^^
@@ -42,6 +43,7 @@ Documentation:
 - Remove unnecessary steps required for Windows installation.
 - Add QuaRL project (@srivatsankrishnan)
 - Add Pwnagotchi project (@evilsocket)
+- Fix `result_plotter` example
 
 Release 2.8.0 (2019-09-29)
 --------------------------
