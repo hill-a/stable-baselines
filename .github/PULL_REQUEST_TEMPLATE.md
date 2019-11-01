@@ -15,7 +15,6 @@
 - [ ] New feature (non-breaking change which adds functionality)
 - [ ] Breaking change (fix or feature that would cause existing functionality to change)
 - [ ] Documentation (update in the documentation)
-- [ ] Other
 
 ## Checklist:
 <!--- Go over all the following points, and put an `x` in all the boxes that apply. -->
@@ -26,4 +25,4 @@
 - [ ] I have updated the tests accordingly (*required for a bug fix or a new feature*).
 - [ ] I have updated the documentation accordingly.
 
-<!--- This Template is ad edited version of the one from https://github.com/evilsocket/pwnagotchi/ -->
+<!--- This Template is an edited version of the one from https://github.com/evilsocket/pwnagotchi/ -->
