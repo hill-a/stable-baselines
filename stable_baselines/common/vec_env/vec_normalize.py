@@ -132,7 +132,7 @@ class VecNormalize(VecEnvWrapper):
         return self._normalize_observation(obs)
 
     @staticmethod
-    def load(load_path, venv=None):
+    def load(load_path, venv):
         """
         Loads a saved VecNormalize object.
 
@@ -142,8 +142,7 @@ class VecNormalize(VecEnvWrapper):
         """
         with open(load_path, "rb") as file_handler:
             vec_normalize = pickle.load(file_handler)
-        if venv is not None:
-            vec_normalize.set_venv(venv)
+        vec_normalize.set_venv(venv)
         return vec_normalize
 
     def save(self, save_path):
