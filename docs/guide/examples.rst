@@ -225,7 +225,7 @@ If your callback returns False, training is aborted early.
 
 
   # Create log dir
-  log_dir = "/tmp/gym/"
+  log_dir = "tmp/"
   os.makedirs(log_dir, exist_ok=True)
 
   # Create and wrap the environment
