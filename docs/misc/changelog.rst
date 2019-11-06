@@ -38,7 +38,7 @@ Others:
 
 Documentation:
 ^^^^^^^^^^^^^^
-- Add plotting to the Monitor example
+- Add plotting to the Monitor example (@rusu24edward)
 - Add Snake Game AI project (@pedrohbtp)
 - Add note on the support Tensorflow versions.
 - Remove unnecessary steps required for Windows installation.
