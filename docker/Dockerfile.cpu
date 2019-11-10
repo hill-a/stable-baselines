@@ -16,7 +16,7 @@ RUN \
     pip install joblib && \
     pip install mpi4py && \
     pip install cloudpickle && \
-    pip install tensorflow==1.8.0 && \
+    pip install tensorflow==1.14.0 && \
     pip install opencv-python && \
     pip install numpy && \
     pip install pandas && \

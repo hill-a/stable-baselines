@@ -4,7 +4,7 @@ python:
 
 env:
   global:
-    - DOCKER_IMAGE=araffin/stable-baselines-cpu:v2.7.1
+    - DOCKER_IMAGE=araffin/stable-baselines-cpu:latest
 
 notifications:
   email: false
