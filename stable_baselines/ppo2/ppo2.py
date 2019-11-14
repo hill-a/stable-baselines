@@ -333,6 +333,11 @@ class PPO2(ActorCriticRLModel):
                 cliprange_vf_now = cliprange_vf(frac)
                 # true_reward is the reward without discount
                 obs, returns, masks, actions, values, neglogpacs, states, ep_infos, true_reward = runner.run()
+                if writer is not None:
+                    self.episode_reward = total_episode_reward_logger(self.episode_reward,
+                                                                      true_reward.reshape((self.n_envs, self.n_steps)),
+                                                                      masks.reshape((self.n_envs, self.n_steps)),
+                                                                      writer, self.num_timesteps)
                 self.num_timesteps += self.n_batch
                 ep_info_buf.extend(ep_infos)
                 mb_loss_vals = []
@@ -372,12 +377,6 @@ class PPO2(ActorCriticRLModel):
                 loss_vals = np.mean(mb_loss_vals, axis=0)
                 t_now = time.time()
                 fps = int(self.n_batch / (t_now - t_start))
-
-                if writer is not None:
-                    self.episode_reward = total_episode_reward_logger(self.episode_reward,
-                                                                      true_reward.reshape((self.n_envs, self.n_steps)),
-                                                                      masks.reshape((self.n_envs, self.n_steps)),
-                                                                      writer, self.num_timesteps)
 
                 if self.verbose >= 1 and (update % log_interval == 0 or update == 1):
                     explained_var = explained_variance(values, returns)
