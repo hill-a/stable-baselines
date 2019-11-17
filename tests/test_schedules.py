@@ -56,3 +56,4 @@ def test_linear_schedule():
     assert np.isclose(linear_sched.value(50), -0.2)
     assert np.isclose(linear_sched.value(0), -0.6)
     assert np.isclose(linear_sched.value(100), 0.2)
+
