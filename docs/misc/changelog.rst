@@ -18,7 +18,7 @@ New Features:
 ^^^^^^^^^^^^^
 - Add `n_cpu_tf_sess` to model constructor to choose the number of threads used by Tensorflow
 - `VecNormalize` now supports being pickled and unpickled.
-- Add parameter `exploration_initial_eps` to DQN to mirror `exploration_final_eps`, allowing user to start training with random action probability which is not 1 (default remains 1) (@jdossgollin)
+- Add parameter `exploration_initial_eps` to DQN. (@jdossgollin)
 
 Bug Fixes:
 ^^^^^^^^^^
@@ -526,5 +526,4 @@ Thanks to @bjmuld @iambenzo @iandanforth @r7vme @brendenpetersen @huvar @abhiskk
 @EliasHasle @mrakgr @Bleyddyn @antoine-galataud @junhyeokahn @AdamGleave @keshaviyengar @tperol
 @XMaster96 @kantneel @Pastafarianist @GerardMaggiolino @PatrickWalter214 @yutingsz @sc420 @Aaahh @billtubbs
 @Miffyli @dwiel @miguelrass @qxcv @jaberkow @eavelardev @ruifeng96150 @pedrohbtp @srivatsankrishnan @evilsocket
-@MarvineGothic
-@jdossgollin
+@MarvineGothic @jdossgollin
