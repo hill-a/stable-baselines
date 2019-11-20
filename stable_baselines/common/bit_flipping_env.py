@@ -101,11 +101,11 @@ class BitFlippingEnv(GoalEnv):
     def compute_reward(self,
                        achieved_goal: np.ndarray,
                        desired_goal: np.ndarray,
-                       _info) -> int:
+                       _info) -> float:
         # Deceptive reward: it is positive only when the goal is achieved
         if self.discrete_obs_space:
-            return 0 if achieved_goal == desired_goal else -1
-        return 0 if (achieved_goal == desired_goal).all() else -1
+            return 0.0 if achieved_goal == desired_goal else -1.0
+        return 0.0 if (achieved_goal == desired_goal).all() else -1.0
 
     def render(self, mode='human'):
         if mode == 'rgb_array':
