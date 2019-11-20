@@ -84,7 +84,7 @@ def make_robotics_env(env_id, seed, rank=0, allow_early_resets=True):
         from gym.wrappers import FilterObservation, FlattenObservation
         env = FlattenObservation(FilterObservation(env, keys))
     except ImportError:  # for older gym (<=0.15.3)
-        from gym.wrappers import FlattenDictWrapper  # pytype:disable=unused-import
+        from gym.wrappers import FlattenDictWrapper  # pytype:disable=import-error
         env = FlattenDictWrapper(env, keys)
     env = Monitor(
         env, logger.get_dir() and os.path.join(logger.get_dir(), str(rank)),

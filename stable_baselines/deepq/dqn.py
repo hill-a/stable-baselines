@@ -246,8 +246,8 @@ class DQN(OffPolicyRLModel):
                     # Minimize the error in Bellman's equation on a batch sampled from replay buffer.
                     # pytype:disable=bad-unpacking
                     if self.prioritized_replay:
-                        assert (self.beta_schedule is not None,
-                                "BUG: should be LinearSchedule when self.prioritized_replay True")
+                        assert self.beta_schedule is not None, \
+                               "BUG: should be LinearSchedule when self.prioritized_replay True"
                         experience = self.replay_buffer.sample(self.batch_size,
                                                                beta=self.beta_schedule.value(self.num_timesteps))
                         (obses_t, actions, rewards, obses_tp1, dones, weights, batch_idxes) = experience
