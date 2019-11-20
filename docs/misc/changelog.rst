@@ -27,6 +27,7 @@ Bug Fixes:
 - Fix seeding, so it is now possible to have deterministic results on cpu
 - Fix a bug in DDPG where `predict` method with `deterministic=False` would fail
 - Fix a bug in TRPO: mean_losses was not initialized causing the logger to crash when there was no gradients (@MarvineGothic)
+- Fix a bug in `cmd_util` from API change in recent Gym versions
 
 Deprecations:
 ^^^^^^^^^^^^^

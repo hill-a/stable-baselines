@@ -5,7 +5,6 @@ Helpers for scripts like run_atari.py.
 import os
 
 import gym
-from gym.wrappers import FilterObservation, FlattenObservation
 
 from stable_baselines import logger
 from stable_baselines.bench import Monitor
@@ -80,7 +79,13 @@ def make_robotics_env(env_id, seed, rank=0, allow_early_resets=True):
     set_global_seeds(seed)
     env = gym.make(env_id)
     keys = ['observation', 'desired_goal']
-    env = FlattenObservation(FilterObservation(env, keys))
+    # TODO: remove try-except once most users are running modern Gym
+    try:  # for modern Gym (>=0.15.4)
+        from gym.wrappers import FilterObservation, FlattenObservation
+        env = FlattenObservation(FilterObservation(env, keys))
+    except ImportError:  # for older gym (<=0.15.3)
+        from gym.wrappers import FlattenDictWrapper  # pytype:disable=unused-import
+        env = FlattenDictWrapper(env, keys)
     env = Monitor(
         env, logger.get_dir() and os.path.join(logger.get_dir(), str(rank)),
         info_keywords=('is_success',), allow_early_resets=allow_early_resets)
