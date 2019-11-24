@@ -13,15 +13,15 @@ from stable_baselines.common.vec_env import DummyVecEnv, SubprocVecEnv
 
 @pytest.mark.parametrize("env_id", ['CartPole-v1', lambda: gym.make('CartPole-v1')])
 @pytest.mark.parametrize("n_envs", [1, 2])
-@pytest.mark.parametrize("use_subprocess", [False, True])
+@pytest.mark.parametrize("vec_env_cls", [None, SubprocVecEnv])
 @pytest.mark.parametrize("wrapper_class", [None, gym.wrappers.TimeLimit])
-def test_make_vec_env(env_id, n_envs, wrapper_class, use_subprocess):
-    env = make_vec_env(env_id, n_envs, use_subprocess=use_subprocess,
+def test_make_vec_env(env_id, n_envs, vec_env_cls, wrapper_class):
+    env = make_vec_env(env_id, n_envs, vec_env_cls=vec_env_cls,
                        wrapper_class=wrapper_class, monitor_dir=None, seed=0)
 
     assert env.num_envs == n_envs
 
-    if not use_subprocess:
+    if vec_env_cls is None:
         assert isinstance(env, DummyVecEnv)
         if wrapper_class is not None:
             assert isinstance(env.envs[0], wrapper_class)
@@ -38,16 +38,16 @@ def test_custom_vec_env():
     Stand alone test for a special case (passing a custom VecEnv class) to avoid doubling the number of tests.
     """
     monitor_dir = 'logs/test_make_vec_env/'
-    env = make_vec_env('CartPole-v1', n_envs=1, use_subprocess=True,
+    env = make_vec_env('CartPole-v1', n_envs=1,
                        monitor_dir=monitor_dir, seed=0,
-                       vec_env_cls=DummyVecEnv, vec_env_kwargs={})
+                       vec_env_cls=SubprocVecEnv, vec_env_kwargs={'start_method': None})
 
 
     assert env.num_envs == 1
-    # Even though we passed `use_subprocess=True`
-    # because `vec_env_cls` is not None, `use_subprocess` is ignored
-    assert isinstance(env, DummyVecEnv)
+    assert isinstance(env, SubprocVecEnv)
     assert os.path.isdir('logs/test_make_vec_env/')
+    # Kill subprocess
+    env.close()
     # Cleanup folder
     shutil.rmtree(monitor_dir)
 

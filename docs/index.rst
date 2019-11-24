@@ -80,6 +80,7 @@ This toolset is a fork of OpenAI Baselines, with a major structural refactoring,
   common/tf_utils
   common/cmd_utils
   common/schedules
+  common/evaluation
 
 .. toctree::
   :maxdepth: 1

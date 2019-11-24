@@ -16,22 +16,17 @@ from stable_baselines.common.vec_env import DummyVecEnv, SubprocVecEnv
 
 
 def make_vec_env(env_id, n_envs=1, seed=None, start_index=0,
-                 use_subprocess=False, start_method=None,
                  monitor_dir=None, wrapper_class=None,
                  env_kwargs=None, vec_env_cls=None, vec_env_kwargs=None):
     """
-    Create a wrapped, monitored VecEnv.
+    Create a wrapped, monitored `VecEnv`.
+    By default it uses a `DummyVecEnv` which is usually faster
+    than a `SubprocVecEnv`.
 
     :param env_id: (str or Type[gym.Env]) the environment ID or the environment class
     :param n_envs: (int) the number of environments you wish to have in parallel
     :param seed: (int) the inital seed for the random number generator
     :param start_index: (int) start rank index
-    :param start_method: (str) method used to start the subprocesses.
-        See SubprocVecEnv doc for more information
-    :param use_subprocess: (bool) Whether to use `SubprocVecEnv` or `DummyVecEnv`,
-        `DummyVecEnv` is usually faster. Default: False.
-        Note that this parameter is ignored when a custom `VecEnv` class is passed,
-        i.e., when `vec_env_cls` is not None.
     :param monitor_dir: (str) Path to a folder where the monitor files will be saved.
         If None, no file will be written, however, the env will still be wrapped
         in a Monitor wrapper to provide additional information about training.
@@ -71,12 +66,8 @@ def make_vec_env(env_id, n_envs=1, seed=None, start_index=0,
 
     # No custom VecEnv is passed
     if vec_env_cls is None:
-        if use_subprocess:
-            vec_env_cls = SubprocVecEnv
-            vec_env_kwargs['start_method'] = start_method
-        else:
-            # Default: use a DummyVecEnv
-            vec_env_cls = DummyVecEnv
+        # Default: use a DummyVecEnv
+        vec_env_cls = DummyVecEnv
 
     return vec_env_cls([make_env(i + start_index) for i in range(n_envs)], **vec_env_kwargs)
 
