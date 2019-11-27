@@ -42,7 +42,7 @@ def test_monitor_load_results(tmp_path):
     """
     env1 = gym.make("CartPole-v1")
     env1.seed(0)
-    mon_file1 = os.fspath(tmp_path / "stable_baselines-test-{}.monitor.csv".format(uuid.uuid4()))
+    monitor_file1 = os.fspath(tmp_path / "stable_baselines-test-{}.monitor.csv".format(uuid.uuid4()))
     menv1 = Monitor(env1, mon_file1)
 
     mon_files = get_monitor_files(tmp_path)
