@@ -40,6 +40,7 @@ def test_monitor_load_results(tmp_path):
     """
     test load_results on log files produced by the monitor wrapper
     """
+    tmp_path = str(tmp_path)
     env1 = gym.make("CartPole-v1")
     env1.seed(0)
     monitor_file1 = os.path.join(tmp_path, "stable_baselines-test-{}.monitor.csv".format(uuid.uuid4()))
