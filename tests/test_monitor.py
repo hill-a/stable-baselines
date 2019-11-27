@@ -55,7 +55,7 @@ def test_monitor_load_results(tmp_path):
         if done:
             menv1.reset()
 
-    r1s = load_results(os.fspath(tmp_path)).size
+    results_size1 = load_results(os.fspath(tmp_path)).size
     assert r1s > 0
 
     env2 = gym.make("CartPole-v1")
