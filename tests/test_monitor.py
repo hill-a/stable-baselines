@@ -42,40 +42,40 @@ def test_monitor_load_results(tmp_path):
     """
     env1 = gym.make("CartPole-v1")
     env1.seed(0)
-    monitor_file1 = os.fspath(tmp_path / "stable_baselines-test-{}.monitor.csv".format(uuid.uuid4()))
-    menv1 = Monitor(env1, mon_file1)
+    monitor_file1 = os.path.join(tmp_path, "stable_baselines-test-{}.monitor.csv".format(uuid.uuid4()))
+    monitor_env1 = Monitor(env1, monitor_file1)
 
-    mon_files = get_monitor_files(tmp_path)
-    assert len(mon_files) == 1
-    assert mon_file1 in mon_files
+    monitor_files = get_monitor_files(tmp_path)
+    assert len(monitor_files) == 1
+    assert monitor_file1 in monitor_files
 
-    menv1.reset()
+    monitor_env1.reset()
     for _ in range(1000):
-        _, _, done, _ = menv1.step(0)
+        _, _, done, _ = monitor_env1.step(monitor_env1.action_space.sample())
         if done:
-            menv1.reset()
+            monitor_env1.reset()
 
-    results_size1 = load_results(os.fspath(tmp_path)).size
-    assert r1s > 0
+    results_size1 = load_results(os.path.join(tmp_path)).size
+    assert results_size1 > 0
 
     env2 = gym.make("CartPole-v1")
     env2.seed(0)
-    mon_file2 = os.fspath(tmp_path / "stable_baselines-test-{}.monitor.csv".format(uuid.uuid4()))
-    menv2 = Monitor(env2, mon_file2)
-    mon_files = get_monitor_files(tmp_path)
-    assert len(mon_files) == 2
-    assert mon_file1 in mon_files
-    assert mon_file2 in mon_files
+    monitor_file2 = os.path.join(tmp_path, "stable_baselines-test-{}.monitor.csv".format(uuid.uuid4()))
+    monitor_env2 = Monitor(env2, monitor_file2)
+    monitor_files = get_monitor_files(tmp_path)
+    assert len(monitor_files) == 2
+    assert monitor_file1 in monitor_files
+    assert monitor_file2 in monitor_files
 
-    menv2.reset()
+    monitor_env2.reset()
     for _ in range(1000):
-        _, _, done, _ = menv2.step(0)
+        _, _, done, _ = monitor_env2.step(monitor_env2.action_space.sample())
         if done:
-            menv2.reset()
+            monitor_env2.reset()
 
-    r2s = load_results(os.fspath(tmp_path)).size
+    results_size2 = load_results(os.path.join(tmp_path)).size
 
-    assert r2s == 2 * r1s
+    assert results_size2 > results_size1
 
-    os.remove(mon_file1)
-    os.remove(mon_file2)
+    os.remove(monitor_file1)
+    os.remove(monitor_file2)
