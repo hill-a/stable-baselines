@@ -15,6 +15,7 @@ from stable_baselines import logger
 from stable_baselines.common import tf_util, OffPolicyRLModel, SetVerbosity, TensorboardWriter
 from stable_baselines.common.vec_env import VecEnv
 from stable_baselines.common.mpi_adam import MpiAdam
+from stable_baselines.common.math_util import unscale_action, scale_action
 from stable_baselines.ddpg.policies import DDPGPolicy
 from stable_baselines.common.mpi_running_mean_std import RunningMeanStd
 from stable_baselines.a2c.utils import total_episode_reward_logger
@@ -312,7 +313,7 @@ class DDPG(OffPolicyRLModel):
     def _get_pretrain_placeholders(self):
         policy = self.policy_tf
         # Rescale
-        deterministic_action = self.actor_tf * np.abs(self.action_space.low)
+        deterministic_action = unscale_action(self.action_space, self.actor_tf)
         return policy.obs_ph, self.actions, deterministic_action
 
     def setup_model(self):
@@ -818,8 +819,7 @@ class DDPG(OffPolicyRLModel):
             self.tb_seen_steps = []
 
             rank = MPI.COMM_WORLD.Get_rank()
-            # we assume symmetric actions.
-            assert np.all(np.abs(self.env.action_space.low) == self.env.action_space.high)
+
             if self.verbose >= 2:
                 logger.log('Using agent with the following configuration:')
                 logger.log(str(self.__dict__.items()))
@@ -872,11 +872,15 @@ class DDPG(OffPolicyRLModel):
                             # Randomly sample actions from a uniform distribution
                             # with a probabilty self.random_exploration (used in HER + DDPG)
                             if np.random.rand() < self.random_exploration:
-                                rescaled_action = action = self.action_space.sample()
+                                # actions sampled from action space are from range specific to the environment
+                                # but algorithm operates on tanh-squashed actions therefore simple scaling is used
+                                unscaled_action = self.action_space.sample()
+                                action = scale_action(self.action_space, unscaled_action)
                             else:
-                                rescaled_action = action * np.abs(self.action_space.low)
+                                # inferred actions need to be transformed to environment action_space before stepping
+                                unscaled_action = unscale_action(self.action_space, action)
 
-                            new_obs, reward, done, info = self.env.step(rescaled_action)
+                            new_obs, reward, done, info = self.env.step(unscaled_action)
 
                             if writer is not None:
                                 ep_rew = np.array([reward]).reshape((1, -1))
@@ -955,8 +959,8 @@ class DDPG(OffPolicyRLModel):
                                     return self
 
                                 eval_action, eval_q = self._policy(eval_obs, apply_noise=False, compute_q=True)
-                                eval_obs, eval_r, eval_done, _ = self.eval_env.step(eval_action *
-                                                                                    np.abs(self.action_space.low))
+                                unscaled_action = unscale_action(self.action_space, eval_action)
+                                eval_obs, eval_r, eval_done, _ = self.eval_env.step(unscaled_action)
                                 if self.render_eval:
                                     self.eval_env.render()
                                 eval_episode_reward += eval_r
@@ -1041,7 +1045,7 @@ class DDPG(OffPolicyRLModel):
         observation = observation.reshape((-1,) + self.observation_space.shape)
         actions, _, = self._policy(observation, apply_noise=not deterministic, compute_q=False)
         actions = actions.reshape((-1,) + self.action_space.shape)  # reshape to the correct action shape
-        actions = actions * np.abs(self.action_space.low)  # scale the output for the prediction
+        actions = unscale_action(self.action_space, actions)  # scale the output for the prediction
 
         if not vectorized_env:
             actions = actions[0]

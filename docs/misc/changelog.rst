@@ -27,6 +27,7 @@ New Features:
 - Add parameter `exploration_initial_eps` to DQN. (@jdossgollin)
 - Add type checking and PEP 561 compliance.
   Note: most functions are still not annotated, this will be a gradual process.
+- DDPG, TD3 and SAC accept non-symmetric action spaces. (@Antymon)
 
 Bug Fixes:
 ^^^^^^^^^^
@@ -34,6 +35,7 @@ Bug Fixes:
 - Fix a bug in DDPG where `predict` method with `deterministic=False` would fail
 - Fix a bug in TRPO: mean_losses was not initialized causing the logger to crash when there was no gradients (@MarvineGothic)
 - Fix a bug in `cmd_util` from API change in recent Gym versions
+- Fix a bug in DDPG, TD3 and SAC where warmup and random exploration actions would end up scaled in the replay buffer (@Antymon)
 
 Deprecations:
 ^^^^^^^^^^^^^

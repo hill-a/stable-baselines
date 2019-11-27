@@ -23,7 +23,6 @@ class DDPGPolicy(BasePolicy):
         super(DDPGPolicy, self).__init__(sess, ob_space, ac_space, n_env, n_steps, n_batch, reuse=reuse, scale=scale,
                                          add_action_ph=True)
         assert isinstance(ac_space, Box), "Error: the action space must be of type gym.spaces.Box"
-        assert (np.abs(ac_space.low) == ac_space.high).all(), "Error: the action space low and high must be symmetric"
         self.qvalue_fn = None
         self.policy = None
 
