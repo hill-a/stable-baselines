@@ -50,13 +50,15 @@ def test_monitor_load_results(tmp_path):
     assert monitor_file1 in monitor_files
 
     monitor_env1.reset()
+    episode_count1 = 0
     for _ in range(1000):
         _, _, done, _ = monitor_env1.step(monitor_env1.action_space.sample())
         if done:
+            episode_count1 += 1
             monitor_env1.reset()
 
-    results_size1 = load_results(os.path.join(tmp_path)).size
-    assert results_size1 > 0
+    results_size1 = len(load_results(os.path.join(tmp_path)).index)
+    assert results_size1 == episode_count1
 
     env2 = gym.make("CartPole-v1")
     env2.seed(0)
@@ -68,14 +70,16 @@ def test_monitor_load_results(tmp_path):
     assert monitor_file2 in monitor_files
 
     monitor_env2.reset()
+    episode_count2 = 0
     for _ in range(1000):
         _, _, done, _ = monitor_env2.step(monitor_env2.action_space.sample())
         if done:
+            episode_count2 += 1
             monitor_env2.reset()
 
-    results_size2 = load_results(os.path.join(tmp_path)).size
+    results_size2 = len(load_results(os.path.join(tmp_path)).index)
 
-    assert results_size2 > results_size1
+    assert results_size2 == (results_size1 + episode_count2)
 
     os.remove(monitor_file1)
     os.remove(monitor_file2)
