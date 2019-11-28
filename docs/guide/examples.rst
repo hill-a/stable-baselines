@@ -56,6 +56,8 @@ In the following example, we will train, save and load a DQN model on the Lunar 
   import gym
 
   from stable_baselines import DQN
+  from stable_baselines.common.evaluation import evaluate_policy
+
 
   # Create environment
   env = gym.make('LunarLander-v2')
@@ -70,6 +72,9 @@ In the following example, we will train, save and load a DQN model on the Lunar 
 
   # Load the trained agent
   model = DQN.load("dqn_lunar")
+
+  # Evaluate the agent
+  mean_reward, n_steps = evaluate_policy(model, model.get_env(), n_eval_episodes=10)
 
   # Enjoy trained agent
   obs = env.reset()
@@ -98,7 +103,7 @@ Multiprocessing: Unleashing the Power of Vectorized Environments
 
   from stable_baselines.common.policies import MlpPolicy
   from stable_baselines.common.vec_env import SubprocVecEnv
-  from stable_baselines.common import set_global_seeds
+  from stable_baselines.common import set_global_seeds, make_vec_env
   from stable_baselines import ACKTR
 
   def make_env(env_id, rank, seed=0):
@@ -117,19 +122,24 @@ Multiprocessing: Unleashing the Power of Vectorized Environments
       set_global_seeds(seed)
       return _init
 
-  env_id = "CartPole-v1"
-  num_cpu = 4  # Number of processes to use
-  # Create the vectorized environment
-  env = SubprocVecEnv([make_env(env_id, i) for i in range(num_cpu)])
+  if __name__ == '__main__':
+      env_id = "CartPole-v1"
+      num_cpu = 4  # Number of processes to use
+      # Create the vectorized environment
+      env = SubprocVecEnv([make_env(env_id, i) for i in range(num_cpu)])
 
-  model = ACKTR(MlpPolicy, env, verbose=1)
-  model.learn(total_timesteps=25000)
+      # Stable Baselines provides you with make_vec_env() helper
+      # which does exactly the previous steps for you:
+      # env = make_vec_env(env_id, n_envs=num_cpu, seed=0)
 
-  obs = env.reset()
-  for _ in range(1000):
-      action, _states = model.predict(obs)
-      obs, rewards, dones, info = env.step(action)
-      env.render()
+      model = ACKTR(MlpPolicy, env, verbose=1)
+      model.learn(total_timesteps=25000)
+
+      obs = env.reset()
+      for _ in range(1000):
+          action, _states = model.predict(obs)
+          obs, rewards, dones, info = env.step(action)
+          env.render()
 
 
 
@@ -162,38 +172,38 @@ If your callback returns False, training is aborted early.
   from stable_baselines.results_plotter import load_results, ts2xy
   from stable_baselines import DDPG
   from stable_baselines.ddpg import AdaptiveParamNoiseSpec
+  from stable_baselines import results_plotter
 
 
   best_mean_reward, n_steps = -np.inf, 0
 
   def callback(_locals, _globals):
-    """
-    Callback called at each step (for DQN an others) or after n steps (see ACER or PPO2)
-    :param _locals: (dict)
-    :param _globals: (dict)
-    """
-    global n_steps, best_mean_reward
-    # Print stats every 1000 calls
-    if (n_steps + 1) % 1000 == 0:
-        # Evaluate policy training performance
-        x, y = ts2xy(load_results(log_dir), 'timesteps')
-        if len(x) > 0:
-            mean_reward = np.mean(y[-100:])
-            print(x[-1], 'timesteps')
-            print("Best mean reward: {:.2f} - Last mean reward per episode: {:.2f}".format(best_mean_reward, mean_reward))
+      """
+      Callback called at each step (for DQN an others) or after n steps (see ACER or PPO2)
+      :param _locals: (dict)
+      :param _globals: (dict)
+      """
+      global n_steps, best_mean_reward
+      # Print stats every 1000 calls
+      if (n_steps + 1) % 1000 == 0:
+          # Evaluate policy training performance
+          x, y = ts2xy(load_results(log_dir), 'timesteps')
+          if len(x) > 0:
+              mean_reward = np.mean(y[-100:])
+              print(x[-1], 'timesteps')
+              print("Best mean reward: {:.2f} - Last mean reward per episode: {:.2f}".format(best_mean_reward, mean_reward))
 
-            # New best model, you could save the agent here
-            if mean_reward > best_mean_reward:
-                best_mean_reward = mean_reward
-                # Example for saving best model
-                print("Saving new best model")
-                _locals['self'].save(log_dir + 'best_model.pkl')
-    n_steps += 1
-    return True
-
+              # New best model, you could save the agent here
+              if mean_reward > best_mean_reward:
+                  best_mean_reward = mean_reward
+                  # Example for saving best model
+                  print("Saving new best model")
+                  _locals['self'].save(log_dir + 'best_model.pkl')
+      n_steps += 1
+      return True
 
   # Create log dir
-  log_dir = "/tmp/gym/"
+  log_dir = "tmp/"
   os.makedirs(log_dir, exist_ok=True)
 
   # Create and wrap the environment
@@ -205,7 +215,11 @@ If your callback returns False, training is aborted early.
   # Because we use parameter noise, we should use a MlpPolicy with layer normalization
   model = DDPG(LnMlpPolicy, env, param_noise=param_noise, verbose=0)
   # Train the agent
-  model.learn(total_timesteps=int(1e5), callback=callback)
+  time_steps = 1e5
+  model.learn(total_timesteps=int(time_steps), callback=callback)
+
+  results_plotter.plot_results([log_dir], time_steps, results_plotter.X_TIMESTEPS, "DDPG LunarLander")
+  plt.show()
 
 
 Atari Games
@@ -281,10 +295,10 @@ will compute a running average and standard deviation of input features (it can 
   model = PPO2(MlpPolicy, env)
   model.learn(total_timesteps=2000)
 
-  # Don't forget to save the running average when saving the agent
+  # Don't forget to save the VecNormalize statistics when saving the agent
   log_dir = "/tmp/"
   model.save(log_dir + "ppo_reacher")
-  env.save_running_average(log_dir)
+  env.save(os.path.join(log_dir, "vec_normalize.pkl"))
 
 
 Custom Policy Network
@@ -335,8 +349,6 @@ A2C policy gradient updates on the model.
   import gym
   import numpy as np
 
-  from stable_baselines.common.policies import MlpPolicy
-  from stable_baselines.common.vec_env import DummyVecEnv
   from stable_baselines import A2C
 
   def mutate(params):
@@ -360,9 +372,8 @@ A2C policy gradient updates on the model.
 
   # Create env
   env = gym.make('CartPole-v1')
-  env = DummyVecEnv([lambda: env])
   # Create policy with a small network
-  model = A2C(MlpPolicy, env, ent_coef=0.0, learning_rate=0.1,
+  model = A2C('MlpPolicy', env, ent_coef=0.0, learning_rate=0.1,
               policy_kwargs={'net_arch': [8, ]})
 
   # Use traditional actor-critic policy gradient updates to
@@ -541,6 +552,9 @@ You can also move from learning on one environment to another for `continual lea
       obs, rewards, dones, info = env.step(action)
       env.render()
 
+  # Close the processes
+  env.close()
+
   # The number of environments must be identical when changing environments
   env = make_atari_env('SpaceInvadersNoFrameskip-v4', num_env=8, seed=0)
 
@@ -553,6 +567,7 @@ You can also move from learning on one environment to another for `continual lea
       action, _states = model.predict(obs)
       obs, rewards, dones, info = env.step(action)
       env.render()
+  env.close()
 
 
 Record a Video
@@ -586,6 +601,7 @@ Record a mp4 video (here using a random agent).
   for _ in range(video_length + 1):
     action = [env.action_space.sample()]
     obs, _, _, _ = env.step(action)
+  # Save the video
   env.close()
 
 
@@ -601,10 +617,9 @@ Bonus: Make a GIF of a Trained Agent
   import imageio
   import numpy as np
 
-  from stable_baselines.common.policies import MlpPolicy
   from stable_baselines import A2C
 
-  model = A2C(MlpPolicy, "LunarLander-v2").learn(100000)
+  model = A2C("MlpPolicy", "LunarLander-v2").learn(100000)
 
   images = []
   obs = model.env.reset()

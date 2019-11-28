@@ -49,12 +49,11 @@ Train a A2C agent on `CartPole-v1` using 4 processes.
   import gym
 
   from stable_baselines.common.policies import MlpPolicy
-  from stable_baselines.common.vec_env import SubprocVecEnv
+  from stable_baselines.common import make_vec_env
   from stable_baselines import A2C
 
-  # multiprocess environment
-  n_cpu = 4
-  env = SubprocVecEnv([lambda: gym.make('CartPole-v1') for i in range(n_cpu)])
+  # Parallel environments
+  env = make_vec_env('CartPole-v1', n_envs=4)
 
   model = A2C(MlpPolicy, env, verbose=1)
   model.learn(total_timesteps=25000)

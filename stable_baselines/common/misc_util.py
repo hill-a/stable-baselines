@@ -51,7 +51,7 @@ def mpi_rank_or_zero():
     :return: (int)
     """
     try:
-        from mpi4py import MPI
-        return MPI.COMM_WORLD.Get_rank()
+        import mpi4py
+        return mpi4py.MPI.COMM_WORLD.Get_rank()
     except ImportError:
         return 0

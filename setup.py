@@ -80,7 +80,9 @@ from stable_baselines.common.vec_env import DummyVecEnv
 from stable_baselines import PPO2
 
 env = gym.make('CartPole-v1')
-env = DummyVecEnv([lambda: env])  # The algorithms require a vectorized environment to run
+# Optional: PPO2 requires a vectorized environment to run
+# the env is now wrapped automatically when passing it to the constructor
+# env = DummyVecEnv([lambda: env])
 
 model = PPO2(MlpPolicy, env, verbose=1)
 model.learn(total_timesteps=10000)
@@ -105,6 +107,9 @@ model = PPO2('MlpPolicy', 'CartPole-v1').learn(10000)
 setup(name='stable_baselines',
       packages=[package for package in find_packages()
                 if package.startswith('stable_baselines')],
+      package_data={
+          'stable_baselines': ['py.typed'],
+      },
       install_requires=[
           'gym[atari,classic_control]>=0.10.9',
           'scipy',
@@ -124,6 +129,7 @@ setup(name='stable_baselines',
             'pytest-cov',
             'pytest-env',
             'pytest-xdist',
+            'pytype',
         ],
         'docs': [
             'sphinx',

@@ -13,32 +13,57 @@ Breaking Changes:
 ^^^^^^^^^^^^^^^^^
 - The `seed` argument has been moved from `learn()` method to model constructor
   in order to have reproducible results
+- `allow_early_resets` of the `Monitor` wrapper now default to `True`
+- `make_atari_env` now returns a `DummyVecEnv` by default (instead of a `SubprocVecEnv`)
+  this usually improves performance.
 
 New Features:
 ^^^^^^^^^^^^^
 - Add `n_cpu_tf_sess` to model constructor to choose the number of threads used by Tensorflow
+- Environments are automatically wrapped in a `DummyVecEnv` if needed when passing them to the model constructor
+- Added `stable_baselines.common.make_vec_env` helper to simplify VecEnv creation
+- Added `stable_baselines.common.evaluation.evaluate_policy` helper to simplify model evaluation
+- `VecNormalize` now supports being pickled and unpickled.
+- Add parameter `exploration_initial_eps` to DQN. (@jdossgollin)
+- Add type checking and PEP 561 compliance.
+  Note: most functions are still not annotated, this will be a gradual process.
+- DDPG, TD3 and SAC accept non-symmetric action spaces. (@Antymon)
 
 Bug Fixes:
 ^^^^^^^^^^
 - Fix seeding, so it is now possible to have deterministic results on cpu
 - Fix a bug in DDPG where `predict` method with `deterministic=False` would fail
+- Fix a bug in TRPO: mean_losses was not initialized causing the logger to crash when there was no gradients (@MarvineGothic)
+- Fix a bug in `cmd_util` from API change in recent Gym versions
+- Fix a bug in DDPG, TD3 and SAC where warmup and random exploration actions would end up scaled in the replay buffer (@Antymon)
 
 Deprecations:
 ^^^^^^^^^^^^^
 - `nprocs` (ACKTR) and `num_procs` (ACER) are deprecated in favor of `n_cpu_tf_sess` which is now common
   to all algorithms
+- `VecNormalize`: `load_running_average` and `save_running_average` are deprecated in favour of using pickle.
 
 Others:
 ^^^^^^^
 - Add upper bound for Tensorflow version (<2.0.0).
+- Refactored test to remove duplicated code
+- Add pull request template
+- Replaced redundant code in load_results (@jbulow)
 
 Documentation:
 ^^^^^^^^^^^^^^
+- Add plotting to the Monitor example (@rusu24edward)
 - Add Snake Game AI project (@pedrohbtp)
 - Add note on the support Tensorflow versions.
 - Remove unnecessary steps required for Windows installation.
+- Remove `DummyVecEnv` creation when not needed
+- Added `make_vec_env` to the examples to simplify VecEnv creation
 - Add QuaRL project (@srivatsankrishnan)
 - Add Pwnagotchi project (@evilsocket)
+- Fix multiprocessing example (@rusu24edward)
+- Fix `result_plotter` example
+- Fix typo in algos.rst, "containes" to "contains" (@SyllogismRXS)
+- Fix outdated source documentation for load_results
 
 Release 2.8.0 (2019-09-29)
 --------------------------
@@ -518,4 +543,5 @@ In random order...
 Thanks to @bjmuld @iambenzo @iandanforth @r7vme @brendenpetersen @huvar @abhiskk @JohannesAck
 @EliasHasle @mrakgr @Bleyddyn @antoine-galataud @junhyeokahn @AdamGleave @keshaviyengar @tperol
 @XMaster96 @kantneel @Pastafarianist @GerardMaggiolino @PatrickWalter214 @yutingsz @sc420 @Aaahh @billtubbs
-@Miffyli @dwiel @miguelrass @qxcv @jaberkow @eavelardev @ruifeng96150 @pedrohbtp @srivatsankrishnan @evilsocket 
+@Miffyli @dwiel @miguelrass @qxcv @jaberkow @eavelardev @ruifeng96150 @pedrohbtp @srivatsankrishnan @evilsocket
+@MarvineGothic @jdossgollin @SyllogismRXS @rusu24edward @jbulow

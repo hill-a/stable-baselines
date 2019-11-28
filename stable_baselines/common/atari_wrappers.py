@@ -3,7 +3,7 @@ from collections import deque
 import numpy as np
 import gym
 from gym import spaces
-import cv2
+import cv2  # pytype:disable=import-error
 cv2.ocl.setUseOpenCL(False)
 
 

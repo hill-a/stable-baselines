@@ -5,7 +5,7 @@ from stable_baselines import A2C, ACER, ACKTR, DQN, DDPG, SAC, PPO1, PPO2, TD3, 
 from stable_baselines.ddpg import NormalActionNoise
 from stable_baselines.common.identity_env import IdentityEnv, IdentityEnvBox
 from stable_baselines.common.vec_env import DummyVecEnv
-from stable_baselines.common import set_global_seeds
+from stable_baselines.common.evaluation import evaluate_policy
 
 
 # Hyperparameters for learning identity for each RL model
@@ -39,16 +39,9 @@ def test_identity(model_name):
     env = DummyVecEnv([lambda: IdentityEnv(10)])
 
     model = LEARN_FUNC_DICT[model_name](env)
+    evaluate_policy(model, env, n_eval_episodes=20, reward_threshold=0.9)
 
-    n_trials = 1000
-    reward_sum = 0
-    set_global_seeds(0)
     obs = env.reset()
-    for _ in range(n_trials):
-        action, _ = model.predict(obs)
-        obs, reward, _, _ = env.step(action)
-        reward_sum += reward
-
     assert model.action_probability(obs).shape == (1, 10), "Error: action_probability not returning correct shape"
     action = env.action_space.sample()
     action_prob = model.action_probability(obs, actions=action)
@@ -56,7 +49,6 @@ def test_identity(model_name):
     action_logprob = model.action_probability(obs, actions=action, logp=True)
     assert np.allclose(action_prob, np.exp(action_logprob)), (action_prob, action_logprob)
 
-    assert reward_sum > 0.9 * n_trials
     # Free memory
     del model, env
 
@@ -80,14 +72,6 @@ def test_identity_continuous(model_class):
                          action_noise=action_noise, buffer_size=int(1e6))
     model.learn(total_timesteps=20000)
 
-    n_trials = 1000
-    reward_sum = 0
-    set_global_seeds(0)
-    obs = env.reset()
-    for _ in range(n_trials):
-        action, _ = model.predict(obs)
-        obs, reward, _, _ = env.step(action)
-        reward_sum += reward
-    assert reward_sum > 0.9 * n_trials
+    evaluate_policy(model, env, n_eval_episodes=20, reward_threshold=0.9)
     # Free memory
     del model, env

@@ -11,6 +11,7 @@ from stable_baselines.common.policies import MlpLstmPolicy, LstmPolicy
 from stable_baselines.common.vec_env import SubprocVecEnv
 from stable_baselines.common.vec_env.vec_normalize import VecNormalize
 from stable_baselines.ppo2.ppo2 import safe_mean
+from stable_baselines.common.evaluation import evaluate_policy
 
 
 class CustomLSTMPolicy1(LstmPolicy):
@@ -85,11 +86,7 @@ def test_lstm_policy(request, model_class, policy):
         model.learn(total_timesteps=100)
 
         env = model.get_env()
-        # predict and measure the acc reward
-        obs = env.reset()
-        for _ in range(N_TRIALS):
-            action, _ = model.predict(obs)
-            obs, _, _, _ = env.step(action)
+        evaluate_policy(model, env, n_eval_episodes=10)
         # saving
         model.save(model_fname)
         del model, env

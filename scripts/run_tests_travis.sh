@@ -18,18 +18,15 @@ TEST_GLOB=$1
 set -e  # exit immediately on any error
 
 # For pull requests from fork, Codacy token is not available, leading to build failure
-if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then
+if [[ ${CODACY_PROJECT_TOKEN} = "" ]]; then
+  echo "WARNING: CODACY_PROJECT_TOKEN not set. Skipping Codacy upload."
+  echo "(This is normal when building in a fork and can be ignored.)"
   ${DOCKER_CMD} ${DOCKER_IMAGE} \
       bash -c "${BASH_CMD} && \
                pytest --cov-config .coveragerc --cov-report term --cov=. -v tests/test_${TEST_GLOB}"
 else
-  if [[ ${CODACY_PROJECT_TOKEN} = "" ]]; then
-    echo "Need CODACY_PROJECT_TOKEN environment variable to be set."
-    exit 1
-  fi
-
   ${DOCKER_CMD} --env CODACY_PROJECT_TOKEN=${CODACY_PROJECT_TOKEN} ${DOCKER_IMAGE} \
       bash -c "${BASH_CMD} && \
                 pytest --cov-config .coveragerc --cov-report term --cov-report xml --cov=. -v tests/test_${TEST_GLOB} && \
-                /root/code/codacy-coverage-reporter report -l python -r coverage.xml --partial"
+                java -jar /root/code/codacy-coverage-reporter.jar report -l python -r coverage.xml --partial"
 fi

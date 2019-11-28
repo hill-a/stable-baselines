@@ -6,3 +6,4 @@ from stable_baselines.common.math_util import discount, discount_with_boundaries
 from stable_baselines.common.misc_util import zipsame, set_global_seeds, boolean_flag
 from stable_baselines.common.base_class import BaseRLModel, ActorCriticRLModel, OffPolicyRLModel, SetVerbosity, \
     TensorboardWriter
+from stable_baselines.common.cmd_util import make_vec_env

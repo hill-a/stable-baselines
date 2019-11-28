@@ -4,6 +4,7 @@
 *.py~
 *.bak
 .pytest_cache
+.pytype
 .DS_Store
 .idea
 .coverage
@@ -11,6 +12,7 @@
 __pycache__/
 _build/
 *.npz
+*.zip
 
 # Setuptools distribution and build folders.
 /dist/
@@ -19,12 +21,10 @@ keys/
 
 # Virtualenv
 /env
-
+/venv
 
 *.sublime-project
 *.sublime-workspace
-
-.idea
 
 logs/
 

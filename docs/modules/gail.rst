@@ -111,7 +111,7 @@ Example
   # Load the expert dataset
   dataset = ExpertDataset(expert_path='expert_pendulum.npz', traj_limitation=10, verbose=1)
 
-  model = GAIL("MlpPolicy", 'Pendulum-v0', dataset, verbose=1)
+  model = GAIL('MlpPolicy', 'Pendulum-v0', dataset, verbose=1)
   # Note: in practice, you need to train for 1M steps to have a working policy
   model.learn(total_timesteps=1000)
   model.save("gail_pendulum")

@@ -14,7 +14,7 @@ class Monitor(Wrapper):
     EXT = "monitor.csv"
     file_handler = None
 
-    def __init__(self, env, filename, allow_early_resets=False, reset_keywords=(), info_keywords=()):
+    def __init__(self, env, filename, allow_early_resets=True, reset_keywords=(), info_keywords=()):
         """
         A monitor wrapper for Gym environments, it is used to know the episode reward, length, time and other data.
 
@@ -160,13 +160,13 @@ def get_monitor_files(path):
 
 def load_results(path):
     """
-    Load results from a given file
+    Load all Monitor logs from a given directory path matching ``*monitor.csv`` and ``*monitor.json``
 
-    :param path: (str) the path to the log file
+    :param path: (str) the directory path containing the log file(s)
     :return: (Pandas DataFrame) the logged data
     """
     # get both csv and (old) json files
-    monitor_files = (glob(os.path.join(path, "*monitor.json")) + glob(os.path.join(path, "*monitor.csv")))
+    monitor_files = (glob(os.path.join(path, "*monitor.json")) + get_monitor_files(path))
     if not monitor_files:
         raise LoadMonitorResultsError("no monitor files of the form *%s found in %s" % (Monitor.EXT, path))
     data_frames = []

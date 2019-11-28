@@ -23,7 +23,6 @@ class TD3Policy(BasePolicy):
     def __init__(self, sess, ob_space, ac_space, n_env=1, n_steps=1, n_batch=None, reuse=False, scale=False):
         super(TD3Policy, self).__init__(sess, ob_space, ac_space, n_env, n_steps, n_batch, reuse=reuse, scale=scale)
         assert isinstance(ac_space, Box), "Error: the action space must be of type gym.spaces.Box"
-        assert (np.abs(ac_space.low) == ac_space.high).all(), "Error: the action space low and high must be symmetric"
 
         self.qf1 = None
         self.qf2 = None

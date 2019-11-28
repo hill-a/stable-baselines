@@ -8,5 +8,5 @@ echo $cmd_line
 
 
 docker run -it --runtime=nvidia --rm --network host --ipc=host \
-  --mount src=$(pwd),target=/root/code/stable-baselines,type=bind araffin/stable-baselines:v2.7.1 \
+  --mount src=$(pwd),target=/root/code/stable-baselines,type=bind stablebaselines/stable-baselines:v2.9.0 \
   bash -c "cd /root/code/stable-baselines/ && $cmd_line"

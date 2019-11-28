@@ -98,11 +98,14 @@ class BitFlippingEnv(GoalEnv):
         done = done or self.current_step >= self.max_steps
         return obs, reward, done, info
 
-    def compute_reward(self, achieved_goal, desired_goal, _info):
+    def compute_reward(self,
+                       achieved_goal: np.ndarray,
+                       desired_goal: np.ndarray,
+                       _info) -> float:
         # Deceptive reward: it is positive only when the goal is achieved
         if self.discrete_obs_space:
-            return 0 if achieved_goal == desired_goal else -1
-        return 0 if (achieved_goal == desired_goal).all() else -1
+            return 0.0 if achieved_goal == desired_goal else -1.0
+        return 0.0 if (achieved_goal == desired_goal).all() else -1.0
 
     def render(self, mode='human'):
         if mode == 'rgb_array':

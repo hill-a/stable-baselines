@@ -2,6 +2,7 @@ import os
 import collections
 import functools
 import multiprocessing
+from typing import Set
 
 import numpy as np
 import tensorflow as tf
@@ -93,7 +94,7 @@ def in_session(func):
     return newfunc
 
 
-ALREADY_INITIALIZED = set()
+ALREADY_INITIALIZED = set()  # type: Set[tf.Variable]
 
 
 def initialize(sess=None):

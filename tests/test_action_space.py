@@ -4,6 +4,7 @@ import numpy as np
 from stable_baselines import A2C, PPO1, PPO2, TRPO
 from stable_baselines.common.identity_env import IdentityEnvMultiBinary, IdentityEnvMultiDiscrete
 from stable_baselines.common.vec_env import DummyVecEnv
+from stable_baselines.common.evaluation import evaluate_policy
 
 MODEL_LIST = [
     A2C,
@@ -27,14 +28,8 @@ def test_identity_multidiscrete(model_class):
 
     model = model_class("MlpPolicy", env)
     model.learn(total_timesteps=1000)
-
-    n_trials = 1000
-    reward_sum = 0
+    evaluate_policy(model, env, n_eval_episodes=5)
     obs = env.reset()
-    for _ in range(n_trials):
-        action, _ = model.predict(obs)
-        obs, reward, _, _ = env.step(action)
-        reward_sum += reward
 
     assert np.array(model.action_probability(obs)).shape == (2, 1, 10), \
         "Error: action_probability not returning correct shape"
@@ -56,14 +51,8 @@ def test_identity_multibinary(model_class):
 
     model = model_class("MlpPolicy", env)
     model.learn(total_timesteps=1000)
-
-    n_trials = 1000
-    reward_sum = 0
+    evaluate_policy(model, env, n_eval_episodes=5)
     obs = env.reset()
-    for _ in range(n_trials):
-        action, _ = model.predict(obs)
-        obs, reward, _, _ = env.step(action)
-        reward_sum += reward
 
     assert model.action_probability(obs).shape == (1, 10), \
         "Error: action_probability not returning correct shape"

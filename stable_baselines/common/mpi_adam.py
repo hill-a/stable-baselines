@@ -1,6 +1,6 @@
 import tensorflow as tf
 import numpy as np
-from mpi4py import MPI
+import mpi4py
 
 import stable_baselines.common.tf_util as tf_utils
 
@@ -17,7 +17,7 @@ class MpiAdam(object):
         :param beta2: (float) Adam beta1 parameter
         :param epsilon: (float) to help with preventing arithmetic issues
         :param scale_grad_by_procs: (bool) if the scaling should be done by processes
-        :param comm: (MPI Communicators) if None, MPI.COMM_WORLD
+        :param comm: (MPI Communicators) if None, mpi4py.MPI.COMM_WORLD
         :param sess: (TensorFlow Session) if None, tf.get_default_session()
         """
         self.var_list = var_list
@@ -35,7 +35,7 @@ class MpiAdam(object):
         self.step = 0
         self.setfromflat = tf_utils.SetFromFlat(var_list, sess=sess)
         self.getflat = tf_utils.GetFlat(var_list, sess=sess)
-        self.comm = MPI.COMM_WORLD if comm is None else comm
+        self.comm = mpi4py.MPI.COMM_WORLD if comm is None else comm
 
     def update(self, local_grad, learning_rate):
         """
@@ -48,7 +48,7 @@ class MpiAdam(object):
             self.check_synced()
         local_grad = local_grad.astype('float32')
         global_grad = np.zeros_like(local_grad)
-        self.comm.Allreduce(local_grad, global_grad, op=MPI.SUM)
+        self.comm.Allreduce(local_grad, global_grad, op=mpi4py.MPI.SUM)
         if self.scale_grad_by_procs:
             global_grad /= self.comm.Get_size()
 

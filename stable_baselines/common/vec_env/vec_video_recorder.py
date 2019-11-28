@@ -3,7 +3,11 @@ import os
 from gym.wrappers.monitoring import video_recorder
 
 from stable_baselines import logger
-from stable_baselines.common.vec_env import VecEnvWrapper, DummyVecEnv, VecNormalize, VecFrameStack, SubprocVecEnv
+from stable_baselines.common.vec_env.base_vec_env import VecEnvWrapper
+from stable_baselines.common.vec_env.dummy_vec_env import DummyVecEnv
+from stable_baselines.common.vec_env.subproc_vec_env import SubprocVecEnv
+from stable_baselines.common.vec_env.vec_frame_stack import VecFrameStack
+from stable_baselines.common.vec_env.vec_normalize import VecNormalize
 
 
 class VecVideoRecorder(VecEnvWrapper):

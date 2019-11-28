@@ -73,7 +73,6 @@ Example
   from stable_baselines.ddpg.noise import NormalActionNoise, OrnsteinUhlenbeckActionNoise
 
   env = gym.make('Pendulum-v0')
-  env = DummyVecEnv([lambda: env])
 
   # The noise objects for TD3
   n_actions = env.action_space.shape[-1]

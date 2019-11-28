@@ -2,7 +2,7 @@ import queue
 import time
 from multiprocessing import Queue, Process
 
-import cv2
+import cv2  # pytype:disable=import-error
 import numpy as np
 from joblib import Parallel, delayed
 

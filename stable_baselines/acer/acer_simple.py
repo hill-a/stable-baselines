@@ -1,4 +1,5 @@
 import time
+import warnings
 
 import numpy as np
 import tensorflow as tf
@@ -538,7 +539,9 @@ class ACER(ActorCriticRLModel):
                         logger.record_tabular(name, float(val))
                     logger.dump_tabular()
 
-                if self.replay_ratio > 0 and buffer.has_atleast(self.replay_start):
+                if (self.replay_ratio > 0 and
+                    buffer is not None and
+                    buffer.has_atleast(self.replay_start)):
                     samples_number = np.random.poisson(self.replay_ratio)
                     for _ in range(samples_number):
                         # get obs, actions, rewards, mus, dones from buffer.

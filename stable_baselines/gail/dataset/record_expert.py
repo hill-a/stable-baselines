@@ -1,7 +1,8 @@
 import os
 import warnings
+from typing import Dict
 
-import cv2
+import cv2  # pytype:disable=import-error
 import numpy as np
 from gym import spaces
 
@@ -167,7 +168,7 @@ def generate_expert_traj(model, save_path=None, env=None, n_timesteps=0,
         'rewards': rewards,
         'episode_returns': episode_returns,
         'episode_starts': episode_starts
-    }
+    }  # type: Dict[str, np.ndarray]
 
     for key, val in numpy_dict.items():
         print(key, val.shape)

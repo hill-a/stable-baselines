@@ -8,14 +8,14 @@ import numpy as np
 from stable_baselines import A2C, ACKTR, SAC, DDPG, PPO1, PPO2, TRPO, TD3
 # TODO: add support for continuous actions
 # from stable_baselines.acer import ACER
-from stable_baselines.common import set_global_seeds
 from stable_baselines.common.vec_env import DummyVecEnv
 from stable_baselines.common.identity_env import IdentityEnvBox
 from stable_baselines.ddpg import AdaptiveParamNoiseSpec, NormalActionNoise
+from stable_baselines.common.evaluation import evaluate_policy
 from tests.test_common import _assert_eq
 
 
-N_TRIALS = 1000
+N_EVAL_EPISODES = 20
 NUM_TIMESTEPS = 15000
 
 MODEL_LIST = [
@@ -44,18 +44,10 @@ def test_model_manipulation(request, model_class):
         env = DummyVecEnv([lambda: IdentityEnvBox(eps=0.5)])
 
         # create and train
-        model = model_class(policy="MlpPolicy", env=env)
+        model = model_class(policy="MlpPolicy", env=env, seed=0)
         model.learn(total_timesteps=NUM_TIMESTEPS)
 
-        # predict and measure the acc reward
-        acc_reward = 0
-        set_global_seeds(0)
-        obs = env.reset()
-        for _ in range(N_TRIALS):
-            action, _ = model.predict(obs)
-            obs, reward, _, _ = env.step(action)
-            acc_reward += reward
-        acc_reward = sum(acc_reward) / N_TRIALS
+        acc_reward, _ = evaluate_policy(model, env, n_eval_episodes=N_EVAL_EPISODES)
 
         # saving
         model_fname = './test_model_{}.zip'.format(request.node.name)
@@ -70,16 +62,9 @@ def test_model_manipulation(request, model_class):
         env = DummyVecEnv([lambda: IdentityEnvBox(eps=0.5)])
         model.set_env(env)
 
-        # predict the same output before saving
-        loaded_acc_reward = 0
-        set_global_seeds(0)
-        obs = env.reset()
-        for _ in range(N_TRIALS):
-            action, _ = model.predict(obs)
-            obs, reward, _, _ = env.step(action)
-            loaded_acc_reward += reward
-        loaded_acc_reward = sum(loaded_acc_reward) / N_TRIALS
+        loaded_acc_reward, _ = evaluate_policy(model, env, n_eval_episodes=N_EVAL_EPISODES)
 
+        obs = env.reset()
         with pytest.warns(None) as record:
             act_prob = model.action_probability(obs)
 
@@ -124,27 +109,25 @@ def test_model_manipulation(request, model_class):
         # loaded_acc_reward = 0
         # set_global_seeds(0)
         # obs = env.reset()
-        # for _ in range(N_TRIALS):
+        # for _ in range(N_EVAL_EPISODES):
         #     action, _ = model.predict(obs)
         #     obs, reward, _, _ = env.step(action)
         #     loaded_acc_reward += reward
-        # loaded_acc_reward = sum(loaded_acc_reward) / N_TRIALS
+        # loaded_acc_reward = sum(loaded_acc_reward) / N_EVAL_EPISODES
         # # assert <10% diff
         # assert abs(acc_reward - loaded_acc_reward) / max(acc_reward, loaded_acc_reward) < 0.1, \
         #     "Error: the prediction seems to have changed between pre learning and post learning"
 
         # predict new values
-        obs = env.reset()
-        for _ in range(N_TRIALS):
-            action, _ = model.predict(obs)
-            obs, _, _, _ = env.step(action)
+
+        evaluate_policy(model, env, n_eval_episodes=N_EVAL_EPISODES)
 
         # Free memory
         del model, env
 
     finally:
-        if os.path.exists("./test_model.zip"):
-            os.remove("./test_model.zip")
+        if os.path.exists(model_fname):
+            os.remove(model_fname)
 
 
 def test_ddpg():
