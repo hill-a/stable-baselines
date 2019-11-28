@@ -36,6 +36,7 @@ Bug Fixes:
 - Fix a bug in TRPO: mean_losses was not initialized causing the logger to crash when there was no gradients (@MarvineGothic)
 - Fix a bug in `cmd_util` from API change in recent Gym versions
 - Fix a bug in DDPG, TD3 and SAC where warmup and random exploration actions would end up scaled in the replay buffer (@Antymon)
+- Fix a bug in CategoricalProbabilityDistribution: mode/sample function should return tensor of tf.int32 (@seheevic)
 
 Deprecations:
 ^^^^^^^^^^^^^
