@@ -108,11 +108,11 @@ class FeedForwardPolicy(DQNPolicy):
                 else:
                     extracted_features = tf.layers.flatten(self.processed_obs)
                     action_out = extracted_features
-                    for layer_size in layers:
-                        action_out = tf_layers.fully_connected(action_out, num_outputs=layer_size, activation_fn=None)
-                        if layer_norm:
-                            action_out = tf_layers.layer_norm(action_out, center=True, scale=True)
-                        action_out = act_fun(action_out)
+                for layer_size in layers:
+                    action_out = tf_layers.fully_connected(action_out, num_outputs=layer_size, activation_fn=None)
+                    if layer_norm:
+                        action_out = tf_layers.layer_norm(action_out, center=True, scale=True)
+                    action_out = act_fun(action_out)
 
                 action_scores = tf_layers.fully_connected(action_out, num_outputs=self.n_actions, activation_fn=None)
 
