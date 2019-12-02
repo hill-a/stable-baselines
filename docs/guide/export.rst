@@ -46,6 +46,33 @@ function to obtain model parameters, construct the network manually in PyTorch a
 See `discussion #372 <https://github.com/hill-a/stable-baselines/issues/372>`_ for details.
 
 
+Export to C++
+-----------------
+
+Tensorflow, which is the backbone of Stable Baselines, is fundamentally a C/C++ library despite being most commonly accessed
+through the Python frontend layer. This design choice means that the models created at Python level should generally be
+fully compliant with the respective C++ version of Tensorflow.
+
+.. warning::
+   It is advisable not to mix-and-match different versions of Tensorflow libraries, particularly in terms of the state.
+   Moving computational graphs is generally more forgiving. As a matter of fact, mentioned below `PPO_CPP <https://github.com/Antymon/ppo_cpp>`_ project uses
+   graphs generated with Python Tensorflow 1.x in C++ Tensorflow 2 version.
+
+Stable Baselines comes very handily when hoping to migrate a computational graph and/or a state (weights) as
+the existing algorithms define most of the necessary computations for you so you don't need to recreate the core of the algorithms again.
+This is exactly the idea that has been used in the `PPO_CPP <https://github.com/Antymon/ppo_cpp>`_ project, which executes the training at the C++ level for the sake of
+computational efficiency. The graphs are exported from Stable Baselines' PPO2 implementation through ``tf.train.export_meta_graph``
+function. Alternatively, and perhaps more commonly, you could use the C++ layer only for inference. That could be useful
+as a deployment step of server backends or optimization for more limited devices.
+
+.. warning::
+   As a word of caution, C++-level APIs are more imperative than their Python counterparts or more plainly speaking: cruder.
+   This is particularly apparent in Tensorflow 2.0 where the declarativeness of Autograph exists only at Python level. The
+   C++ counterpart still operates on Session objects' use, which are known from earlier versions of Tensorflow. In our use case,
+   availability of graphs utilized by Session depends on the use of ``tf.function`` decorators. However, as of November 2019, Stable Baselines still
+   uses Tensorflow 1.x in the main version which is slightly easier to use in the context of the C++ portability.
+
+
 Export to tensorflowjs / tfjs
 -----------------------------
 
