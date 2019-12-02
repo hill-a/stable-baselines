@@ -638,7 +638,7 @@ class _Runner(AbstractEnvRunner):
         """
         Run a step leaning of the model
 
-        :return: ([float], [float], [float], [float], [float], [bool], [float])
+        :return: ([float], [float], [int64], [float], [float], [bool], [float])
                  encoded observation, observations, actions, rewards, mus, dones, masks
         """
         enc_obs = [self.obs]
@@ -666,7 +666,7 @@ class _Runner(AbstractEnvRunner):
 
         enc_obs = np.asarray(enc_obs, dtype=self.obs_dtype).swapaxes(1, 0)
         mb_obs = np.asarray(mb_obs, dtype=self.obs_dtype).swapaxes(1, 0)
-        mb_actions = np.asarray(mb_actions, dtype=np.int32).swapaxes(1, 0)
+        mb_actions = np.asarray(mb_actions, dtype=np.int64).swapaxes(1, 0)
         mb_rewards = np.asarray(mb_rewards, dtype=np.float32).swapaxes(1, 0)
         mb_mus = np.asarray(mb_mus, dtype=np.float32).swapaxes(1, 0)
         mb_dones = np.asarray(mb_dones, dtype=np.bool).swapaxes(1, 0)

@@ -493,7 +493,7 @@ def get_by_index(input_tensor, idx):
     """
     assert len(input_tensor.get_shape()) == 2
     assert len(idx.get_shape()) == 1
-    idx_flattened = tf.range(0, input_tensor.shape[0]) * input_tensor.shape[1] + idx
+    idx_flattened = tf.range(0, input_tensor.shape[0], dtype=idx.dtype) * input_tensor.shape[1] + idx
     offset_tensor = tf.gather(tf.reshape(input_tensor, [-1]),  # flatten input
                               idx_flattened)  # use flattened indices
     return offset_tensor
