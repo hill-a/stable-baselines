@@ -67,6 +67,7 @@ Documentation:
 - Fix outdated source documentation for load_results
 - Add PPO_CPP project (@Antymon)
 - Add section on C++ portability of Tensorflow models (@Antymon)
+- Update custom env documentation to reflect new gym close API
 
 Release 2.8.0 (2019-09-29)
 --------------------------
