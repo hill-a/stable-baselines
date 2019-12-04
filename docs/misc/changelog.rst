@@ -67,7 +67,7 @@ Documentation:
 - Fix outdated source documentation for load_results
 - Add PPO_CPP project (@Antymon)
 - Add section on C++ portability of Tensorflow models (@Antymon)
-- Update custom env documentation to reflect new gym close API
+- Update custom env documentation to reflect new gym API for the `close()` method (@justinkterry)
 
 Release 2.8.0 (2019-09-29)
 --------------------------
@@ -548,4 +548,4 @@ Thanks to @bjmuld @iambenzo @iandanforth @r7vme @brendenpetersen @huvar @abhiskk
 @EliasHasle @mrakgr @Bleyddyn @antoine-galataud @junhyeokahn @AdamGleave @keshaviyengar @tperol
 @XMaster96 @kantneel @Pastafarianist @GerardMaggiolino @PatrickWalter214 @yutingsz @sc420 @Aaahh @billtubbs
 @Miffyli @dwiel @miguelrass @qxcv @jaberkow @eavelardev @ruifeng96150 @pedrohbtp @srivatsankrishnan @evilsocket
-@MarvineGothic @jdossgollin @SyllogismRXS @rusu24edward @jbulow @Antymon @seheevic
+@MarvineGothic @jdossgollin @SyllogismRXS @rusu24edward @jbulow @Antymon @seheevic @justinkterry
