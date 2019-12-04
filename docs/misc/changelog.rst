@@ -68,6 +68,7 @@ Documentation:
 - Add PPO_CPP project (@Antymon)
 - Add section on C++ portability of Tensorflow models (@Antymon)
 - Update custom env documentation to reflect new gym API for the `close()` method (@justinkterry)
+- Update custom env documentation to clarify what step and reset return (@justinkterry)
 
 Release 2.8.0 (2019-09-29)
 --------------------------
