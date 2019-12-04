@@ -50,6 +50,7 @@ Others:
 - Refactored test to remove duplicated code
 - Add pull request template
 - Replaced redundant code in load_results (@jbulow)
+- Minor PEP8 fixes in dqn.py (@justinkterry)
 
 Documentation:
 ^^^^^^^^^^^^^^
