@@ -25,6 +25,8 @@ New Features:
 - Added `stable_baselines.common.make_vec_env` helper to simplify VecEnv creation
 - Added `stable_baselines.common.evaluation.evaluate_policy` helper to simplify model evaluation
 - `VecNormalize` now supports being pickled and unpickled.
+- `VecNormalize` has new methods `normalize_observation` and `normalize_reward` which apply normalization
+  to arbitrary observation or rewards without updating statistics (@shwang)
 - Add parameter `exploration_initial_eps` to DQN. (@jdossgollin)
 - Add type checking and PEP 561 compliance.
   Note: most functions are still not annotated, this will be a gradual process.
