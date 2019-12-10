@@ -89,7 +89,6 @@ class VecNormalize(VecEnvWrapper):
         where 'news' is a boolean vector indicating whether each element is new.
         """
         obs, rews, news, infos = self.venv.step_wait()
-        self.ret = self.ret * self.gamma + rews
         self.old_obs = obs
         self.old_rews = rews
 
@@ -104,6 +103,10 @@ class VecNormalize(VecEnvWrapper):
             rews = self.normalize_reward(rews)
         self.ret[news] = 0
         return obs, rews, news, infos
+
+    def _update_rews(self, rews):
+        self.ret = self.ret * self.gamma + rews
+        self.ret_rms.update(self.ret)
 
     def normalize_observation(self, obs):
         """
@@ -153,7 +156,9 @@ class VecNormalize(VecEnvWrapper):
         obs = self.venv.reset()
         self.old_obs = obs
         self.ret = np.zeros(self.num_envs)
-        return self._normalize_observation(obs)
+        if self.training:
+            self._update_rews(self.ret)
+        return self.normalize_observation(obs)
 
     @staticmethod
     def load(load_path, venv):
