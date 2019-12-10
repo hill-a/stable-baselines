@@ -39,7 +39,8 @@ class VecNormalize(VecEnvWrapper):
         self.training = training
         self.norm_obs = norm_obs
         self.norm_reward = norm_reward
-        self.old_obs = np.array([])
+        self.old_obs = None
+        self.old_rews = None
 
     def __getstate__(self):
         """
@@ -90,6 +91,7 @@ class VecNormalize(VecEnvWrapper):
         obs, rews, news, infos = self.venv.step_wait()
         self.ret = self.ret * self.gamma + rews
         self.old_obs = obs
+        self.old_rews = rews
 
         if self.norm_obs:
             if self.training:
@@ -129,21 +131,27 @@ class VecNormalize(VecEnvWrapper):
 
     def get_original_obs(self):
         """
-        returns the unnormalized observation
+        Returns an unnormalized version of the observations from the most recent
+        step or reset.
 
         :return: (numpy float)
         """
         return self.old_obs
+
+    def get_original_rews(self):
+        """
+        Returns an unnormalized version of the rewards from the most recent step.
+
+        :return: (numpy float)
+        """
+        return self.old_rews
 
     def reset(self):
         """
         Reset all environments
         """
         obs = self.venv.reset()
-        if len(np.array(obs).shape) == 1:  # for when num_cpu is 1
-            self.old_obs = [obs]
-        else:
-            self.old_obs = obs
+        self.old_obs = obs
         self.ret = np.zeros(self.num_envs)
         return self._normalize_observation(obs)
 
