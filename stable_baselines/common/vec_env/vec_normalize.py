@@ -95,7 +95,7 @@ class VecNormalize(VecEnvWrapper):
         if self.norm_obs:
             if self.training:
                 self.obs_rms.update(obs)
-            obs = self._normalize_observation(obs)
+            obs = self.normalize_obs(obs)
 
         if self.norm_reward:
             if self.training:
@@ -104,11 +104,11 @@ class VecNormalize(VecEnvWrapper):
         self.ret[news] = 0
         return obs, rews, news, infos
 
-    def _update_rews(self, rews):
+    def _update_reward(self, rews):
         self.ret = self.ret * self.gamma + rews
         self.ret_rms.update(self.ret)
 
-    def normalize_observation(self, obs):
+    def normalize_obs(self, obs):
         """
         Normalize observations using this VecNormalize's observations statistics.
         Calling this method does not update statistics.
@@ -141,7 +141,7 @@ class VecNormalize(VecEnvWrapper):
         """
         return self.old_obs
 
-    def get_original_rews(self):
+    def get_original_reward(self):
         """
         Returns an unnormalized version of the rewards from the most recent step.
 
@@ -157,8 +157,8 @@ class VecNormalize(VecEnvWrapper):
         self.old_obs = obs
         self.ret = np.zeros(self.num_envs)
         if self.training:
-            self._update_rews(self.ret)
-        return self.normalize_observation(obs)
+            self._update_reward(self.ret)
+        return self.normalize_obs(obs)
 
     @staticmethod
     def load(load_path, venv):
