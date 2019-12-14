@@ -27,9 +27,9 @@ New Features:
 - `VecNormalize` changes:
 
    - Now supports being pickled and unpickled (@AdamGleave).
-   - New methods `.normalize_observations(obs)` and `normalize_rewards(rews)` apply normalization
+   - New methods `.normalize_obs(obs)` and `normalize_reward(rews)` apply normalization
      to arbitrary observation or rewards without updating statistics (@shwang)
-   - `.get_original_rews()` returns the unnormalized rewards from the most recent timestep
+   - `.get_original_reward()` returns the unnormalized rewards from the most recent timestep
    - `.reset()` now collects observation statistics (used to only apply normalization)
 
 - Add parameter `exploration_initial_eps` to DQN. (@jdossgollin)

@@ -77,6 +77,7 @@ def test_vec_env(tmpdir):
 
 
 def _make_stepped_cartpole():
+    """Warm-start VecNormalize by stepping through CartPole"""
     venv = DummyVecEnv([lambda: gym.make("CartPole-v1")])
     venv = VecNormalize(venv)
     venv.reset()
@@ -92,21 +93,27 @@ def test_get_original():
     venv = _make_stepped_cartpole()
     acts = [venv.action_space.sample()]
     obs, rews, _, _ = venv.step(acts)
-    orig_obs = venv.get_original_obs()
-    orig_rews = venv.get_original_reward()
+    obs = obs[0]
+    orig_obs = venv.get_original_obs()[0]
+    rews = rews[0]
+    orig_rews = venv.get_original_reward()[0]
+    assert np.all(orig_rews == 1)
+    assert orig_obs.shape == obs.shape
     assert not np.array_equal(orig_obs, obs)
     assert not np.array_equal(orig_rews, rews)
-    assert np.all(orig_rews[0] == 1)
+    np.testing.assert_allclose(venv.normalize_obs(orig_obs), obs)
+    np.testing.assert_allclose(venv.normalize_reward(orig_rews), rews)
 
 def test_normalize_external():
     venv = _make_stepped_cartpole()
 
-    # Cartpole always returns reward=1, de-meaning should give us 0
     rews = np.array([1, 1])
     norm_rews = venv.normalize_reward(rews)
-    assert np.testing.assert_allclose(norm_rews, [0, 0])
+    assert norm_rews.shape == rews.shape
+    # Episode return is almost always >= 1 in CartPole. So reward should shrink.
+    assert np.all(norm_rews < 1)
 
-    # Don't have any guarantees on obs normalization, except shape really.
+    # Don't have any guarantees on obs normalization, except shape, really.
     obs = np.array([0, 0, 0, 0])
     norm_obs = venv.normalize_obs(obs)
     assert obs.shape == norm_obs.shape

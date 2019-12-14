@@ -104,11 +104,12 @@ class VecNormalize(VecEnvWrapper):
         self.ret[news] = 0
         return obs, rews, news, infos
 
-    def _update_reward(self, rews):
+    def _update_reward(self, rews: np.ndarray):
+        """Update reward normalizing statistics."""
         self.ret = self.ret * self.gamma + rews
         self.ret_rms.update(self.ret)
 
-    def normalize_obs(self, obs):
+    def normalize_obs(self, obs: np.ndarray):
         """
         Normalize observations using this VecNormalize's observations statistics.
         Calling this method does not update statistics.
@@ -120,32 +121,28 @@ class VecNormalize(VecEnvWrapper):
                       self.clip_obs)
         return obs
 
-    def normalize_reward(self, rews):
+    def normalize_reward(self, rews: np.ndarray) -> np.ndarray:
         """
         Normalize rewards using this VecNormalize's rewards statistics.
         Calling this method does not update statistics.
 
-        :param rews: (numpy float)
-        :return: (numpy float)
+        :param rews:
+        :return:
         """
         rews = np.clip(rews / np.sqrt(self.ret_rms.var + self.epsilon),
                        -self.clip_reward, self.clip_reward)
         return rews
 
-    def get_original_obs(self):
+    def get_original_obs(self) -> np.ndarray:
         """
         Returns an unnormalized version of the observations from the most recent
         step or reset.
-
-        :return: (numpy float)
         """
         return self.old_obs
 
-    def get_original_reward(self):
+    def get_original_reward(self) -> np.ndarray:
         """
         Returns an unnormalized version of the rewards from the most recent step.
-
-        :return: (numpy float)
         """
         return self.old_rews
 
