@@ -71,12 +71,18 @@ Documentation:
 - Add Pwnagotchi project (@evilsocket)
 - Fix multiprocessing example (@rusu24edward)
 - Fix `result_plotter` example
+- Add JNRR19 tutorial (by @edbeeching, @hill-a and @araffin)
+- Updated notebooks link
 - Fix typo in algos.rst, "containes" to "contains" (@SyllogismRXS)
 - Fix outdated source documentation for load_results
 - Add PPO_CPP project (@Antymon)
 - Add section on C++ portability of Tensorflow models (@Antymon)
 - Update custom env documentation to reflect new gym API for the `close()` method (@justinkterry)
 - Update custom env documentation to clarify what step and reset return (@justinkterry)
+- Add RL tips and tricks for doing RL experiments
+- Corrected lots of typos
+- Add spell check to documentation if available
+
 
 Release 2.8.0 (2019-09-29)
 --------------------------
@@ -391,7 +397,7 @@ Release 2.1.1 (2018-10-20)
 --------------------------
 
 - fixed MpiAdam synchronization issue in PPO1 (thanks to @brendenpetersen) issue #50
-- fixed dependency issues (new mujoco-py requires a mujoco licence + gym broke MultiDiscrete space shape)
+- fixed dependency issues (new mujoco-py requires a mujoco license + gym broke MultiDiscrete space shape)
 
 
 Release 2.1.0 (2018-10-2)
@@ -557,4 +563,4 @@ Thanks to @bjmuld @iambenzo @iandanforth @r7vme @brendenpetersen @huvar @abhiskk
 @EliasHasle @mrakgr @Bleyddyn @antoine-galataud @junhyeokahn @AdamGleave @keshaviyengar @tperol
 @XMaster96 @kantneel @Pastafarianist @GerardMaggiolino @PatrickWalter214 @yutingsz @sc420 @Aaahh @billtubbs
 @Miffyli @dwiel @miguelrass @qxcv @jaberkow @eavelardev @ruifeng96150 @pedrohbtp @srivatsankrishnan @evilsocket
-@MarvineGothic @jdossgollin @SyllogismRXS @rusu24edward @jbulow @Antymon @seheevic @justinkterry
+@MarvineGothic @jdossgollin @SyllogismRXS @rusu24edward @jbulow @Antymon @seheevic @justinkterry @edbeeching

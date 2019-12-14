@@ -16,6 +16,14 @@ import os
 import sys
 from unittest.mock import MagicMock
 
+# We CANNOT enable 'sphinxcontrib.spelling' because ReadTheDocs.org does not support
+# PyEnchant.
+try:
+    import sphinxcontrib.spelling
+    enable_spell_check = True
+except ImportError:
+    enable_spell_check = False
+
 # source code directory, relative to this file, for sphinx-autobuild
 sys.path.insert(0, os.path.abspath('..'))
 
@@ -68,6 +76,9 @@ extensions = [
     'sphinx.ext.ifconfig',
     'sphinx.ext.viewcode',
 ]
+
+if enable_spell_check:
+    extensions.append('sphinxcontrib.spelling')
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']

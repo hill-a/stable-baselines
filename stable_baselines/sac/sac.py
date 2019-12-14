@@ -176,7 +176,7 @@ class SAC(OffPolicyRLModel):
                     # Create the policy
                     # first return value corresponds to deterministic actions
                     # policy_out corresponds to stochastic actions, used for training
-                    # logp_pi is the log probabilty of actions taken by the policy
+                    # logp_pi is the log probability of actions taken by the policy
                     self.deterministic_action, policy_out, logp_pi = self.policy_tf.make_actor(self.processed_obs_ph)
                     # Monitor the entropy of the policy,
                     # this is not used for training
@@ -250,7 +250,7 @@ class SAC(OffPolicyRLModel):
                     policy_kl_loss = tf.reduce_mean(self.ent_coef * logp_pi - qf1_pi)
 
                     # NOTE: in the original implementation, they have an additional
-                    # regularization loss for the gaussian parameters
+                    # regularization loss for the Gaussian parameters
                     # this is not used for now
                     # policy_loss = (policy_kl_loss + policy_regularization_loss)
                     policy_loss = policy_kl_loss
@@ -510,7 +510,7 @@ class SAC(OffPolicyRLModel):
             raise ValueError("Error: SAC does not have action probabilities.")
 
         warnings.warn("Even though SAC has a Gaussian policy, it cannot return a distribution as it "
-                      "is squashed by a tanh before being scaled and ouputed.")
+                      "is squashed by a tanh before being scaled and outputed.")
 
         return None
 

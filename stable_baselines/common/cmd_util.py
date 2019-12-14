@@ -25,7 +25,7 @@ def make_vec_env(env_id, n_envs=1, seed=None, start_index=0,
 
     :param env_id: (str or Type[gym.Env]) the environment ID or the environment class
     :param n_envs: (int) the number of environments you wish to have in parallel
-    :param seed: (int) the inital seed for the random number generator
+    :param seed: (int) the initial seed for the random number generator
     :param start_index: (int) start rank index
     :param monitor_dir: (str) Path to a folder where the monitor files will be saved.
         If None, no file will be written, however, the env will still be wrapped
@@ -80,7 +80,7 @@ def make_atari_env(env_id, num_env, seed, wrapper_kwargs=None,
 
     :param env_id: (str) the environment ID
     :param num_env: (int) the number of environment you wish to have in subprocesses
-    :param seed: (int) the inital seed for RNG
+    :param seed: (int) the initial seed for RNG
     :param wrapper_kwargs: (dict) the parameters for wrap_deepmind function
     :param start_index: (int) start rank index
     :param allow_early_resets: (bool) allows early reset of the environment
@@ -116,7 +116,7 @@ def make_mujoco_env(env_id, seed, allow_early_resets=True):
     Create a wrapped, monitored gym.Env for MuJoCo.
 
     :param env_id: (str) the environment ID
-    :param seed: (int) the inital seed for RNG
+    :param seed: (int) the initial seed for RNG
     :param allow_early_resets: (bool) allows early reset of the environment
     :return: (Gym Environment) The mujoco environment
     """
@@ -132,7 +132,7 @@ def make_robotics_env(env_id, seed, rank=0, allow_early_resets=True):
     Create a wrapped, monitored gym.Env for MuJoCo.
 
     :param env_id: (str) the environment ID
-    :param seed: (int) the inital seed for RNG
+    :param seed: (int) the initial seed for RNG
     :param rank: (int) the rank of the environment (for logging)
     :param allow_early_resets: (bool) allows early reset of the environment
     :return: (Gym Environment) The robotic environment

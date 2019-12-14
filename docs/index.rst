@@ -39,6 +39,7 @@ This toolset is a fork of OpenAI Baselines, with a major structural refactoring,
 
    guide/install
    guide/quickstart
+   guide/rl_tips
    guide/rl
    guide/algos
    guide/examples

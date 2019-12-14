@@ -61,7 +61,7 @@ def flatten_arrays(arrs):
     flattens a list of arrays down to 1D
 
     :param arrs: ([np.ndarray]) arrays
-    :return: (np.ndarray) 1D flattend array
+    :return: (np.ndarray) 1D flattened array
     """
     return np.concatenate([arr.flat for arr in arrs])
 

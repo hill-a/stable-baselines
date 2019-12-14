@@ -38,7 +38,7 @@ class TD3(OffPolicyRLModel):
     :param policy_delay: (int) Policy and target networks will only be updated once every policy_delay steps
         per training steps. The Q values will be updated policy_delay more often (update every training step).
     :param action_noise: (ActionNoise) the action noise type. Cf DDPG for the different action noise type.
-    :param target_policy_noise: (float) Standard deviation of gaussian noise added to target policy
+    :param target_policy_noise: (float) Standard deviation of Gaussian noise added to target policy
         (smoothing noise)
     :param target_noise_clip: (float) Limit for absolute value of target policy smoothing noise.
     :param train_freq: (int) Update the model every `train_freq` steps.

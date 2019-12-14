@@ -101,7 +101,7 @@ class BasePolicy(ABC):
     :param reuse: (bool) If the policy is reusable or not
     :param scale: (bool) whether or not to scale the input
     :param obs_phs: (TensorFlow Tensor, TensorFlow Tensor) a tuple containing an override for observation placeholder
-        and the processed observation placeholder respectivly
+        and the processed observation placeholder respectively
     :param add_action_ph: (bool) whether or not to create an action placeholder
     """
 
@@ -171,9 +171,9 @@ class BasePolicy(ABC):
         # When using policy_kwargs parameter on model creation,
         # all keywords arguments must be consumed by the policy constructor except
         # the ones for the cnn_extractor network (cf nature_cnn()), where the keywords arguments
-        # are not passed explicitely (using **kwargs to forward the arguments)
+        # are not passed explicitly (using **kwargs to forward the arguments)
         # that's why there should be not kwargs left when using the mlp_extractor
-        # (in that case the keywords arguments are passed explicitely)
+        # (in that case the keywords arguments are passed explicitly)
         if feature_extraction == 'mlp' and len(kwargs) > 0:
             raise ValueError("Unknown keywords for policy: {}".format(kwargs))
 

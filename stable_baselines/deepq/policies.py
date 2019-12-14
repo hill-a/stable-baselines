@@ -19,7 +19,7 @@ class DQNPolicy(BasePolicy):
     :param reuse: (bool) If the policy is reusable or not
     :param scale: (bool) whether or not to scale the input
     :param obs_phs: (TensorFlow Tensor, TensorFlow Tensor) a tuple containing an override for observation placeholder
-        and the processed observation placeholder respectivly
+        and the processed observation placeholder respectively
     :param dueling: (bool) if true double the output MLP to compute a baseline for action scores
     """
 
@@ -81,7 +81,7 @@ class FeedForwardPolicy(DQNPolicy):
     :param cnn_extractor: (function (TensorFlow Tensor, ``**kwargs``): (TensorFlow Tensor)) the CNN feature extraction
     :param feature_extraction: (str) The feature extraction type ("cnn" or "mlp")
     :param obs_phs: (TensorFlow Tensor, TensorFlow Tensor) a tuple containing an override for observation placeholder
-        and the processed observation placeholder respectivly
+        and the processed observation placeholder respectively
     :param layer_norm: (bool) enable layer normalisation
     :param dueling: (bool) if true double the output MLP to compute a baseline for action scores
     :param act_fun: (tf.func) the activation function to use in the neural network.
@@ -164,7 +164,7 @@ class CnnPolicy(FeedForwardPolicy):
     :param n_batch: (int) The number of batch to run (n_envs * n_steps)
     :param reuse: (bool) If the policy is reusable or not
     :param obs_phs: (TensorFlow Tensor, TensorFlow Tensor) a tuple containing an override for observation placeholder
-        and the processed observation placeholder respectivly
+        and the processed observation placeholder respectively
     :param dueling: (bool) if true double the output MLP to compute a baseline for action scores
     :param _kwargs: (dict) Extra keyword arguments for the nature CNN feature extraction
     """
@@ -188,7 +188,7 @@ class LnCnnPolicy(FeedForwardPolicy):
     :param n_batch: (int) The number of batch to run (n_envs * n_steps)
     :param reuse: (bool) If the policy is reusable or not
     :param obs_phs: (TensorFlow Tensor, TensorFlow Tensor) a tuple containing an override for observation placeholder
-        and the processed observation placeholder respectivly
+        and the processed observation placeholder respectively
     :param dueling: (bool) if true double the output MLP to compute a baseline for action scores
     :param _kwargs: (dict) Extra keyword arguments for the nature CNN feature extraction
     """
@@ -212,7 +212,7 @@ class MlpPolicy(FeedForwardPolicy):
     :param n_batch: (int) The number of batch to run (n_envs * n_steps)
     :param reuse: (bool) If the policy is reusable or not
     :param obs_phs: (TensorFlow Tensor, TensorFlow Tensor) a tuple containing an override for observation placeholder
-        and the processed observation placeholder respectivly
+        and the processed observation placeholder respectively
     :param dueling: (bool) if true double the output MLP to compute a baseline for action scores
     :param _kwargs: (dict) Extra keyword arguments for the nature CNN feature extraction
     """
@@ -236,7 +236,7 @@ class LnMlpPolicy(FeedForwardPolicy):
     :param n_batch: (int) The number of batch to run (n_envs * n_steps)
     :param reuse: (bool) If the policy is reusable or not
     :param obs_phs: (TensorFlow Tensor, TensorFlow Tensor) a tuple containing an override for observation placeholder
-        and the processed observation placeholder respectivly
+        and the processed observation placeholder respectively
     :param dueling: (bool) if true double the output MLP to compute a baseline for action scores
     :param _kwargs: (dict) Extra keyword arguments for the nature CNN feature extraction
     """

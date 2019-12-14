@@ -15,7 +15,7 @@ def evaluate_policy(model, env, n_eval_episodes=10, deterministic=True,
         this must contain only one environment.
     :param n_eval_episodes: (int) Number of episode to evaluate the agent
     :param deterministic: (bool) Whether to use deterministic or stochastic actions
-    :param render: (bool) Whether to render the environement or not
+    :param render: (bool) Whether to render the environment or not
     :param callback: (callable) callback function to do additional checks,
         called after each step.
     :param reward_threshold: (float) Minimum expected reward per episode,

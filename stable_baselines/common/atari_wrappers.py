@@ -276,7 +276,7 @@ class LazyFrames(object):
 
 def make_atari(env_id):
     """
-    Create a wrapped atari envrionment
+    Create a wrapped atari Environment
 
     :param env_id: (str) the environment ID
     :return: (Gym Environment) the wrapped atari environment

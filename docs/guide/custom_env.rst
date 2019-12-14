@@ -54,7 +54,10 @@ Then you can define and train a RL agent with:
   model = A2C(CnnPolicy, env).learn(total_timesteps=1000)
 
 
-You can find a `complete guide online <https://github.com/openai/gym/blob/master/docs/creating-environments.md>`_
+We have created a `colab notebook <https://colab.research.google.com/github/araffin/rl-tutorial-jnrr19/blob/master/5_custom_gym_env.ipynb>`_ for
+a concrete example of creating a custom environment.
+
+You can also find a `complete guide online <https://github.com/openai/gym/blob/master/docs/creating-environments.md>`_
 on creating a custom Gym environment.
 
 

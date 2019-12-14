@@ -55,7 +55,7 @@ class ActionNoise(object):
 
 class NormalActionNoise(ActionNoise):
     """
-    A gaussian action noise
+    A Gaussian action noise
 
     :param mean: (float) the mean value of the noise
     :param sigma: (float) the scale of the noise (std here)
@@ -73,7 +73,7 @@ class NormalActionNoise(ActionNoise):
 
 class OrnsteinUhlenbeckActionNoise(ActionNoise):
     """
-    A Ornstein Uhlenbeck action noise, this is designed to aproximate brownian motion with friction.
+    A Ornstein Uhlenbeck action noise, this is designed to approximate brownian motion with friction.
 
     Based on http://math.stackexchange.com/questions/1287634/implementing-ornstein-uhlenbeck-in-matlab
 

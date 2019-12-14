@@ -7,6 +7,8 @@ Try it online with Colab Notebooks!
 All the following examples can be executed online using Google colab |colab|
 notebooks:
 
+-  `Full Tutorial <https://github.com/araffin/rl-tutorial-jnrr19>`_
+-  `All Notebooks <https://github.com/Stable-Baselines-Team/rl-colab-notebooks>`_
 -  `Getting Started`_
 -  `Training, Saving, Loading`_
 -  `Multiprocessing`_
@@ -16,14 +18,14 @@ notebooks:
 -  `Hindsight Experience Replay`_
 -  `RL Baselines zoo`_
 
-.. _Getting Started: https://colab.research.google.com/drive/1_1H5bjWKYBVKbbs-Kj83dsfuZieDNcFU
-.. _Training, Saving, Loading: https://colab.research.google.com/drive/16QritJF5kgT3mtnODepld1fo5tFnFCoc
-.. _Multiprocessing: https://colab.research.google.com/drive/1ZzNFMUUi923foaVsYb4YjPy4mjKtnOxb
-.. _Monitor Training and Plotting: https://colab.research.google.com/drive/1L_IMo6v0a0ALK8nefZm6PqPSy0vZIWBT
-.. _Atari Games: https://colab.research.google.com/drive/1iYK11yDzOOqnrXi1Sfjm1iekZr4cxLaN
-.. _Breakout: https://colab.research.google.com/drive/14NwwEHwN4hdNgGzzySjxQhEVDff-zr7O
-.. _Hindsight Experience Replay: https://colab.research.google.com/drive/1VDD0uLi8wjUXIqAdLKiK15XaEe0z2FOc
-.. _RL Baselines zoo: https://colab.research.google.com/drive/1cPGK3XrCqEs3QLqiijsfib9OFht3kObX
+.. _Getting Started: https://colab.research.google.com/github/Stable-Baselines-Team/rl-colab-notebooks/blob/master/stable_baselines_getting_started.ipynb
+.. _Training, Saving, Loading: https://colab.research.google.com/github/Stable-Baselines-Team/rl-colab-notebooks/blob/master/saving_loading_dqn.ipynb
+.. _Multiprocessing: https://colab.research.google.com/github/Stable-Baselines-Team/rl-colab-notebooks/blob/master/multiprocessing_rl.ipynb
+.. _Monitor Training and Plotting: https://colab.research.google.com/github/Stable-Baselines-Team/rl-colab-notebooks/blob/master/monitor_training.ipynb
+.. _Atari Games: https://colab.research.google.com/github/Stable-Baselines-Team/rl-colab-notebooks/blob/master/atari_games.ipynb
+.. _Breakout: https://colab.research.google.com/github/Stable-Baselines-Team/rl-colab-notebooks/blob/master/breakout.ipynb
+.. _Hindsight Experience Replay: https://colab.research.google.com/github/Stable-Baselines-Team/rl-colab-notebooks/blob/master/stable_baselines_her.ipynb
+.. _RL Baselines zoo: https://colab.research.google.com/github/Stable-Baselines-Team/rl-colab-notebooks/blob/master/rl-baselines-zoo.ipynb
 
 .. |colab| image:: ../_static/img/colab.svg
 
@@ -34,7 +36,7 @@ In the following example, we will train, save and load a DQN model on the Lunar 
 
 .. image:: ../_static/img/try_it.png
    :scale: 30 %
-   :target: https://colab.research.google.com/drive/16QritJF5kgT3mtnODepld1fo5tFnFCoc
+   :target: https://colab.research.google.com/github/Stable-Baselines-Team/rl-colab-notebooks/blob/master/saving_loading_dqn.ipynb
 
 
 .. figure:: https://cdn-images-1.medium.com/max/960/1*f4VZPKOI0PYNWiwt0la0Rg.gif
@@ -89,7 +91,7 @@ Multiprocessing: Unleashing the Power of Vectorized Environments
 
 .. image:: ../_static/img/try_it.png
    :scale: 30 %
-   :target: https://colab.research.google.com/drive/1ZzNFMUUi923foaVsYb4YjPy4mjKtnOxb
+   :target: https://colab.research.google.com/github/Stable-Baselines-Team/rl-colab-notebooks/blob/master/multiprocessing_rl.ipynb
 
 .. figure:: https://cdn-images-1.medium.com/max/960/1*h4WTQNVIsvMXJTCpXm_TAw.gif
 
@@ -153,7 +155,7 @@ If your callback returns False, training is aborted early.
 
 .. image:: ../_static/img/try_it.png
    :scale: 30 %
-   :target: https://colab.research.google.com/drive/1L_IMo6v0a0ALK8nefZm6PqPSy0vZIWBT
+   :target: https://colab.research.google.com/github/Stable-Baselines-Team/rl-colab-notebooks/blob/master/monitor_training.ipynb
 
 .. figure:: ../_static/img/learning_curve.png
 
@@ -240,7 +242,7 @@ and multiprocessing for you.
 
 .. image:: ../_static/img/try_it.png
    :scale: 30 %
-   :target: https://colab.research.google.com/drive/1iYK11yDzOOqnrXi1Sfjm1iekZr4cxLaN
+   :target: https://colab.research.google.com/github/Stable-Baselines-Team/rl-colab-notebooks/blob/master/atari_games.ipynb
 
 
 .. code-block:: python
@@ -457,7 +459,7 @@ For this example, we are using `Highway-Env <https://github.com/eleurent/highway
 
 .. image:: ../_static/img/try_it.png
    :scale: 30 %
-   :target: https://colab.research.google.com/drive/1VDD0uLi8wjUXIqAdLKiK15XaEe0z2FOc
+   :target: https://colab.research.google.com/github/Stable-Baselines-Team/rl-colab-notebooks/blob/master/stable_baselines_her.ipynb
 
 
 .. figure:: https://raw.githubusercontent.com/eleurent/highway-env/gh-media/docs/media/parking-env.gif

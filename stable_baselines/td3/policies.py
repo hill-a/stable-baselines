@@ -33,7 +33,7 @@ class TD3Policy(BasePolicy):
         Creates an actor object
 
         :param obs: (TensorFlow Tensor) The observation placeholder (can be None for default placeholder)
-        :param reuse: (bool) whether or not to resue parameters
+        :param reuse: (bool) whether or not to reuse parameters
         :param scope: (str) the scope name of the actor
         :return: (TensorFlow Tensor) the output tensor
         """
@@ -46,7 +46,7 @@ class TD3Policy(BasePolicy):
 
         :param obs: (TensorFlow Tensor) The observation placeholder (can be None for default placeholder)
         :param action: (TensorFlow Tensor) The action placeholder
-        :param reuse: (bool) whether or not to resue parameters
+        :param reuse: (bool) whether or not to reuse parameters
         :param scope: (str) the scope name
         :return: ([tf.Tensor]) Mean, action and log probability
         """

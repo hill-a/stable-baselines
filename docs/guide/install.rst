@@ -169,7 +169,7 @@ Explanation of the docker command:
 -  ``--ipc=host`` Use the host system’s IPC namespace. IPC (POSIX/SysV IPC) namespace provides
    separation of named shared memory segments, semaphores and message
    queues.
--  ``--name test`` give explicitely the name ``test`` to the container,
+-  ``--name test`` give explicitly the name ``test`` to the container,
    otherwise it will be assigned a random name
 -  ``--mount src=...`` give access of the local directory (``pwd``
    command) to the container (it will be map to ``/root/code/stable-baselines``), so

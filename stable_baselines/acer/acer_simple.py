@@ -75,7 +75,7 @@ class ACER(ActorCriticRLModel):
             Use `n_cpu_tf_sess` instead.
 
     :param q_coef: (float) The weight for the loss on the Q value
-    :param ent_coef: (float) The weight for the entropic loss
+    :param ent_coef: (float) The weight for the entropy loss
     :param max_grad_norm: (float) The clipping value for the maximum gradient
     :param learning_rate: (float) The initial learning rate for the RMS prop optimizer
     :param lr_schedule: (str) The type of scheduler for the learning rate update ('linear', 'constant',
@@ -390,13 +390,13 @@ class ACER(ActorCriticRLModel):
                     tf.summary.scalar('rewards', tf.reduce_mean(self.reward_ph))
                     tf.summary.scalar('learning_rate', tf.reduce_mean(self.learning_rate))
                     tf.summary.scalar('advantage', tf.reduce_mean(adv))
-                    tf.summary.scalar('action_probabilty', tf.reduce_mean(self.mu_ph))
+                    tf.summary.scalar('action_probability', tf.reduce_mean(self.mu_ph))
 
                     if self.full_tensorboard_log:
                         tf.summary.histogram('rewards', self.reward_ph)
                         tf.summary.histogram('learning_rate', self.learning_rate)
                         tf.summary.histogram('advantage', adv)
-                        tf.summary.histogram('action_probabilty', self.mu_ph)
+                        tf.summary.histogram('action_probability', self.mu_ph)
                         if tf_util.is_image(self.observation_space):
                             tf.summary.image('observation', train_model.obs_ph)
                         else:

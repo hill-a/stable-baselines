@@ -99,7 +99,7 @@ with a budget of 1000 trials and a maximum of 50000 steps:
 Colab Notebook: Try it Online!
 ------------------------------
 
-You can train agents online using Google `colab notebook <https://colab.research.google.com/drive/1cPGK3XrCqEs3QLqiijsfib9OFht3kObX>`_.
+You can train agents online using Google `colab notebook <https://colab.research.google.com/github/Stable-Baselines-Team/rl-colab-notebooks/blob/master/rl-baselines-zoo.ipynb>`_.
 
 
 .. note::

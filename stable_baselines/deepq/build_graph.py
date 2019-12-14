@@ -134,7 +134,7 @@ def build_act(q_func, ob_space, ac_space, stochastic_ph, update_eps_ph, sess):
     :param sess: (TensorFlow session) The current TensorFlow session
     :return: (function (TensorFlow Tensor, bool, float): TensorFlow Tensor, (TensorFlow Tensor, TensorFlow Tensor)
         act function to select and action given observation (See the top of the file for details),
-        A tuple containing the observation placeholder and the processed observation placeholder respectivly.
+        A tuple containing the observation placeholder and the processed observation placeholder respectively.
     """
     eps = tf.get_variable("eps", (), initializer=tf.constant_initializer(0))
 
@@ -177,7 +177,7 @@ def build_act_with_param_noise(q_func, ob_space, ac_space, stochastic_ph, update
         is used by default.
     :return: (function (TensorFlow Tensor, bool, float): TensorFlow Tensor, (TensorFlow Tensor, TensorFlow Tensor)
         act function to select and action given observation (See the top of the file for details),
-        A tuple containing the observation placeholder and the processed observation placeholder respectivly.
+        A tuple containing the observation placeholder and the processed observation placeholder respectively.
     """
     if param_noise_filter_func is None:
         param_noise_filter_func = default_param_noise_filter

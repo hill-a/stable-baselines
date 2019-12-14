@@ -25,7 +25,7 @@ class KfacOptimizer:
         :param clip_kl: (float) gradient clipping for Kullback-Leibler
         :param kfac_update: (int) update kfac after kfac_update steps
         :param stats_accum_iter: (int) how may steps to accumulate stats
-        :param full_stats_init: (bool) whether or not to fully initalize stats
+        :param full_stats_init: (bool) whether or not to fully initialize stats
         :param cold_iter: (int) Cold start learning rate for how many steps
         :param cold_lr: (float) Cold start learning rate
         :param async_eigen_decomp: (bool) Use async eigen decomposition

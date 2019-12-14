@@ -17,7 +17,7 @@ class ProbabilityDistribution(object):
         """
         Return the direct probabilities
 
-        :return: ([float]) the probabilites
+        :return: ([float]) the probabilities
         """
         raise NotImplementedError
 
@@ -41,7 +41,7 @@ class ProbabilityDistribution(object):
 
     def kl(self, other):
         """
-        Calculates the Kullback-Leibler divergence from the given probabilty distribution
+        Calculates the Kullback-Leibler divergence from the given probability distribution
 
         :param other: ([float]) the distribution to compare with
         :return: (float) the KL divergence of the two distributions
@@ -50,7 +50,7 @@ class ProbabilityDistribution(object):
 
     def entropy(self):
         """
-        Returns shannon's entropy of the probability
+        Returns Shannon's entropy of the probability
 
         :return: (float) the entropy
         """
@@ -58,7 +58,7 @@ class ProbabilityDistribution(object):
 
     def sample(self):
         """
-        returns a sample from the probabilty distribution
+        returns a sample from the probability distribution
 
         :return: (Tensorflow Tensor) the stochastic action
         """
@@ -103,8 +103,8 @@ class ProbabilityDistributionType(object):
 
         :param pi_latent_vector: ([float]) the latent pi values
         :param vf_latent_vector: ([float]) the latent vf values
-        :param init_scale: (float) the inital scale of the distribution
-        :param init_bias: (float) the inital bias of the distribution
+        :param init_scale: (float) the initial scale of the distribution
+        :param init_bias: (float) the initial bias of the distribution
         :return: (ProbabilityDistribution) the instance of the ProbabilityDistribution associated
         """
         raise NotImplementedError
@@ -217,7 +217,7 @@ class MultiCategoricalProbabilityDistributionType(ProbabilityDistributionType):
 class DiagGaussianProbabilityDistributionType(ProbabilityDistributionType):
     def __init__(self, size):
         """
-        The probability distribution type for multivariate gaussian input
+        The probability distribution type for multivariate Gaussian input
 
         :param size: (int) the number of dimensions of the multivariate gaussian
         """
@@ -255,9 +255,9 @@ class DiagGaussianProbabilityDistributionType(ProbabilityDistributionType):
 class BernoulliProbabilityDistributionType(ProbabilityDistributionType):
     def __init__(self, size):
         """
-        The probability distribution type for bernoulli input
+        The probability distribution type for Bernoulli input
 
-        :param size: (int) the number of dimensions of the bernoulli distribution
+        :param size: (int) the number of dimensions of the Bernoulli distribution
         """
         self.size = size
 
@@ -381,9 +381,9 @@ class MultiCategoricalProbabilityDistribution(ProbabilityDistribution):
 class DiagGaussianProbabilityDistribution(ProbabilityDistribution):
     def __init__(self, flat):
         """
-        Probability distributions from multivariate gaussian input
+        Probability distributions from multivariate Gaussian input
 
-        :param flat: ([float]) the multivariate gaussian input data
+        :param flat: ([float]) the multivariate Gaussian input data
         """
         self.flat = flat
         mean, logstd = tf.split(axis=len(flat.shape) - 1, num_or_size_splits=2, value=flat)
@@ -421,10 +421,10 @@ class DiagGaussianProbabilityDistribution(ProbabilityDistribution):
     @classmethod
     def fromflat(cls, flat):
         """
-        Create an instance of this from new multivariate gaussian input
+        Create an instance of this from new multivariate Gaussian input
 
-        :param flat: ([float]) the multivariate gaussian input data
-        :return: (ProbabilityDistribution) the instance from the given multivariate gaussian input data
+        :param flat: ([float]) the multivariate Gaussian input data
+        :return: (ProbabilityDistribution) the instance from the given multivariate Gaussian input data
         """
         return cls(flat)
 
@@ -432,9 +432,9 @@ class DiagGaussianProbabilityDistribution(ProbabilityDistribution):
 class BernoulliProbabilityDistribution(ProbabilityDistribution):
     def __init__(self, logits):
         """
-        Probability distributions from bernoulli input
+        Probability distributions from Bernoulli input
 
-        :param logits: ([float]) the bernoulli input data
+        :param logits: ([float]) the Bernoulli input data
         """
         self.logits = logits
         self.probabilities = tf.sigmoid(logits)
@@ -468,10 +468,10 @@ class BernoulliProbabilityDistribution(ProbabilityDistribution):
     @classmethod
     def fromflat(cls, flat):
         """
-        Create an instance of this from new bernoulli input
+        Create an instance of this from new Bernoulli input
 
-        :param flat: ([float]) the bernoulli input data
-        :return: (ProbabilityDistribution) the instance from the given bernoulli input data
+        :param flat: ([float]) the Bernoulli input data
+        :return: (ProbabilityDistribution) the instance from the given Bernoulli input data
         """
         return cls(flat)
 
@@ -481,7 +481,7 @@ def make_proba_dist_type(ac_space):
     return an instance of ProbabilityDistributionType for the correct type of action space
 
     :param ac_space: (Gym Space) the input action space
-    :return: (ProbabilityDistributionType) the approriate instance of a ProbabilityDistributionType
+    :return: (ProbabilityDistributionType) the appropriate instance of a ProbabilityDistributionType
     """
     if isinstance(ac_space, spaces.Box):
         assert len(ac_space.shape) == 1, "Error: the action space must be a vector"

@@ -30,7 +30,7 @@ class ACKTR(ActorCriticRLModel):
             Use `n_cpu_tf_sess` instead.
 
     :param n_steps: (int) The number of steps to run for each environment
-    :param ent_coef: (float) The weight for the entropic loss
+    :param ent_coef: (float) The weight for the entropy loss
     :param vf_coef: (float) The weight for the loss on the value function
     :param vf_fisher_coef: (float) The weight for the fisher loss on the value function
     :param learning_rate: (float) The initial learning rate for the RMS prop optimizer

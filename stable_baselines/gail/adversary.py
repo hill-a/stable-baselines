@@ -26,7 +26,7 @@ def logit_bernoulli_entropy(logits):
     https://github.com/openai/imitation/blob/99fbccf3e060b6e6c739bdf209758620fcdefd3c/policyopt/thutil.py#L48-L51
 
     :param logits: (tf.Tensor) the logits
-    :return: (tf.Tensor) the bernoulli entropy
+    :return: (tf.Tensor) the Bernoulli entropy
     """
     ent = (1. - tf.nn.sigmoid(logits)) * logits - logsigmoid(logits)
     return ent
