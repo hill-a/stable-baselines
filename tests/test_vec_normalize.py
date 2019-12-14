@@ -76,6 +76,42 @@ def test_vec_env(tmpdir):
     check_vec_norm_equal(norm_venv, deserialized)
 
 
+def _make_stepped_cartpole():
+    venv = DummyVecEnv([lambda: gym.make("CartPole-v1")])
+    venv = VecNormalize(venv)
+    venv.reset()
+    venv.get_original_obs()
+
+    for _ in range(100):
+        acts = [venv.action_space.sample()]
+        venv.step(acts)
+    return venv
+
+
+def test_get_original():
+    venv = _make_stepped_cartpole()
+    acts = [venv.action_space.sample()]
+    obs, rews, _, _ = venv.step(acts)
+    orig_obs = venv.get_original_obs()
+    orig_rews = venv.get_original_reward()
+    assert not np.array_equal(orig_obs, obs)
+    assert not np.array_equal(orig_rews, rews)
+    assert np.all(orig_rews[0] == 1)
+
+def test_normalize_external():
+    venv = _make_stepped_cartpole()
+
+    # Cartpole always returns reward=1, de-meaning should give us 0
+    rews = np.array([1, 1])
+    norm_rews = venv.normalize_reward(rews)
+    assert np.testing.assert_allclose(norm_rews, [0, 0])
+
+    # Don't have any guarantees on obs normalization, except shape really.
+    obs = np.array([0, 0, 0, 0])
+    norm_obs = venv.normalize_obs(obs)
+    assert obs.shape == norm_obs.shape
+
+
 def test_mpi_runningmeanstd():
     """Test RunningMeanStd object for MPI"""
     return_code = subprocess.call(['mpirun', '--allow-run-as-root', '-np', '2',

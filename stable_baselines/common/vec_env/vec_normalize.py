@@ -99,7 +99,7 @@ class VecNormalize(VecEnvWrapper):
 
         if self.norm_reward:
             if self.training:
-                self.ret_rms.update(self.ret)
+                self._update_reward(rews)
             rews = self.normalize_reward(rews)
         self.ret[news] = 0
         return obs, rews, news, infos
