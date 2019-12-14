@@ -76,7 +76,7 @@ def test_vec_env(tmpdir):
     check_vec_norm_equal(norm_venv, deserialized)
 
 
-def _make_stepped_cartpole():
+def _make_warmstart_cartpole():
     """Warm-start VecNormalize by stepping through CartPole"""
     venv = DummyVecEnv([lambda: gym.make("CartPole-v1")])
     venv = VecNormalize(venv)
@@ -90,22 +90,26 @@ def _make_stepped_cartpole():
 
 
 def test_get_original():
-    venv = _make_stepped_cartpole()
-    acts = [venv.action_space.sample()]
-    obs, rews, _, _ = venv.step(acts)
-    obs = obs[0]
-    orig_obs = venv.get_original_obs()[0]
-    rews = rews[0]
-    orig_rews = venv.get_original_reward()[0]
-    assert np.all(orig_rews == 1)
-    assert orig_obs.shape == obs.shape
-    assert not np.array_equal(orig_obs, obs)
-    assert not np.array_equal(orig_rews, rews)
-    np.testing.assert_allclose(venv.normalize_obs(orig_obs), obs)
-    np.testing.assert_allclose(venv.normalize_reward(orig_rews), rews)
+    venv = _make_warmstart_cartpole()
+    for _ in range(3):
+        acts = [venv.action_space.sample()]
+        obs, rews, _, _ = venv.step(acts)
+        obs = obs[0]
+        orig_obs = venv.get_original_obs()[0]
+        rews = rews[0]
+        orig_rews = venv.get_original_reward()[0]
+
+        assert np.all(orig_rews == 1)
+        assert orig_obs.shape == obs.shape
+        assert orig_rews.dtype == rews.dtype
+        assert not np.array_equal(orig_obs, obs)
+        assert not np.array_equal(orig_rews, rews)
+        np.testing.assert_allclose(venv.normalize_obs(orig_obs), obs)
+        np.testing.assert_allclose(venv.normalize_reward(orig_rews), rews)
+
 
 def test_normalize_external():
-    venv = _make_stepped_cartpole()
+    venv = _make_warmstart_cartpole()
 
     rews = np.array([1, 1])
     norm_rews = venv.normalize_reward(rews)
