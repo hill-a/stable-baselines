@@ -101,3 +101,8 @@ Piecewise
 csv
 nvidia
 visdom
+tensorboard
+preprocessed
+namespace
+sklearn
+GoalEnv

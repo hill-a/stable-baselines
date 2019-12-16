@@ -171,7 +171,18 @@ Some basic advice:
 - debug with random actions to check that your environment works and follows the gym interface:
 
 
-Here is a code snippet to check that your environment runs without error.
+We provide a helper to check that your environment runs without error:
+
+.. code-block:: python
+
+	from stable_baselines.common.env_checker import check_env
+
+	env = CustomEnv(arg1, ...)
+	# It will check your custom environment and output additional warnings if needed
+	check_env(env)
+
+
+If you want to quickly try a random agent on your environment, you can also do:
 
 .. code-block:: python
 

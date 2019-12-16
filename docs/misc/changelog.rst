@@ -36,6 +36,7 @@ New Features:
 - Add type checking and PEP 561 compliance.
   Note: most functions are still not annotated, this will be a gradual process.
 - DDPG, TD3 and SAC accept non-symmetric action spaces. (@Antymon)
+- Add `check_env` util to check if a custom environment follows the gym interface (@araffin and @justinkterry)
 
 Bug Fixes:
 ^^^^^^^^^^

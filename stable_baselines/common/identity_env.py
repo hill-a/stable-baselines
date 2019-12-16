@@ -5,7 +5,7 @@ from gym.spaces import Discrete, MultiDiscrete, MultiBinary, Box
 
 
 class IdentityEnv(Env):
-    def __init__(self, dim, ep_length=100):
+    def __init__(self, dim=1, ep_length=100):
         """
         Identity environment for testing purposes
 

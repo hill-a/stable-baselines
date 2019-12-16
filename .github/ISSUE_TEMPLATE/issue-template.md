@@ -10,6 +10,16 @@ If you have any questions, feel free to create an issue with the tag [question].
 If you wish to suggest an enhancement or feature request, add the tag [feature request].  
 If you are submitting a bug report, please fill in the following details.
 
+If your issue is related to a custom gym environment, please check it first using:
+
+```python
+from stable_baselines.common.env_checker import check_env
+
+env = CustomEnv(arg1, ...)
+# It will check your custom environment and output additional warnings if needed
+check_env(env)
+```
+
 **Describe the bug**
 A clear and concise description of what the bug is.
 

@@ -48,10 +48,22 @@ Then you can define and train a RL agent with:
 
 .. code-block:: python
 
-  # Instantiate and wrap the env
-  env = DummyVecEnv([lambda: CustomEnv(arg1, ...)])
+  # Instantiate the env
+  env = CustomEnv(arg1, ...)
   # Define and Train the agent
-  model = A2C(CnnPolicy, env).learn(total_timesteps=1000)
+  model = A2C('CnnPolicy', env).learn(total_timesteps=1000)
+
+
+To check that your environment follows the gym interface, please use:
+
+.. code-block:: python
+
+	from stable_baselines.common.env_checker import check_env
+
+	env = CustomEnv(arg1, ...)
+	# It will check your custom environment and output additional warnings if needed
+	check_env(env)
+
 
 
 We have created a `colab notebook <https://colab.research.google.com/github/araffin/rl-tutorial-jnrr19/blob/master/5_custom_gym_env.ipynb>`_ for
