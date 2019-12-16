@@ -105,7 +105,7 @@ class VecNormalize(VecEnvWrapper):
         return obs, rews, news, infos
 
     def _update_reward(self, rews: np.ndarray) -> None:
-        """Update reward normalizing statistics."""
+        """Update reward normalization statistics."""
         self.ret = self.ret * self.gamma + rews
         self.ret_rms.update(self.ret)
 
