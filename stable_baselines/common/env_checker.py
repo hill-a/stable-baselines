@@ -16,7 +16,7 @@ def _enforce_array_obs(observation_space: spaces.Space) -> bool:
     return not isinstance(observation_space, (spaces.Dict, spaces.Tuple))
 
 
-def _check_image_input(observation_space: spaces.Box):
+def _check_image_input(observation_space: spaces.Box) -> None:
     """
     Check that the input will be compatible with Stable-Baselines
     when the observation is apparently an image.
@@ -29,7 +29,7 @@ def _check_image_input(observation_space: spaces.Box):
 
     if np.any(observation_space.low != 0) or np.any(observation_space.high != 255):
         warnings.warn("It seems that your observation space is an image but the "
-                      "high and lower bounds are not in [0, 255]. "
+                      "upper and lower bounds are not in [0, 255]. "
                       "Because the CNN policy normalize automatically the observation "
                       "you may encounter issue if the values are not in that range."
                       )
@@ -40,7 +40,7 @@ def _check_image_input(observation_space: spaces.Box):
                       "cf https://stable-baselines.readthedocs.io/en/master/guide/custom_policy.html")
 
 
-def _check_unsupported_obs_spaces(env: gym.Env, observation_space: spaces.Space):
+def _check_unsupported_obs_spaces(env: gym.Env, observation_space: spaces.Space) -> None:
     """Emit warnings when the observation space used is not supported by Stable-Baselines."""
 
     if isinstance(observation_space, spaces.Dict) and not isinstance(env, gym.GoalEnv):
@@ -59,7 +59,7 @@ def _check_unsupported_obs_spaces(env: gym.Env, observation_space: spaces.Space)
                       )
 
 
-def _check_nan(env: gym.Env):
+def _check_nan(env: gym.Env) -> None:
     """Check for Inf and NaN using the VecWrapper."""
     vec_env = VecCheckNan(DummyVecEnv([lambda: env]))
     for _ in range(10):
@@ -69,7 +69,7 @@ def _check_nan(env: gym.Env):
 
 def _check_obs(obs: Union[tuple, dict, np.ndarray, int],
                observation_space: spaces.Space,
-               method_name: str):
+               method_name: str) -> None:
     """
     Check that the observation returned by the environment
     correspond to the declared one.
@@ -89,7 +89,7 @@ def _check_obs(obs: Union[tuple, dict, np.ndarray, int],
                                              "method does not match the given observation space".format(method_name))
 
 
-def _check_returned_values(env: gym.Env, observation_space: spaces.Space, action_space: spaces.Space):
+def _check_returned_values(env: gym.Env, observation_space: spaces.Space, action_space: spaces.Space) -> None:
     """
     Check the returned values by the env when calling `.reset()` or `.step()` methods.
     """
@@ -115,11 +115,11 @@ def _check_returned_values(env: gym.Env, observation_space: spaces.Space, action
     assert isinstance(info, dict), "The `info` returned by `step()` must be a python dictionary"
 
     if isinstance(env, gym.GoalEnv):
-        # For a GoalEnv, the keys are check at reset
+        # For a GoalEnv, the keys are checked at reset
         assert reward == env.compute_reward(obs['achieved_goal'], obs['desired_goal'], info)
 
 
-def _check_spaces(env: gym.Env):
+def _check_spaces(env: gym.Env) -> None:
     """
     Check that the observation and action spaces are defined
     and inherit from gym.spaces.Space.
@@ -135,7 +135,7 @@ def _check_spaces(env: gym.Env):
     assert isinstance(env.action_space, spaces.Space), "The action space must inherit from gym.spaces" + gym_spaces
 
 
-def _check_render(env: gym.Env, warn=True, headless=False):
+def _check_render(env: gym.Env, warn=True, headless=False) -> None:
     """
     Check the declared render modes and the `render()`/`close()`
     method of the environment.
@@ -163,7 +163,7 @@ def _check_render(env: gym.Env, warn=True, headless=False):
         env.close()
 
 
-def check_env(env: gym.Env, warn=True, skip_render_check=True):
+def check_env(env: gym.Env, warn=True, skip_render_check=True) -> None:
     """
     Check that an environment follows Gym API.
     This is particularly useful when using a custom environment.
@@ -184,7 +184,7 @@ def check_env(env: gym.Env, warn=True, skip_render_check=True):
     # ============= Check the spaces (observation and action) ================
     _check_spaces(env)
 
-    # Define aliases for convenienve
+    # Define aliases for convenience
     observation_space = env.observation_space
     action_space = env.action_space
 
