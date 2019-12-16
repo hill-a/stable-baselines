@@ -53,8 +53,10 @@ def test_non_default_spaces(new_obs_space):
     env.observation_space = new_obs_space
     # Patch methods to avoid errors
     env.reset = new_obs_space.sample
+
     def patched_step(_action):
         return new_obs_space.sample(), 0.0, False, {}
+
     env.step = patched_step
     with pytest.warns(UserWarning):
         check_env(env)
@@ -66,8 +68,10 @@ def check_reset_assert_error(env, new_reset_return):
     :param env: (gym.Env)
     :param new_reset_return: (Any)
     """
+
     def wrong_reset():
         return new_reset_return
+
     # Patch the reset method with a wrong one
     env.reset = wrong_reset
     with pytest.raises(AssertionError):
@@ -94,8 +98,10 @@ def check_step_assert_error(env, new_step_return=()):
     :param env: (gym.Env)
     :param new_step_return: (tuple)
     """
+
     def wrong_step(_action):
         return new_step_return
+
     # Patch the step method with a wrong one
     env.step = wrong_step
     with pytest.raises(AssertionError):

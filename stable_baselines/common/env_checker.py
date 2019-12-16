@@ -16,7 +16,7 @@ def _enforce_array_obs(observation_space: spaces.Space) -> bool:
     return not isinstance(observation_space, (spaces.Dict, spaces.Tuple))
 
 
-def _check_image_input(observation_space: spaces.Space):
+def _check_image_input(observation_space: spaces.Box):
     """
     Check that the input will be compatible with Stable-Baselines
     when the observation is apparently an image.
@@ -32,7 +32,7 @@ def _check_image_input(observation_space: spaces.Space):
                       "high and lower bounds are not in [0, 255]. "
                       "Because the CNN policy normalize automatically the observation "
                       "you may encounter issue if the values are not in that range."
-                    )
+                      )
 
     if observation_space.shape[0] < 36 or observation_space.shape[1] < 36:
         warnings.warn("The minimal resolution for an image is 36x36 for the default CnnPolicy. "
@@ -47,15 +47,16 @@ def _check_unsupported_obs_spaces(env: gym.Env, observation_space: spaces.Space)
         warnings.warn("The observation space is a Dict but the environment is not a gym.GoalEnv "
                       "(cf https://github.com/openai/gym/blob/master/gym/core.py), "
                       "this is currently not supported by Stable Baselines "
-                      "(cf https://github.com/hill-a/stable-baselines/issues/133), you will need to use a custom policy. "
-                    )
+                      "(cf https://github.com/hill-a/stable-baselines/issues/133), "
+                      "you will need to use a custom policy. "
+                      )
 
     if isinstance(observation_space, spaces.Tuple):
         warnings.warn("The observation space is a Tuple,"
                       "this is currently not supported by Stable Baselines "
                       "(cf https://github.com/hill-a/stable-baselines/issues/133), "
                       "you will need to flatten the observation and maybe use a custom policy. "
-                    )
+                      )
 
 
 def _check_nan(env: gym.Env):
@@ -73,17 +74,19 @@ def _check_obs(obs: Union[tuple, dict, np.ndarray, int],
     Check that the observation returned by the environment
     correspond to the declared one.
     """
-    # Check for the reset method only: the step method return a tuple of 4 elements
-    if not isinstance(observation_space, spaces.Tuple) and method_name == 'reset':
-        assert not isinstance(obs, tuple), "The `{}()` method should only return one value, not a tuple".format(method_name)
+    if not isinstance(observation_space, spaces.Tuple):
+        assert not isinstance(obs, tuple), ("The observation returned by the `{}()` "
+                                            "method should be a single value, not a tuple".format(method_name))
 
     # The check for a GoalEnv is done by the base class
     if isinstance(observation_space, spaces.Discrete):
         assert isinstance(obs, int), "The observation returned by `{}()` method must be an int".format(method_name)
     elif _enforce_array_obs(observation_space):
-        assert isinstance(obs, np.ndarray), "The observation returned by `{}()` method must be a numpy array".format(method_name)
+        assert isinstance(obs, np.ndarray), ("The observation returned by `{}()` "
+                                             "method must be a numpy array".format(method_name))
 
-    assert observation_space.contains(obs), "The observation returned by the `{}()` method does not match the given observation space".format(method_name)
+    assert observation_space.contains(obs), ("The observation returned by the `{}()` "
+                                             "method does not match the given observation space".format(method_name))
 
 
 def _check_returned_values(env: gym.Env, observation_space: spaces.Space, action_space: spaces.Space):
@@ -127,8 +130,8 @@ def _check_spaces(env: gym.Env):
     assert hasattr(env, 'observation_space'), "You must specify an observation space (cf gym.spaces)" + gym_spaces
     assert hasattr(env, 'action_space'), "You must specify an action space (cf gym.spaces)" + gym_spaces
 
-
-    assert isinstance(env.observation_space, spaces.Space), "The observation space must inherit from gym.spaces" + gym_spaces
+    assert isinstance(env.observation_space,
+                      spaces.Space), "The observation space must inherit from gym.spaces" + gym_spaces
     assert isinstance(env.action_space, spaces.Space), "The action space must inherit from gym.spaces" + gym_spaces
 
 
@@ -201,8 +204,9 @@ def check_env(env: gym.Env, warn=True, skip_render_check=True):
                           "to have only a 1D vector")
 
         # Check for the action space, it may lead to hard-to-debug issues
-        if isinstance(action_space, spaces.Box) and \
-            (np.abs(action_space.low) != np.abs(action_space.high) or np.abs(action_space.low) > 1 or np.abs(action_space.high) > 1):
+        if (isinstance(action_space, spaces.Box) and
+                (np.abs(action_space.low) != np.abs(action_space.high)
+                 or np.abs(action_space.low) > 1 or np.abs(action_space.high) > 1)):
             warnings.warn("We recommend you to use a symmetric and normalized Box action space (range=[-1, 1]) "
                           "cf https://stable-baselines.readthedocs.io/en/master/guide/rl_tips.html")
 
