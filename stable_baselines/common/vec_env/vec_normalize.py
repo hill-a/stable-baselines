@@ -92,21 +92,20 @@ class VecNormalize(VecEnvWrapper):
         self.old_obs = obs
         self.old_rews = rews
 
-        if self.norm_obs:
-            if self.training:
-                self.obs_rms.update(obs)
-            obs = self.normalize_obs(obs)
+        if self.training:
+            self.obs_rms.update(obs)
+        obs = self.normalize_obs(obs)
 
-        if self.norm_reward:
-            if self.training:
-                self._update_reward(rews)
-            rews = self.normalize_reward(rews)
+        if self.training:
+            self._update_reward(rews)
+        rews = self.normalize_reward(rews)
+
         self.ret[news] = 0
         return obs, rews, news, infos
 
-    def _update_reward(self, rews: np.ndarray) -> None:
+    def _update_reward(self, reward: np.ndarray) -> None:
         """Update reward normalization statistics."""
-        self.ret = self.ret * self.gamma + rews
+        self.ret = self.ret * self.gamma + reward
         self.ret_rms.update(self.ret)
 
     def normalize_obs(self, obs: np.ndarray) -> np.ndarray:
@@ -114,18 +113,21 @@ class VecNormalize(VecEnvWrapper):
         Normalize observations using this VecNormalize's observations statistics.
         Calling this method does not update statistics.
         """
-        obs = np.clip((obs - self.obs_rms.mean) / np.sqrt(self.obs_rms.var + self.epsilon), -self.clip_obs,
-                      self.clip_obs)
+        if self.norm_obs:
+            obs = np.clip((obs - self.obs_rms.mean) / np.sqrt(self.obs_rms.var + self.epsilon),
+                          -self.clip_obs,
+                          self.clip_obs)
         return obs
 
-    def normalize_reward(self, rews: np.ndarray) -> np.ndarray:
+    def normalize_reward(self, reward: np.ndarray) -> np.ndarray:
         """
         Normalize rewards using this VecNormalize's rewards statistics.
         Calling this method does not update statistics.
         """
-        rews = np.clip(rews / np.sqrt(self.ret_rms.var + self.epsilon),
-                       -self.clip_reward, self.clip_reward)
-        return rews
+        if self.norm_reward:
+            reward = np.clip(reward / np.sqrt(self.ret_rms.var + self.epsilon),
+                           -self.clip_reward, self.clip_reward)
+        return reward
 
     def get_original_obs(self) -> np.ndarray:
         """

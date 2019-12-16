@@ -84,38 +84,38 @@ def _make_warmstart_cartpole():
     venv.get_original_obs()
 
     for _ in range(100):
-        acts = [venv.action_space.sample()]
-        venv.step(acts)
+        actions = [venv.action_space.sample()]
+        venv.step(actions)
     return venv
 
 
 def test_get_original():
     venv = _make_warmstart_cartpole()
     for _ in range(3):
-        acts = [venv.action_space.sample()]
-        obs, rews, _, _ = venv.step(acts)
+        actions = [venv.action_space.sample()]
+        obs, rewards, _, _ = venv.step(actions)
         obs = obs[0]
         orig_obs = venv.get_original_obs()[0]
-        rews = rews[0]
-        orig_rews = venv.get_original_reward()[0]
+        rewards = rewards[0]
+        orig_rewards = venv.get_original_reward()[0]
 
-        assert np.all(orig_rews == 1)
+        assert np.all(orig_rewards == 1)
         assert orig_obs.shape == obs.shape
-        assert orig_rews.dtype == rews.dtype
+        assert orig_rewards.dtype == rewards.dtype
         assert not np.array_equal(orig_obs, obs)
-        assert not np.array_equal(orig_rews, rews)
+        assert not np.array_equal(orig_rewards, rewards)
         np.testing.assert_allclose(venv.normalize_obs(orig_obs), obs)
-        np.testing.assert_allclose(venv.normalize_reward(orig_rews), rews)
+        np.testing.assert_allclose(venv.normalize_reward(orig_rewards), rewards)
 
 
 def test_normalize_external():
     venv = _make_warmstart_cartpole()
 
-    rews = np.array([1, 1])
-    norm_rews = venv.normalize_reward(rews)
-    assert norm_rews.shape == rews.shape
+    rewards = np.array([1, 1])
+    norm_rewards = venv.normalize_reward(rewards)
+    assert norm_rewards.shape == rewards.shape
     # Episode return is almost always >= 1 in CartPole. So reward should shrink.
-    assert np.all(norm_rews < 1)
+    assert np.all(norm_rewards < 1)
 
     # Don't have any guarantees on obs normalization, except shape, really.
     obs = np.array([0, 0, 0, 0])
