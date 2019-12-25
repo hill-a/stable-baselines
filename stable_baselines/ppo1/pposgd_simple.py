@@ -9,15 +9,16 @@ from mpi4py import MPI
 from stable_baselines.common import Dataset, explained_variance, fmt_row, zipsame, ActorCriticRLModel, SetVerbosity, \
     TensorboardWriter
 from stable_baselines import logger
+from stable_baselines.a2c.utils import total_episode_reward_logger
 import stable_baselines.common.tf_util as tf_util
 from stable_baselines.common.policies import ActorCriticPolicy
 from stable_baselines.common.mpi_adam import MpiAdam
 from stable_baselines.common.mpi_moments import mpi_moments
-from stable_baselines.trpo_mpi.utils import traj_segment_generator, add_vtarg_and_adv, flatten_lists
-from stable_baselines.a2c.utils import total_episode_reward_logger
+from stable_baselines.common.runners import AbstractEnvRunner
+from stable_baselines.trpo_mpi.utils import Runner, add_vtarg_and_adv, flatten_lists
 
 
-class PPO1(ActorCriticRLModel):
+class PPO1(ActorCriticRLModelWithRunner):
     """
     Proximal Policy Optimization algorithm (MPI version).
     Paper: https://arxiv.org/abs/1707.06347
@@ -52,10 +53,6 @@ class PPO1(ActorCriticRLModel):
                  schedule='linear', verbose=0, tensorboard_log=None, _init_setup_model=True,
                  policy_kwargs=None, full_tensorboard_log=False, seed=None, n_cpu_tf_sess=1):
 
-        super().__init__(policy=policy, env=env, verbose=verbose, requires_vec_env=False,
-                         _init_setup_model=_init_setup_model, policy_kwargs=policy_kwargs,
-                         seed=seed, n_cpu_tf_sess=n_cpu_tf_sess)
-
         self.gamma = gamma
         self.timesteps_per_actorbatch = timesteps_per_actorbatch
         self.clip_param = clip_param
@@ -69,23 +66,27 @@ class PPO1(ActorCriticRLModel):
         self.tensorboard_log = tensorboard_log
         self.full_tensorboard_log = full_tensorboard_log
 
-        self.graph = None
-        self.sess = None
         self.policy_pi = None
         self.loss_names = None
         self.lossandgrad = None
         self.adam = None
         self.assign_old_eq_new = None
         self.compute_losses = None
-        self.params = None
-        self.step = None
         self.proba_step = None
-        self.initial_state = None
         self.summary = None
         self.episode_reward = None
 
+        super().__init__(policy=policy, env=env, verbose=verbose, requires_vec_env=False,
+                         _init_setup_model=_init_setup_model, policy_kwargs=policy_kwargs,
+                         seed=seed, n_cpu_tf_sess=n_cpu_tf_sess)
+
         if _init_setup_model:
             self.setup_model()
+
+    def _make_runner(self) -> AbstractEnvRunner:
+        return Runner(env=self.env,
+                      policy=self.policy_pi,
+                      horizon=self.timesteps_per_actorbatch)
 
     def _get_pretrain_placeholders(self):
         policy = self.policy_pi
@@ -209,7 +210,6 @@ class PPO1(ActorCriticRLModel):
                 self.adam.sync()
 
                 # Prepare for rollouts
-                seg_gen = traj_segment_generator(self.policy_pi, self.env, self.timesteps_per_actorbatch)
 
                 episodes_so_far = 0
                 timesteps_so_far = 0
@@ -241,7 +241,7 @@ class PPO1(ActorCriticRLModel):
 
                     logger.log("********** Iteration %i ************" % iters_so_far)
 
-                    seg = seg_gen.__next__()
+                    seg = self.runner.run()
                     add_vtarg_and_adv(seg, self.gamma, self.lam)
 
                     # ob, ac, atarg, ret, td1ret = map(np.concatenate, (obs, acs, atargs, rets, td1rets))
