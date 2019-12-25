@@ -5,22 +5,26 @@ from gym.spaces import Discrete, MultiDiscrete, MultiBinary, Box
 
 
 class IdentityEnv(Env):
-    def __init__(self, dim=1, ep_length=100):
+    def __init__(self, dim, space=None, ep_length=100):
         """
         Identity environment for testing purposes
 
+        :param space: (gym.spaces.Space) The action and observation space.
         :param dim: (int) the size of the dimensions you want to learn
         :param ep_length: (int) the length of each episodes in timesteps
         """
-        self.action_space = Discrete(dim)
-        self.observation_space = self.action_space
+        if space is None:
+            space = Discrete(dim)
+        self.action_space = self.observation_space = space
         self.ep_length = ep_length
         self.current_step = 0
         self.dim = dim
+        self.num_resets = -1  # Becomes 0 after __init__ exits.
         self.reset()
 
     def reset(self):
         self.current_step = 0
+        self.num_resets += 1
         self._choose_next_state()
         return self.state
 
@@ -46,22 +50,14 @@ class IdentityEnvBox(IdentityEnv):
         """
         Identity environment for testing purposes
 
-        :param dim: (int) the size of the dimensions you want to learn
         :param low: (float) the lower bound of the box dim
         :param high: (float) the upper bound of the box dim
         :param eps: (float) the epsilon bound for correct value
         :param ep_length: (int) the length of each episodes in timesteps
         """
-        super(IdentityEnvBox, self).__init__(1, ep_length)
-        self.action_space = Box(low=low, high=high, shape=(1,), dtype=np.float32)
-        self.observation_space = self.action_space
+        space = Box(low=low, high=high, shape=(1,), dtype=np.float32)
+        super().__init__(dim=1, ep_length=ep_length, space=space)
         self.eps = eps
-        self.reset()
-
-    def reset(self):
-        self.current_step = 0
-        self._choose_next_state()
-        return self.state
 
     def step(self, action):
         reward = self._get_reward(action)
@@ -69,9 +65,6 @@ class IdentityEnvBox(IdentityEnv):
         self.current_step += 1
         done = self.current_step >= self.ep_length
         return self.state, reward, done, {}
-
-    def _choose_next_state(self):
-        self.state = self.observation_space.sample()
 
     def _get_reward(self, action):
         return 1 if (self.state - self.eps) <= action <= (self.state + self.eps) else 0
@@ -85,10 +78,8 @@ class IdentityEnvMultiDiscrete(IdentityEnv):
         :param dim: (int) the size of the dimensions you want to learn
         :param ep_length: (int) the length of each episodes in timesteps
         """
-        super(IdentityEnvMultiDiscrete, self).__init__(dim, ep_length)
-        self.action_space = MultiDiscrete([dim, dim])
-        self.observation_space = self.action_space
-        self.reset()
+        space = MultiDiscrete([dim, dim])
+        super().__init__(dim=dim, ep_length=ep_length, space=space)
 
 
 class IdentityEnvMultiBinary(IdentityEnv):
@@ -99,7 +90,5 @@ class IdentityEnvMultiBinary(IdentityEnv):
         :param dim: (int) the size of the dimensions you want to learn
         :param ep_length: (int) the length of each episodes in timesteps
         """
-        super(IdentityEnvMultiBinary, self).__init__(dim, ep_length)
-        self.action_space = MultiBinary(dim)
-        self.observation_space = self.action_space
-        self.reset()
+        space = MultiBinary(dim)
+        super().__init__(dim=dim, ep_length=ep_length, space=space)

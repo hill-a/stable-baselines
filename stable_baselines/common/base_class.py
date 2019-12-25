@@ -14,9 +14,9 @@ import tensorflow as tf
 from stable_baselines.common.misc_util import set_global_seeds
 from stable_baselines.common.save_util import data_to_json, json_to_data, params_to_bytes, bytes_to_params
 from stable_baselines.common.policies import get_policy_from_name, ActorCriticPolicy
+from stable_baselines.common.runners import AbstractEnvRunner
 from stable_baselines.common.vec_env import VecEnvWrapper, VecEnv, DummyVecEnv
 from stable_baselines import logger
-
 
 class BaseRLModel(ABC):
     """
@@ -888,6 +888,31 @@ class ActorCriticRLModel(BaseRLModel):
         model.load_parameters(params)
 
         return model
+
+
+class ActorCriticRLModelWithRunner(ActorCriticRLModel):
+    """
+    Base class for an ActorCriticRLModel that uses a Runner to sample from the environment.
+
+    Arguments are the same as those in `ActorCriticRLModel`.
+    """
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.runner = self._make_runner()
+
+    @abstractmethod
+    def _make_runner(self) -> AbstractEnvRunner:
+        """Builds a new Runner.
+
+        The implementation is responsible for resetting the environment. This
+        method is called in `__init__()`, and whenever the environment changes
+        via `set_env()`.
+        """
+
+    def set_env(self, env):
+        super().set_env(env)
+        if self.runner or self.runner.env is not self.env:
+            self.runner = self._make_runner()
 
 
 class OffPolicyRLModel(BaseRLModel):

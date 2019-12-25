@@ -12,12 +12,12 @@ from stable_baselines.ppo2.ppo2 import Runner as PPO2Runner
 from stable_baselines.a2c.utils import Scheduler, mse, \
     total_episode_reward_logger
 from stable_baselines.acktr import kfac
-from stable_baselines.common import explained_variance, ActorCriticRLModel, tf_util, SetVerbosity, TensorboardWriter
+from stable_baselines.common import explained_variance, ActorCriticRLModelWithRunner, tf_util, SetVerbosity, TensorboardWriter
 from stable_baselines.common.policies import ActorCriticPolicy, RecurrentActorCriticPolicy
 from stable_baselines.ppo2.ppo2 import safe_mean
 
 
-class ACKTR(ActorCriticRLModel):
+class ACKTR(ActorCriticRLModelWithRunner):
     """
     The ACKTR (Actor Critic using Kronecker-Factored Trust Region) model class, https://arxiv.org/abs/1708.05144
 
@@ -60,10 +60,6 @@ class ACKTR(ActorCriticRLModel):
                  tensorboard_log=None, _init_setup_model=True, async_eigen_decomp=False, kfac_update=1,
                  gae_lambda=None, policy_kwargs=None, full_tensorboard_log=False, seed=None, n_cpu_tf_sess=1):
 
-        super(ACKTR, self).__init__(policy=policy, env=env, verbose=verbose, requires_vec_env=True,
-                                    _init_setup_model=_init_setup_model, policy_kwargs=policy_kwargs,
-                                    seed=seed, n_cpu_tf_sess=n_cpu_tf_sess)
-
         self.n_steps = n_steps
         self.gamma = gamma
         self.ent_coef = ent_coef
@@ -74,19 +70,12 @@ class ACKTR(ActorCriticRLModel):
         self.learning_rate = learning_rate
         self.lr_schedule = lr_schedule
 
-        if nprocs is not None:
-            warnings.warn("nprocs will be removed in a future version (v3.x.x) "
-                          "use n_cpu_tf_sess instead", DeprecationWarning)
-            self.n_cpu_tf_sess = nprocs
-
         self.tensorboard_log = tensorboard_log
         self.async_eigen_decomp = async_eigen_decomp
         self.full_tensorboard_log = full_tensorboard_log
         self.kfac_update = kfac_update
         self.gae_lambda = gae_lambda
 
-        self.graph = None
-        self.sess = None
         self.actions_ph = None
         self.advs_ph = None
         self.rewards_ph = None
@@ -99,13 +88,11 @@ class ACKTR(ActorCriticRLModel):
         self.pg_fisher = None
         self.vf_fisher = None
         self.joint_fisher = None
-        self.params = None
         self.grads_check = None
         self.optim = None
         self.train_op = None
         self.q_runner = None
         self.learning_rate_schedule = None
-        self.step = None
         self.proba_step = None
         self.value = None
         self.initial_state = None
@@ -115,8 +102,25 @@ class ACKTR(ActorCriticRLModel):
         self.trained = False
         self.continuous_actions = False
 
+        super(ACKTR, self).__init__(policy=policy, env=env, verbose=verbose, requires_vec_env=True,
+                                    _init_setup_model=_init_setup_model, policy_kwargs=policy_kwargs,
+                                    seed=seed, n_cpu_tf_sess=n_cpu_tf_sess)
+
+        if nprocs is not None:
+            warnings.warn("nprocs will be removed in a future version (v3.x.x) "
+                          "use n_cpu_tf_sess instead", DeprecationWarning)
+            self.n_cpu_tf_sess = nprocs
+
         if _init_setup_model:
             self.setup_model()
+
+    def _make_runner(self):
+        if self.gae_lambda is not None:
+            return PPO2Runner(
+                env=self.env, model=self, n_steps=self.n_steps, gamma=self.gamma, lam=self.gae_lambda)
+        else:
+            return A2CRunner(
+                self.env, self, n_steps=self.n_steps, gamma=self.gamma)
 
     def _get_pretrain_placeholders(self):
         policy = self.train_model
@@ -318,12 +322,6 @@ class ACKTR(ActorCriticRLModel):
 
             self.trained = True
 
-            # Use GAE
-            if self.gae_lambda is not None:
-                runner = PPO2Runner(env=self.env, model=self, n_steps=self.n_steps, gamma=self.gamma, lam=self.gae_lambda)
-            else:
-                runner = A2CRunner(self.env, self, n_steps=self.n_steps, gamma=self.gamma)
-
             self.episode_reward = np.zeros((self.n_envs,))
 
             t_start = time.time()
@@ -339,11 +337,11 @@ class ACKTR(ActorCriticRLModel):
             for update in range(1, total_timesteps // self.n_batch + 1):
                 # pytype:disable=bad-unpacking
                 # true_reward is the reward without discount
-                if isinstance(runner, PPO2Runner):
+                if isinstance(self.runner, PPO2Runner):
                     # We are using GAE
-                    obs, returns, masks, actions, values, _, states, ep_infos, true_reward = runner.run()
+                    obs, returns, masks, actions, values, _, states, ep_infos, true_reward = self.runner.run()
                 else:
-                    obs, states, returns, masks, actions, values, ep_infos, true_reward = runner.run()
+                    obs, states, returns, masks, actions, values, ep_infos, true_reward = self.runner.run()
                 # pytype:enable=bad-unpacking
 
                 ep_info_buf.extend(ep_infos)

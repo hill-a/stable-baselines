@@ -1,5 +1,4 @@
 import time
-import sys
 from collections import deque
 
 import gym
@@ -7,13 +6,13 @@ import numpy as np
 import tensorflow as tf
 
 from stable_baselines import logger
-from stable_baselines.common import explained_variance, ActorCriticRLModel, tf_util, SetVerbosity, TensorboardWriter
+from stable_baselines.common import explained_variance, ActorCriticRLModelWithRunner, tf_util, SetVerbosity, TensorboardWriter
 from stable_baselines.common.runners import AbstractEnvRunner
 from stable_baselines.common.policies import ActorCriticPolicy, RecurrentActorCriticPolicy
 from stable_baselines.a2c.utils import total_episode_reward_logger
 
 
-class PPO2(ActorCriticRLModel):
+class PPO2(ActorCriticRLModelWithRunner):
     """
     Proximal Policy Optimization algorithm (GPU version).
     Paper: https://arxiv.org/abs/1707.06347
@@ -55,10 +54,6 @@ class PPO2(ActorCriticRLModel):
                  verbose=0, tensorboard_log=None, _init_setup_model=True, policy_kwargs=None,
                  full_tensorboard_log=False, seed=None, n_cpu_tf_sess=None):
 
-        super(PPO2, self).__init__(policy=policy, env=env, verbose=verbose, requires_vec_env=True,
-                                   _init_setup_model=_init_setup_model, policy_kwargs=policy_kwargs,
-                                   seed=seed, n_cpu_tf_sess=n_cpu_tf_sess)
-
         self.learning_rate = learning_rate
         self.cliprange = cliprange
         self.cliprange_vf = cliprange_vf
@@ -73,8 +68,6 @@ class PPO2(ActorCriticRLModel):
         self.tensorboard_log = tensorboard_log
         self.full_tensorboard_log = full_tensorboard_log
 
-        self.graph = None
-        self.sess = None
         self.action_ph = None
         self.advs_ph = None
         self.rewards_ph = None
@@ -87,21 +80,25 @@ class PPO2(ActorCriticRLModel):
         self.pg_loss = None
         self.approxkl = None
         self.clipfrac = None
-        self.params = None
         self._train = None
         self.loss_names = None
         self.train_model = None
         self.act_model = None
-        self.step = None
-        self.proba_step = None
         self.value = None
-        self.initial_state = None
         self.n_batch = None
         self.summary = None
         self.episode_reward = None
 
+        super(PPO2, self).__init__(policy=policy, env=env, verbose=verbose, requires_vec_env=True,
+                                   _init_setup_model=_init_setup_model, policy_kwargs=policy_kwargs,
+                                   seed=seed, n_cpu_tf_sess=n_cpu_tf_sess)
+
         if _init_setup_model:
             self.setup_model()
+
+    def _make_runner(self):
+        return Runner(env=self.env, model=self, n_steps=self.n_steps,
+                      gamma=self.gamma, lam=self.lam)
 
     def _get_pretrain_placeholders(self):
         policy = self.act_model
@@ -316,7 +313,6 @@ class PPO2(ActorCriticRLModel):
                 as writer:
             self._setup_learn()
 
-            runner = Runner(env=self.env, model=self, n_steps=self.n_steps, gamma=self.gamma, lam=self.lam)
             self.episode_reward = np.zeros((self.n_envs,))
 
             ep_info_buf = deque(maxlen=100)
@@ -324,11 +320,7 @@ class PPO2(ActorCriticRLModel):
 
             n_updates = total_timesteps // self.n_batch
             for update in range(1, n_updates + 1):
-                assert self.n_batch % self.nminibatches == 0, ("The number of minibatches (`nminibatches`) "
-                                                               "is not a factor of the total number of samples "
-                                                               "collected per rollout (`n_batch`), "
-                                                               "some samples won't be used."
-                                                               )
+                assert self.n_batch % self.nminibatches == 0
                 batch_size = self.n_batch // self.nminibatches
                 t_start = time.time()
                 frac = 1.0 - (update - 1.0) / n_updates
@@ -336,7 +328,7 @@ class PPO2(ActorCriticRLModel):
                 cliprange_now = self.cliprange(frac)
                 cliprange_vf_now = cliprange_vf(frac)
                 # true_reward is the reward without discount
-                obs, returns, masks, actions, values, neglogpacs, states, ep_infos, true_reward = runner.run()
+                obs, returns, masks, actions, values, neglogpacs, states, ep_infos, true_reward = self.runner.run()
                 self.num_timesteps += self.n_batch
                 ep_info_buf.extend(ep_infos)
                 mb_loss_vals = []
