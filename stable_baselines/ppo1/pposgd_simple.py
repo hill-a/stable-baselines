@@ -250,10 +250,10 @@ class PPO1(ActorCriticRLModel):
 
                     # true_rew is the reward without discount
                     if writer is not None:
-                        self.episode_reward = total_episode_reward_logger(self.episode_reward,
-                                                                          seg["true_rewards"].reshape((self.n_envs, -1)),
-                                                                          seg["dones"].reshape((self.n_envs, -1)),
-                                                                          writer, self.num_timesteps)
+                        total_episode_reward_logger(self.episode_reward,
+                                                    seg["true_rewards"].reshape((self.n_envs, -1)),
+                                                    seg["dones"].reshape((self.n_envs, -1)),
+                                                    writer, self.num_timesteps)
 
                     # predicted value function before udpate
                     vpredbefore = seg["vpred"]

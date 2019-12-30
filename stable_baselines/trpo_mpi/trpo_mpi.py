@@ -340,11 +340,11 @@ class TRPO(ActorCriticRLModel):
 
                         # true_rew is the reward without discount
                         if writer is not None:
-                            self.episode_reward = total_episode_reward_logger(self.episode_reward,
-                                                                              seg["true_rewards"].reshape(
-                                                                                  (self.n_envs, -1)),
-                                                                              seg["dones"].reshape((self.n_envs, -1)),
-                                                                              writer, self.num_timesteps)
+                            total_episode_reward_logger(self.episode_reward,
+                                                        seg["true_rewards"].reshape(
+                                                            (self.n_envs, -1)),
+                                                        seg["dones"].reshape((self.n_envs, -1)),
+                                                        writer, self.num_timesteps)
 
                         args = seg["observations"], seg["observations"], seg["actions"], atarg
                         # Subsampling: see p40-42 of John Schulman thesis

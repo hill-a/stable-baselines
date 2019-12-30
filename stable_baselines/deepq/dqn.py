@@ -224,8 +224,8 @@ class DQN(OffPolicyRLModel):
                 if writer is not None:
                     ep_rew = np.array([rew]).reshape((1, -1))
                     ep_done = np.array([done]).reshape((1, -1))
-                    self.episode_reward = total_episode_reward_logger(self.episode_reward, ep_rew, ep_done, writer,
-                                                                      self.num_timesteps)
+                    total_episode_reward_logger(self.episode_reward, ep_rew, ep_done, writer,
+                                                self.num_timesteps)
 
                 episode_rewards[-1] += rew
                 if done:

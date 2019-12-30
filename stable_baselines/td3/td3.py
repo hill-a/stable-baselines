@@ -348,8 +348,8 @@ class TD3(OffPolicyRLModel):
                     # Write reward per episode to tensorboard
                     ep_reward = np.array([reward]).reshape((1, -1))
                     ep_done = np.array([done]).reshape((1, -1))
-                    self.episode_reward = total_episode_reward_logger(self.episode_reward, ep_reward,
-                                                                      ep_done, writer, self.num_timesteps)
+                    total_episode_reward_logger(self.episode_reward, ep_reward,
+                                                ep_done, writer, self.num_timesteps)
 
                 if step % self.train_freq == 0:
                     mb_infos_vals = []
