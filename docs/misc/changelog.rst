@@ -6,6 +6,29 @@ Changelog
 For download links, please look at `Github release page <https://github.com/hill-a/stable-baselines/releases>`_.
 
 
+Pre-Release 2.10.0a0 (WIP)
+--------------------------
+
+Breaking Changes:
+^^^^^^^^^^^^^^^^^
+
+New Features:
+^^^^^^^^^^^^^
+
+Bug Fixes:
+^^^^^^^^^^
+
+Deprecations:
+^^^^^^^^^^^^^
+
+Others:
+^^^^^^^
+- Removed redundant return value from `a2c.utils::total_episode_reward_logger`. (@shwang)
+
+Documentation:
+^^^^^^^^^^^^^^
+
+
 Release 2.9.0 (2019-12-20)
 --------------------------
 
