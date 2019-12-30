@@ -503,10 +503,10 @@ class ACER(ActorCriticRLModelWithRunner):
                     buffer.put(enc_obs, actions, rewards, mus, dones, masks)
 
                 if writer is not None:
-                    self.episode_reward = total_episode_reward_logger(self.episode_reward,
-                                                                      rewards.reshape((self.n_envs, self.n_steps)),
-                                                                      dones.reshape((self.n_envs, self.n_steps)),
-                                                                      writer, self.num_timesteps)
+                    total_episode_reward_logger(self.episode_reward,
+                                                rewards.reshape((self.n_envs, self.n_steps)),
+                                                dones.reshape((self.n_envs, self.n_steps)),
+                                                writer, self.num_timesteps)
 
                 # reshape stuff correctly
                 obs = obs.reshape(self.runner.batch_ob_shape)

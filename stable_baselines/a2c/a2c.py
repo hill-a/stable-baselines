@@ -249,10 +249,10 @@ class A2C(ActorCriticRLModelWithRunner):
                 fps = int((update * self.n_batch) / n_seconds)
 
                 if writer is not None:
-                    self.episode_reward = total_episode_reward_logger(self.episode_reward,
-                                                                      true_reward.reshape((self.n_envs, self.n_steps)),
-                                                                      masks.reshape((self.n_envs, self.n_steps)),
-                                                                      writer, self.num_timesteps)
+                    total_episode_reward_logger(self.episode_reward,
+                                                true_reward.reshape((self.n_envs, self.n_steps)),
+                                                masks.reshape((self.n_envs, self.n_steps)),
+                                                writer, self.num_timesteps)
 
                 self.num_timesteps += self.n_batch
 
