@@ -33,7 +33,7 @@ RUN \
     . $VENV/bin/activate && \
     cd $CODE_DIR && \
     pip install --upgrade pip && \
-    if [[ $USE_GPU == "True" ]]; then \
+    if [ "$USE_GPU" = "True" ]; then \
         TENSORFLOW_PACKAGE="tensorflow-gpu==1.8.0"; \
     else \
         TENSORFLOW_PACKAGE="tensorflow==1.8.0"; \

@@ -13,5 +13,5 @@ else
   TAG="${TAG}-cpu"
 fi
 
-docker build --build-arg PARENT_IMAGE=${PARENT} -t ${TAG}:${VERSION} .
+docker build --build-arg PARENT_IMAGE=${PARENT} --build-arg USE_GPU=${USE_GPU} -t ${TAG}:${VERSION} .
 
