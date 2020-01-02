@@ -15,8 +15,12 @@ Breaking Changes:
 New Features:
 ^^^^^^^^^^^^^
 
+- Docker build script, `scripts/build_docker.sh`, can push images automatically.
+
 Bug Fixes:
 ^^^^^^^^^^
+
+- Fixed Docker build script, `scripts/build_docker.sh`, to pass `USE_GPU` build argument.
 
 Deprecations:
 ^^^^^^^^^^^^^
