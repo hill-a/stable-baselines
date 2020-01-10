@@ -22,6 +22,12 @@ Bug Fixes:
 ^^^^^^^^^^
 
 - Fixed Docker build script, `scripts/build_docker.sh`, to pass `USE_GPU` build argument.
+- Fixed a bug in PPO2, ACER, A2C, and ACKTR where repeated calls to `learn(total_timesteps)` reset
+  the environment on every call, potentially biasing samples toward early episode timesteps.
+  (@shwang)
+
+  - Fixed by adding lazy property `ActorCriticRLModel.runner`. Subclasses now use lazily-generated
+    `self.runner` instead of reinitializing a new Runner every time `learn()` is called.
 
 Deprecations:
 ^^^^^^^^^^^^^
@@ -29,6 +35,7 @@ Deprecations:
 Others:
 ^^^^^^^
 - Removed redundant return value from `a2c.utils::total_episode_reward_logger`. (@shwang)
+- Cleanup and refactoring in `common/identity_env.py` (@shwang)
 
 Documentation:
 ^^^^^^^^^^^^^^
