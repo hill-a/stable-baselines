@@ -57,6 +57,19 @@ def test_model_multiple_learn_no_reset(model_class):
     assert env.num_resets == 0
 
     model = model_class(policy="MlpPolicy", env=venv)
+    assert env.num_resets == 0
     for _ in range(4):
-        model.learn(total_timesteps=10)
+        model.learn(total_timesteps=400)
+        # Lazy constructor for Runner fires upon the first call to learn.
+        assert env.num_resets == 1
+
+    # Try again following a `set_env`.
+    venv = DummyVecEnv([make_env])
+    env = venv.envs[0]
+    assert env.num_resets == 0
+
+    model.set_env(venv)
+    assert env.num_resets == 0
+    for _ in range(4):
+        model.learn(total_timesteps=400)
         assert env.num_resets == 1

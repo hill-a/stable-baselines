@@ -89,9 +89,9 @@ class PPO2(ActorCriticRLModelWithRunner):
         self.summary = None
         self.episode_reward = None
 
-        super(PPO2, self).__init__(policy=policy, env=env, verbose=verbose, requires_vec_env=True,
-                                   _init_setup_model=_init_setup_model, policy_kwargs=policy_kwargs,
-                                   seed=seed, n_cpu_tf_sess=n_cpu_tf_sess)
+        super().__init__(policy=policy, env=env, verbose=verbose, requires_vec_env=True,
+                         _init_setup_model=_init_setup_model, policy_kwargs=policy_kwargs,
+                         seed=seed, n_cpu_tf_sess=n_cpu_tf_sess)
 
         if _init_setup_model:
             self.setup_model()
