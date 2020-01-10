@@ -78,6 +78,7 @@ class A2C(ActorCriticRLModel):
         self.initial_state = None
         self.learning_rate_schedule = None
         self.summary = None
+        self.episode_reward = None
 
         super(A2C, self).__init__(policy=policy, env=env, verbose=verbose, requires_vec_env=True,
                                   _init_setup_model=_init_setup_model, policy_kwargs=policy_kwargs,
@@ -233,6 +234,7 @@ class A2C(ActorCriticRLModel):
             self.learning_rate_schedule = Scheduler(initial_value=self.learning_rate, n_values=total_timesteps,
                                                     schedule=self.lr_schedule)
 
+            self.episode_reward = np.zeros((self.n_envs,))
             # Training stats (when using Monitor wrapper)
             ep_info_buf = deque(maxlen=100)
 

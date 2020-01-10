@@ -300,6 +300,7 @@ class DDPG(OffPolicyRLModel):
         self.adaptive_param_noise_actor = None
         self.params = None
         self.summary = None
+        self.episode_reward = None
         self.tb_seen_steps = None
 
         self.target_params = None
@@ -825,6 +826,7 @@ class DDPG(OffPolicyRLModel):
 
             eval_episode_rewards_history = deque(maxlen=100)
             episode_rewards_history = deque(maxlen=100)
+            self.episode_reward = np.zeros((1,))
             episode_successes = []
             with self.sess.as_default(), self.graph.as_default():
                 # Prepare everything.
