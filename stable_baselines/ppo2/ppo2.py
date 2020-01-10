@@ -317,7 +317,11 @@ class PPO2(ActorCriticRLModel):
 
             n_updates = total_timesteps // self.n_batch
             for update in range(1, n_updates + 1):
-                assert self.n_batch % self.nminibatches == 0
+                assert self.n_batch % self.nminibatches == 0, ("The number of minibatches (`nminibatches`) "
+                                                               "is not a factor of the total number of samples "
+                                                               "collected per rollout (`n_batch`), "
+                                                               "some samples won't be used."
+                                                               )
                 batch_size = self.n_batch // self.nminibatches
                 t_start = time.time()
                 frac = 1.0 - (update - 1.0) / n_updates
