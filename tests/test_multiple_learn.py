@@ -17,7 +17,7 @@ MODEL_LIST = [
     #
     # TODO: Modify `trpo.utils.traj_segment_generator` so that it follows
     # the `AbstractEnvRunner` interface, and then join the `ActorCriticRLModel`
-    # and `ActorCriticRLModelWithRunner` classes.
+    # and `ActorCriticRLModel` classes.
     #
     # Why is this hard in the first place? Some sort of dependency loop, if I
     # remember correctly. In TRPO, something depends on the Runner which

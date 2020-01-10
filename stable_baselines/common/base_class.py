@@ -736,6 +736,26 @@ class ActorCriticRLModel(BaseRLModel):
         self.step = None
         self.proba_step = None
         self.params = None
+        self._runner = None
+
+    def _make_runner(self) -> AbstractEnvRunner:
+        """Builds a new Runner.
+
+        This method is called in `__init__()`, and whenever the environment
+        changes via `set_env()`.
+        """
+        raise NotImplementedError("This model is not configured to use a Runner")
+
+    @property
+    def runner(self) -> AbstractEnvRunner:
+        if self._runner is None:
+            self._runner = self._make_runner()
+        return self._runner
+
+    def set_env(self, env):
+        if self.env is not env:
+            self._runner = None  # New environment invalidates `self.runner`.
+        super().set_env(env)
 
     @abstractmethod
     def setup_model(self):
@@ -888,37 +908,6 @@ class ActorCriticRLModel(BaseRLModel):
         model.load_parameters(params)
 
         return model
-
-
-class ActorCriticRLModelWithRunner(ActorCriticRLModel):
-    """
-    Base class for an ActorCriticRLModel that uses a Runner to sample from the environment.
-
-    Arguments are the same as those in `ActorCriticRLModel`.
-    """
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self._runner = None
-
-    @abstractmethod
-    def _make_runner(self) -> AbstractEnvRunner:
-        """Builds a new Runner.
-
-        The implementation is responsible for resetting the environment. This
-        method is called in `__init__()`, and whenever the environment changes
-        via `set_env()`.
-        """
-
-    @property
-    def runner(self) -> AbstractEnvRunner:
-        if self._runner is None:
-            self._runner = self._make_runner()
-        return self._runner
-
-    def set_env(self, env):
-        if self.env is not env:
-            self._runner = None  # New environment invalidates `self.runner`.
-        super().set_env(env)
 
 
 class OffPolicyRLModel(BaseRLModel):

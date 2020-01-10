@@ -12,12 +12,12 @@ from stable_baselines.ppo2.ppo2 import Runner as PPO2Runner
 from stable_baselines.a2c.utils import Scheduler, mse, \
     total_episode_reward_logger
 from stable_baselines.acktr import kfac
-from stable_baselines.common import explained_variance, ActorCriticRLModelWithRunner, tf_util, SetVerbosity, TensorboardWriter
+from stable_baselines.common import explained_variance, ActorCriticRLModel, tf_util, SetVerbosity, TensorboardWriter
 from stable_baselines.common.policies import ActorCriticPolicy, RecurrentActorCriticPolicy
 from stable_baselines.ppo2.ppo2 import safe_mean
 
 
-class ACKTR(ActorCriticRLModelWithRunner):
+class ACKTR(ActorCriticRLModel):
     """
     The ACKTR (Actor Critic using Kronecker-Factored Trust Region) model class, https://arxiv.org/abs/1708.05144
 

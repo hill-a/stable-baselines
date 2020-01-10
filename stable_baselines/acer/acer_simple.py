@@ -9,7 +9,7 @@ from stable_baselines import logger
 from stable_baselines.a2c.utils import batch_to_seq, seq_to_batch, Scheduler, EpisodeStats, \
     get_by_index, check_shape, avg_norm, gradient_add, q_explained_variance, total_episode_reward_logger
 from stable_baselines.acer.buffer import Buffer
-from stable_baselines.common import ActorCriticRLModelWithRunner, tf_util, SetVerbosity, TensorboardWriter
+from stable_baselines.common import ActorCriticRLModel, tf_util, SetVerbosity, TensorboardWriter
 from stable_baselines.common.runners import AbstractEnvRunner
 from stable_baselines.common.policies import ActorCriticPolicy, RecurrentActorCriticPolicy
 
@@ -60,7 +60,7 @@ def q_retrace(rewards, dones, q_i, values, rho_i, n_envs, n_steps, gamma):
     return qret
 
 
-class ACER(ActorCriticRLModelWithRunner):
+class ACER(ActorCriticRLModel):
     """
     The ACER (Actor-Critic with Experience Replay) model class, https://arxiv.org/abs/1611.01224
 
