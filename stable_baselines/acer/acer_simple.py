@@ -514,7 +514,7 @@ class ACER(ActorCriticRLModel):
                 rewards = rewards.reshape([self.n_batch])
                 mus = mus.reshape([self.n_batch, self.n_act])
                 dones = dones.reshape([self.n_batch])
-                masks = masks.reshape(self.runner.batch_ob_shape[0])
+                masks = masks.reshape([self.runner.batch_ob_shape[0]])
 
                 names_ops, values_ops = self._train_step(obs, actions, rewards, dones, mus, self.initial_state, masks,
                                                          self.num_timesteps, writer)
@@ -551,7 +551,7 @@ class ACER(ActorCriticRLModel):
                         rewards = rewards.reshape([self.n_batch])
                         mus = mus.reshape([self.n_batch, self.n_act])
                         dones = dones.reshape([self.n_batch])
-                        masks = masks.reshape(self.runner.batch_ob_shape[0])
+                        masks = masks.reshape([self.runner.batch_ob_shape[0]])
 
                         self._train_step(obs, actions, rewards, dones, mus, self.initial_state, masks,
                                          self.num_timesteps)
