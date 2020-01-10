@@ -57,6 +57,7 @@ class BaseRLModel(ABC):
         self.seed = seed
         self._param_load_ops = None
         self.n_cpu_tf_sess = n_cpu_tf_sess
+        self.episode_reward = None
 
         if env is not None:
             if isinstance(env, str):
@@ -137,6 +138,7 @@ class BaseRLModel(ABC):
             self.n_envs = 1
 
         self.env = env
+        self.episode_reward = None  # Invalidated by environment change.
 
     def _init_num_timesteps(self, reset_num_timesteps=True):
         """
@@ -189,6 +191,8 @@ class BaseRLModel(ABC):
         if self.env is None:
             raise ValueError("Error: cannot train the model without a valid environment, please set an environment with"
                              "set_env(self, env) method.")
+        if self.episode_reward is None:
+            self.episode_reward = np.zeros((self.n_envs,))
 
     @abstractmethod
     def get_parameter_list(self):

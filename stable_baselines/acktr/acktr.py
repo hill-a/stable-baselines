@@ -111,7 +111,6 @@ class ACKTR(ActorCriticRLModel):
         self.initial_state = None
         self.n_batch = None
         self.summary = None
-        self.episode_reward = None
         self.trained = False
         self.continuous_actions = False
 
@@ -323,8 +322,6 @@ class ACKTR(ActorCriticRLModel):
                 runner = PPO2Runner(env=self.env, model=self, n_steps=self.n_steps, gamma=self.gamma, lam=self.gae_lambda)
             else:
                 runner = A2CRunner(self.env, self, n_steps=self.n_steps, gamma=self.gamma)
-
-            self.episode_reward = np.zeros((self.n_envs,))
 
             t_start = time.time()
             coord = tf.train.Coordinator()

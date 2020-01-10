@@ -86,7 +86,6 @@ class A2C(ActorCriticRLModel):
         self.initial_state = None
         self.learning_rate_schedule = None
         self.summary = None
-        self.episode_reward = None
 
         # if we are loading, it is possible the environment is not known, however the obs and action space are known
         if _init_setup_model:
@@ -236,7 +235,6 @@ class A2C(ActorCriticRLModel):
                                                     schedule=self.lr_schedule)
 
             runner = A2CRunner(self.env, self, n_steps=self.n_steps, gamma=self.gamma)
-            self.episode_reward = np.zeros((self.n_envs,))
             # Training stats (when using Monitor wrapper)
             ep_info_buf = deque(maxlen=100)
 

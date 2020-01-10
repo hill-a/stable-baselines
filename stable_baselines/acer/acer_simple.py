@@ -160,7 +160,6 @@ class ACER(ActorCriticRLModel):
         self.n_act = None
         self.n_batch = None
         self.summary = None
-        self.episode_reward = None
 
         if _init_setup_model:
             self.setup_model()
@@ -488,7 +487,6 @@ class ACER(ActorCriticRLModel):
             episode_stats = EpisodeStats(self.n_steps, self.n_envs)
 
             runner = _Runner(env=self.env, model=self, n_steps=self.n_steps)
-            self.episode_reward = np.zeros((self.n_envs,))
             if self.replay_ratio > 0:
                 buffer = Buffer(env=self.env, n_steps=self.n_steps, size=self.buffer_size)
             else:

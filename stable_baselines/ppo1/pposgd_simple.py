@@ -82,7 +82,6 @@ class PPO1(ActorCriticRLModel):
         self.proba_step = None
         self.initial_state = None
         self.summary = None
-        self.episode_reward = None
 
         if _init_setup_model:
             self.setup_model()
@@ -220,8 +219,6 @@ class PPO1(ActorCriticRLModel):
                 lenbuffer = deque(maxlen=100)
                 # rolling buffer for episode rewards
                 rewbuffer = deque(maxlen=100)
-
-                self.episode_reward = np.zeros((self.n_envs,))
 
                 while True:
                     if callback is not None:
