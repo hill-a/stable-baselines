@@ -18,6 +18,7 @@ from stable_baselines.common.runners import AbstractEnvRunner
 from stable_baselines.common.vec_env import VecEnvWrapper, VecEnv, DummyVecEnv
 from stable_baselines import logger
 
+
 class BaseRLModel(ABC):
     """
     The base RL model
@@ -741,8 +742,7 @@ class ActorCriticRLModel(BaseRLModel):
     def _make_runner(self) -> AbstractEnvRunner:
         """Builds a new Runner.
 
-        This method is called in `__init__()`, and whenever the environment
-        changes via `set_env()`.
+        Lazily called whenever `self.runner` is accessed and `self._runner is None`.
         """
         raise NotImplementedError("This model is not configured to use a Runner")
 
@@ -754,7 +754,7 @@ class ActorCriticRLModel(BaseRLModel):
 
     def set_env(self, env):
         if self.env is not env:
-            self._runner = None  # New environment invalidates `self.runner`.
+            self._runner = None  # New environment invalidates `self._runner`.
         super().set_env(env)
 
     @abstractmethod
