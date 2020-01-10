@@ -105,7 +105,6 @@ class SAC(OffPolicyRLModel):
         self.value_fn = None
         self.graph = None
         self.replay_buffer = None
-        self.episode_reward = None
         self.sess = None
         self.tensorboard_log = tensorboard_log
         self.verbose = verbose
@@ -390,7 +389,6 @@ class SAC(OffPolicyRLModel):
             if self.action_noise is not None:
                 self.action_noise.reset()
             obs = self.env.reset()
-            self.episode_reward = np.zeros((1,))
             ep_info_buf = deque(maxlen=100)
             n_updates = 0
             infos_values = []
