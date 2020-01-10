@@ -33,7 +33,7 @@ RUN \
     . $VENV/bin/activate && \
     cd $CODE_DIR && \
     pip install --upgrade pip && \
-    if [[ $USE_GPU == "True" ]]; then \
+    if [ "$USE_GPU" = "True" ]; then \
         TENSORFLOW_PACKAGE="tensorflow-gpu==1.8.0"; \
     else \
         TENSORFLOW_PACKAGE="tensorflow==1.8.0"; \
@@ -47,6 +47,6 @@ ENV PATH=$VENV/bin:$PATH
 
 # Codacy code coverage report: used for partial code coverage reporting
 RUN cd $CODE_DIR && \
-    curl -Ls -o codacy-coverage-reporter.jar "$(curl -Ls https://api.github.com/repos/codacy/codacy-coverage-reporter/releases/latest | jq -r '.assets | map({name, browser_download_url} | select(.name | (contains("codacy-coverage-reporter") and endswith("assembly.jar")))) | .[0].browser_download_url')"
+    curl -Ls -o codacy-coverage-reporter.jar "$(curl -Ls https://api.github.com/repos/codacy/codacy-coverage-reporter/releases/latest | jq -r '.assets | map({name, browser_download_url} | select(.name | (startswith("codacy-coverage-reporter") and contains("assembly") and endswith(".jar")))) | .[0].browser_download_url')"
 
 CMD /bin/bash

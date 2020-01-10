@@ -43,7 +43,7 @@ jobs:
 
     - name: "Type Checking"
       script:
-        - 'docker run --rm --mount src=$(pwd),target=/root/code/stable-baselines,type=bind ${DOCKER_IMAGE} bash -c "cd /root/code/stable-baselines/ && pytype"'
+        - 'docker run --rm --mount src=$(pwd),target=/root/code/stable-baselines,type=bind ${DOCKER_IMAGE} bash -c "cd /root/code/stable-baselines/ && pytype --version && pytype"'
 
     - stage: Codacy Trigger
       if: type != pull_request

@@ -6,6 +6,34 @@ Changelog
 For download links, please look at `Github release page <https://github.com/hill-a/stable-baselines/releases>`_.
 
 
+Pre-Release 2.10.0a0 (WIP)
+--------------------------
+
+Breaking Changes:
+^^^^^^^^^^^^^^^^^
+
+New Features:
+^^^^^^^^^^^^^
+- Parallelized updating and sampling from the replay buffer in DQN. (@flodorner)
+
+- Docker build script, `scripts/build_docker.sh`, can push images automatically.
+
+Bug Fixes:
+^^^^^^^^^^
+
+- Fixed Docker build script, `scripts/build_docker.sh`, to pass `USE_GPU` build argument.
+
+Deprecations:
+^^^^^^^^^^^^^
+
+Others:
+^^^^^^^
+- Removed redundant return value from `a2c.utils::total_episode_reward_logger`. (@shwang)
+
+Documentation:
+^^^^^^^^^^^^^^
+
+
 Release 2.9.0 (2019-12-20)
 --------------------------
 
@@ -570,3 +598,4 @@ Thanks to @bjmuld @iambenzo @iandanforth @r7vme @brendenpetersen @huvar @abhiskk
 @XMaster96 @kantneel @Pastafarianist @GerardMaggiolino @PatrickWalter214 @yutingsz @sc420 @Aaahh @billtubbs
 @Miffyli @dwiel @miguelrass @qxcv @jaberkow @eavelardev @ruifeng96150 @pedrohbtp @srivatsankrishnan @evilsocket
 @MarvineGothic @jdossgollin @SyllogismRXS @rusu24edward @jbulow @Antymon @seheevic @justinkterry @edbeeching
+@flodorner

@@ -134,13 +134,12 @@ class PrioritizedReplayBuffer(ReplayBuffer):
         self._it_min[idx] = self._max_priority ** self._alpha
 
     def _sample_proportional(self, batch_size):
-        res = []
-        for _ in range(batch_size):
-            # TODO(szymon): should we ensure no repeats?
-            mass = random.random() * self._it_sum.sum(0, len(self._storage) - 1)
-            idx = self._it_sum.find_prefixsum_idx(mass)
-            res.append(idx)
-        return res
+        mass = []
+        total = self._it_sum.sum(0, len(self._storage) - 1)
+        # TODO(szymon): should we ensure no repeats?
+        mass = np.random.random(size=batch_size) * total
+        idx = self._it_sum.find_prefixsum_idx(mass)
+        return idx
 
     def sample(self, batch_size, beta=0):
         """
@@ -166,16 +165,11 @@ class PrioritizedReplayBuffer(ReplayBuffer):
         assert beta > 0
 
         idxes = self._sample_proportional(batch_size)
-
         weights = []
         p_min = self._it_min.min() / self._it_sum.sum()
         max_weight = (p_min * len(self._storage)) ** (-beta)
-
-        for idx in idxes:
-            p_sample = self._it_sum[idx] / self._it_sum.sum()
-            weight = (p_sample * len(self._storage)) ** (-beta)
-            weights.append(weight / max_weight)
-        weights = np.array(weights)
+        p_sample = self._it_sum[idxes] / self._it_sum.sum()
+        weights = (p_sample * len(self._storage)) ** (-beta) / max_weight
         encoded_sample = self._encode_sample(idxes)
         return tuple(list(encoded_sample) + [weights, idxes])
 
@@ -191,10 +185,11 @@ class PrioritizedReplayBuffer(ReplayBuffer):
             denoted by variable `idxes`.
         """
         assert len(idxes) == len(priorities)
-        for idx, priority in zip(idxes, priorities):
-            assert priority > 0
-            assert 0 <= idx < len(self._storage)
-            self._it_sum[idx] = priority ** self._alpha
-            self._it_min[idx] = priority ** self._alpha
+        assert np.min(priorities) > 0
+        assert np.min(idxes) >= 0
+        assert np.max(idxes) < len(self.storage)
+        self._it_sum[idxes] = priorities ** self._alpha
+        self._it_min[idxes] = priorities ** self._alpha
 
-            self._max_priority = max(self._max_priority, priority)
+        self._max_priority = max(self._max_priority, np.max(priorities))
+
