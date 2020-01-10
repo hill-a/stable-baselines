@@ -898,7 +898,7 @@ class ActorCriticRLModelWithRunner(ActorCriticRLModel):
     """
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.runner = self._make_runner()
+        self._runner = None
 
     @abstractmethod
     def _make_runner(self) -> AbstractEnvRunner:
@@ -909,10 +909,16 @@ class ActorCriticRLModelWithRunner(ActorCriticRLModel):
         via `set_env()`.
         """
 
+    @property
+    def runner(self) -> AbstractEnvRunner:
+        if self._runner is None:
+            self._runner = self._make_runner()
+        return self._runner
+
     def set_env(self, env):
+        if self.env is not env:
+            self._runner = None  # New environment invalidates `self.runner`.
         super().set_env(env)
-        if self.runner or self.runner.env is not self.env:
-            self.runner = self._make_runner()
 
 
 class OffPolicyRLModel(BaseRLModel):
