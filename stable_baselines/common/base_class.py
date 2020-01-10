@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from collections import deque
 import os
 import glob
 import warnings
@@ -58,6 +59,7 @@ class BaseRLModel(ABC):
         self._param_load_ops = None
         self.n_cpu_tf_sess = n_cpu_tf_sess
         self.episode_reward = None
+        self.ep_info_buf = None
 
         if env is not None:
             if isinstance(env, str):
@@ -138,7 +140,10 @@ class BaseRLModel(ABC):
             self.n_envs = 1
 
         self.env = env
-        self.episode_reward = None  # Invalidated by environment change.
+
+        # Invalidated by environment change.
+        self.episode_reward = None
+        self.ep_info_buf = None
 
     def _init_num_timesteps(self, reset_num_timesteps=True):
         """
@@ -193,6 +198,8 @@ class BaseRLModel(ABC):
                              "set_env(self, env) method.")
         if self.episode_reward is None:
             self.episode_reward = np.zeros((self.n_envs,))
+        if self.ep_info_buf is None:
+            self.ep_info_buf = deque(maxlen=100)
 
     @abstractmethod
     def get_parameter_list(self):
