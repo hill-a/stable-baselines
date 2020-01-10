@@ -510,11 +510,11 @@ class ACER(ActorCriticRLModel):
 
                 # reshape stuff correctly
                 obs = obs.reshape(self.runner.batch_ob_shape)
-                actions = actions.reshape([self.runner.n_batch])
-                rewards = rewards.reshape([self.runner.n_batch])
-                mus = mus.reshape([self.runner.n_batch, self.runner.n_act])
-                dones = dones.reshape([self.runner.n_batch])
-                masks = masks.reshape([self.runner.batch_ob_shape[0]])
+                actions = actions.reshape([self.n_batch])
+                rewards = rewards.reshape([self.n_batch])
+                mus = mus.reshape([self.n_batch, self.n_act])
+                dones = dones.reshape([self.n_batch])
+                masks = masks.reshape(self.runner.batch_ob_shape[0])
 
                 names_ops, values_ops = self._train_step(obs, actions, rewards, dones, mus, self.initial_state, masks,
                                                          self.num_timesteps, writer)
@@ -525,7 +525,7 @@ class ACER(ActorCriticRLModel):
                     if callback(locals(), globals()) is False:
                         break
 
-                if self.verbose >= 1 and (int(steps / self.runner.n_batch) % log_interval == 0):
+                if self.verbose >= 1 and (int(steps / self.n_batch) % log_interval == 0):
                     logger.record_tabular("total_timesteps", self.num_timesteps)
                     logger.record_tabular("fps", int(steps / (time.time() - t_start)))
                     # IMP: In EpisodicLife env, during training, we get done=True at each loss of life,
@@ -547,11 +547,11 @@ class ACER(ActorCriticRLModel):
 
                         # reshape stuff correctly
                         obs = obs.reshape(self.runner.batch_ob_shape)
-                        actions = actions.reshape([self.runner.n_batch])
-                        rewards = rewards.reshape([self.runner.n_batch])
-                        mus = mus.reshape([self.runner.n_batch, self.runner.n_act])
-                        dones = dones.reshape([self.runner.n_batch])
-                        masks = masks.reshape([self.runner.batch_ob_shape[0]])
+                        actions = actions.reshape([self.n_batch])
+                        rewards = rewards.reshape([self.n_batch])
+                        mus = mus.reshape([self.n_batch, self.n_act])
+                        dones = dones.reshape([self.n_batch])
+                        masks = masks.reshape(self.runner.batch_ob_shape[0])
 
                         self._train_step(obs, actions, rewards, dones, mus, self.initial_state, masks,
                                          self.num_timesteps)
