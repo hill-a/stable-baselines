@@ -29,30 +29,33 @@ def test_model_multiple_learn_no_reset(model_class):
     """Check that when we call learn multiple times, we don't unnecessarily
     reset the environment.
     """
-    if model_class is ACER:  # only supports discrete actions
+    if model_class is ACER:
         def make_env():
             return IdentityEnv(ep_length=1e10, dim=2)
     else:
         def make_env():
             return IdentityEnvBox(ep_length=1e10)
-    venv = DummyVecEnv([make_env])
-    env = venv.envs[0]
+    env = make_env()
+    venv = DummyVecEnv([lambda: env])
+    model = model_class(policy="MlpPolicy", env=venv)
+    _check_reset_count(model, env)
+
+    # Try again following a `set_env`.
+    env = make_env()
+    venv = DummyVecEnv([lambda: env])
     assert env.num_resets == 0
 
-    model = model_class(policy="MlpPolicy", env=venv)
+    model.set_env(venv)
+    _check_reset_count(model, env)
+
+
+def _check_reset_count(model, env: IdentityEnv):
     assert env.num_resets == 0
+    _prev_runner = None
     for _ in range(4):
         model.learn(total_timesteps=400)
         # Lazy constructor for Runner fires upon the first call to learn.
         assert env.num_resets == 1
-
-    # Try again following a `set_env`.
-    venv = DummyVecEnv([make_env])
-    env = venv.envs[0]
-    assert env.num_resets == 0
-
-    model.set_env(venv)
-    assert env.num_resets == 0
-    for _ in range(4):
-        model.learn(total_timesteps=400)
-        assert env.num_resets == 1
+        if _prev_runner is not None:
+            assert _prev_runner is model.runner, "Runner shouldn't change"
+        _prev_runner = model.runner

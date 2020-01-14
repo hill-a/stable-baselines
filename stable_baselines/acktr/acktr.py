@@ -60,6 +60,11 @@ class ACKTR(ActorCriticRLModel):
                  tensorboard_log=None, _init_setup_model=True, async_eigen_decomp=False, kfac_update=1,
                  gae_lambda=None, policy_kwargs=None, full_tensorboard_log=False, seed=None, n_cpu_tf_sess=1):
 
+        if nprocs is not None:
+            warnings.warn("nprocs will be removed in a future version (v3.x.x) "
+                          "use n_cpu_tf_sess instead", DeprecationWarning)
+            n_cpu_tf_sess = nprocs
+
         self.n_steps = n_steps
         self.gamma = gamma
         self.ent_coef = ent_coef
@@ -98,18 +103,12 @@ class ACKTR(ActorCriticRLModel):
         self.initial_state = None
         self.n_batch = None
         self.summary = None
-        self.episode_reward = None
         self.trained = False
         self.continuous_actions = False
 
         super(ACKTR, self).__init__(policy=policy, env=env, verbose=verbose, requires_vec_env=True,
                                     _init_setup_model=_init_setup_model, policy_kwargs=policy_kwargs,
                                     seed=seed, n_cpu_tf_sess=n_cpu_tf_sess)
-
-        if nprocs is not None:
-            warnings.warn("nprocs will be removed in a future version (v3.x.x) "
-                          "use n_cpu_tf_sess instead", DeprecationWarning)
-            self.n_cpu_tf_sess = nprocs
 
         if _init_setup_model:
             self.setup_model()
@@ -322,7 +321,6 @@ class ACKTR(ActorCriticRLModel):
 
             self.trained = True
 
-            self.episode_reward = np.zeros((self.n_envs,))
 
             t_start = time.time()
             coord = tf.train.Coordinator()

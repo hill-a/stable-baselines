@@ -1,24 +1,36 @@
 import numpy as np
+from typing import Optional
 
-from gym import Env
+from gym import Env, Space
 from gym.spaces import Discrete, MultiDiscrete, MultiBinary, Box
 
 
 class IdentityEnv(Env):
-    def __init__(self, dim=1, space=None, ep_length=100):
+    def __init__(self,
+                 dim: Optional[int] = 1,
+                 space: Optional[Space] = None,
+                 ep_length=100):
         """
         Identity environment for testing purposes
 
-        :param space: (gym.spaces.Space) the action and observation space
-        :param dim: (int) the size of the dimensions you want to learn
-        :param ep_length: (int) the length of each episodes in timesteps
+        :param dim: the size of the action and observation dimension you want
+            to learn. Provide exactly one of either `dim` or `space`.
+        :param space: The action and observation space. Exactly one of
+            `dim` and `space` should be non-None.
+        :param ep_length: the length of each episodes in timesteps
         """
-        if space is None:
+        if dim is not None:
+            assert space is None, space
             space = Discrete(dim)
+        elif space is not None:
+            space = space
+        else:
+            raise ValueError(
+                "Exactly one of `dim` and `space` should be non-None.")
+
         self.action_space = self.observation_space = space
         self.ep_length = ep_length
         self.current_step = 0
-        self.dim = dim
         self.num_resets = -1  # Becomes 0 after __init__ exits.
         self.reset()
 
@@ -56,7 +68,7 @@ class IdentityEnvBox(IdentityEnv):
         :param ep_length: (int) the length of each episodes in timesteps
         """
         space = Box(low=low, high=high, shape=(1,), dtype=np.float32)
-        super().__init__(dim=1, ep_length=ep_length, space=space)
+        super().__init__(ep_length=ep_length, dim=None, space=space)
         self.eps = eps
 
     def step(self, action):
@@ -79,7 +91,7 @@ class IdentityEnvMultiDiscrete(IdentityEnv):
         :param ep_length: (int) the length of each episodes in timesteps
         """
         space = MultiDiscrete([dim, dim])
-        super().__init__(dim=dim, ep_length=ep_length, space=space)
+        super().__init__(ep_length=ep_length, dim=None, space=space)
 
 
 class IdentityEnvMultiBinary(IdentityEnv):
@@ -91,4 +103,4 @@ class IdentityEnvMultiBinary(IdentityEnv):
         :param ep_length: (int) the length of each episodes in timesteps
         """
         space = MultiBinary(dim)
-        super().__init__(dim=dim, ep_length=ep_length, space=space)
+        super().__init__(ep_length=ep_length, dim=None, space=space)

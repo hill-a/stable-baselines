@@ -112,6 +112,11 @@ class ACER(ActorCriticRLModel):
                  _init_setup_model=True, policy_kwargs=None,
                  full_tensorboard_log=False, seed=None, n_cpu_tf_sess=1):
 
+        if num_procs is not None:
+            warnings.warn("num_procs will be removed in a future version (v3.x.x) "
+                          "use n_cpu_tf_sess instead", DeprecationWarning)
+            n_cpu_tf_sess = num_procs
+
         self.n_steps = n_steps
         self.replay_ratio = replay_ratio
         self.buffer_size = buffer_size
@@ -146,16 +151,10 @@ class ACER(ActorCriticRLModel):
         self.n_act = None
         self.n_batch = None
         self.summary = None
-        self.episode_reward = None
 
         super(ACER, self).__init__(policy=policy, env=env, verbose=verbose, requires_vec_env=True,
                                    _init_setup_model=_init_setup_model, policy_kwargs=policy_kwargs,
                                    seed=seed, n_cpu_tf_sess=n_cpu_tf_sess)
-
-        if num_procs is not None:
-            warnings.warn("num_procs will be removed in a future version (v3.x.x) "
-                          "use n_cpu_tf_sess instead", DeprecationWarning)
-            self.n_cpu_tf_sess = num_procs
 
 
         if _init_setup_model:
@@ -486,7 +485,6 @@ class ACER(ActorCriticRLModel):
 
             episode_stats = EpisodeStats(self.n_steps, self.n_envs)
 
-            self.episode_reward = np.zeros((self.n_envs,))
             if self.replay_ratio > 0:
                 buffer = Buffer(env=self.env, n_steps=self.n_steps, size=self.buffer_size)
             else:
