@@ -29,7 +29,7 @@ def test_model_multiple_learn_no_reset(model_class):
     """Check that when we call learn multiple times, we don't unnecessarily
     reset the environment.
     """
-    if model_class is ACER:
+    if model_class is ACER:  # only supports discrete actions
         def make_env():
             return IdentityEnv(ep_length=1e10, dim=2)
     else:
