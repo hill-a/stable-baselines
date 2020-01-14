@@ -9,7 +9,7 @@ class IdentityEnv(Env):
         """
         Identity environment for testing purposes
 
-        :param space: (gym.spaces.Space) The action and observation space.
+        :param space: (gym.spaces.Space) the action and observation space
         :param dim: (int) the size of the dimensions you want to learn
         :param ep_length: (int) the length of each episodes in timesteps
         """
