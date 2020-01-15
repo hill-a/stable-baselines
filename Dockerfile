@@ -32,7 +32,6 @@ RUN \
     . $VENV/bin/activate && \
     pip install --upgrade pip && \
     cd ${CODE_DIR}/stable-baselines && \
-    python setup.py egg_info && cat stable_baselines.egg-info/requires.txt && rm -rf stable_baselines.egg-info && \
     pip install -e .[mpi,tests] && \
     rm -rf $HOME/.cache/pip
 
