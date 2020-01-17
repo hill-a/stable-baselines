@@ -18,7 +18,7 @@ class IdentityEnv(Env):
             None, then initialization proceeds with `dim=1` and `space=None`.
         :param space: the action and observation space. Provide at most one of
             `dim` and `space`.
-        :param ep_length: the length of each episodes in timesteps
+        :param ep_length: the length of each episode in timesteps
         """
         if space is None:
             if dim is None:
@@ -64,7 +64,7 @@ class IdentityEnvBox(IdentityEnv):
         :param low: (float) the lower bound of the box dim
         :param high: (float) the upper bound of the box dim
         :param eps: (float) the epsilon bound for correct value
-        :param ep_length: (int) the length of each episodes in timesteps
+        :param ep_length: (int) the length of each episode in timesteps
         """
         space = Box(low=low, high=high, shape=(1,), dtype=np.float32)
         super().__init__(ep_length=ep_length, space=space)
@@ -87,7 +87,7 @@ class IdentityEnvMultiDiscrete(IdentityEnv):
         Identity environment for testing purposes
 
         :param dim: (int) the size of the dimensions you want to learn
-        :param ep_length: (int) the length of each episodes in timesteps
+        :param ep_length: (int) the length of each episode in timesteps
         """
         space = MultiDiscrete([dim, dim])
         super().__init__(ep_length=ep_length, space=space)
@@ -99,7 +99,7 @@ class IdentityEnvMultiBinary(IdentityEnv):
         Identity environment for testing purposes
 
         :param dim: (int) the size of the dimensions you want to learn
-        :param ep_length: (int) the length of each episodes in timesteps
+        :param ep_length: (int) the length of each episode in timesteps
         """
         space = MultiBinary(dim)
         super().__init__(ep_length=ep_length, space=space)
