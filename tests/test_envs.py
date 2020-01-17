@@ -8,7 +8,7 @@ from stable_baselines.common.bit_flipping_env import BitFlippingEnv
 from stable_baselines.common.identity_env import (IdentityEnv, IdentityEnvBox,
                                                   IdentityEnvMultiBinary, IdentityEnvMultiDiscrete,)
 
-env_classes = [BitFlippingEnv, IdentityEnv, IdentityEnvBox, IdentityEnvMultiBinary,
+ENV_CLASSES = [BitFlippingEnv, IdentityEnv, IdentityEnvBox, IdentityEnvMultiBinary,
                IdentityEnvMultiDiscrete]
 
 
@@ -32,7 +32,7 @@ def test_env(env_id):
         assert len(record) == 0
 
 
-@pytest.mark.parametrize("env_class", env_classes)
+@pytest.mark.parametrize("env_class", ENV_CLASSES)
 def test_custom_envs(env_class):
     env = env_class()
     check_env(env)
