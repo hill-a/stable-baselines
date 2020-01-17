@@ -764,8 +764,7 @@ class ActorCriticRLModel(BaseRLModel):
         return self._runner
 
     def set_env(self, env):
-        if self.env is not env:
-            self._runner = None  # New environment invalidates `self._runner`.
+        self._runner = None  # New environment invalidates `self._runner`.
         super().set_env(env)
 
     @abstractmethod
