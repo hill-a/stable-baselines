@@ -82,7 +82,7 @@ class IdentityEnvBox(IdentityEnv):
 
 
 class IdentityEnvMultiDiscrete(IdentityEnv):
-    def __init__(self, dim, ep_length=100):
+    def __init__(self, dim=1, ep_length=100):
         """
         Identity environment for testing purposes
 
@@ -94,7 +94,7 @@ class IdentityEnvMultiDiscrete(IdentityEnv):
 
 
 class IdentityEnvMultiBinary(IdentityEnv):
-    def __init__(self, dim, ep_length=100):
+    def __init__(self, dim=1, ep_length=100):
         """
         Identity environment for testing purposes
 

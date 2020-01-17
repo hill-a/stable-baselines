@@ -5,7 +5,11 @@ import numpy as np
 
 from stable_baselines.common.env_checker import check_env
 from stable_baselines.common.bit_flipping_env import BitFlippingEnv
-from stable_baselines.common.identity_env import IdentityEnv, IdentityEnvBox
+from stable_baselines.common.identity_env import (IdentityEnv, IdentityEnvBox,
+                                                  IdentityEnvMultiBinary, IdentityEnvMultiDiscrete,)
+
+env_classes = [BitFlippingEnv, IdentityEnv, IdentityEnvBox, IdentityEnvMultiBinary,
+               IdentityEnvMultiDiscrete]
 
 
 @pytest.mark.parametrize("env_id", ['CartPole-v0', 'Pendulum-v0', 'BreakoutNoFrameskip-v4'])
@@ -28,7 +32,7 @@ def test_env(env_id):
         assert len(record) == 0
 
 
-@pytest.mark.parametrize("env_class", [IdentityEnv, IdentityEnvBox, BitFlippingEnv])
+@pytest.mark.parametrize("env_class", env_classes)
 def test_custom_envs(env_class):
     env = env_class()
     check_env(env)
