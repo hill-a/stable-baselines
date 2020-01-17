@@ -311,8 +311,6 @@ class PPO2(ActorCriticRLModel):
                 as writer:
             self._setup_learn()
 
-            runner = Runner(env=self.env, model=self, n_steps=self.n_steps, gamma=self.gamma, lam=self.lam)
-
             t_first_start = time.time()
 
             n_updates = total_timesteps // self.n_batch
