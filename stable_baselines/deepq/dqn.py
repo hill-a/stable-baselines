@@ -99,7 +99,6 @@ class DQN(OffPolicyRLModel):
         self.exploration = None
         self.params = None
         self.summary = None
-        self.episode_reward = None
 
         if _init_setup_model:
             self.setup_model()
@@ -187,7 +186,6 @@ class DQN(OffPolicyRLModel):
             episode_successes = []
             obs = self.env.reset()
             reset = True
-            self.episode_reward = np.zeros((1,))
 
             for _ in range(total_timesteps):
                 if callback is not None:

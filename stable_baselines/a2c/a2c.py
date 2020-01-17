@@ -1,5 +1,4 @@
 import time
-from collections import deque
 
 import gym
 import numpy as np
@@ -78,7 +77,6 @@ class A2C(ActorCriticRLModel):
         self.initial_state = None
         self.learning_rate_schedule = None
         self.summary = None
-        self.episode_reward = None
 
         super(A2C, self).__init__(policy=policy, env=env, verbose=verbose, requires_vec_env=True,
                                   _init_setup_model=_init_setup_model, policy_kwargs=policy_kwargs,
@@ -234,15 +232,11 @@ class A2C(ActorCriticRLModel):
             self.learning_rate_schedule = Scheduler(initial_value=self.learning_rate, n_values=total_timesteps,
                                                     schedule=self.lr_schedule)
 
-            self.episode_reward = np.zeros((self.n_envs,))
-            # Training stats (when using Monitor wrapper)
-            ep_info_buf = deque(maxlen=100)
-
             t_start = time.time()
             for update in range(1, total_timesteps // self.n_batch + 1):
                 # true_reward is the reward without discount
-                obs, states, rewards, masks, actions, values, ep_infos, true_reward = self.runner.run()
-                ep_info_buf.extend(ep_infos)
+                obs, states, rewards, masks, actions, values, ep_infos, true_reward = runner.run()
+                self.ep_info_buf.extend(ep_infos)
                 _, value_loss, policy_entropy = self._train_step(obs, states, rewards, masks, actions, values,
                                                                  self.num_timesteps // self.n_batch, writer)
                 n_seconds = time.time() - t_start
@@ -270,9 +264,9 @@ class A2C(ActorCriticRLModel):
                     logger.record_tabular("policy_entropy", float(policy_entropy))
                     logger.record_tabular("value_loss", float(value_loss))
                     logger.record_tabular("explained_variance", float(explained_var))
-                    if len(ep_info_buf) > 0 and len(ep_info_buf[0]) > 0:
-                        logger.logkv('ep_reward_mean', safe_mean([ep_info['r'] for ep_info in ep_info_buf]))
-                        logger.logkv('ep_len_mean', safe_mean([ep_info['l'] for ep_info in ep_info_buf]))
+                    if len(self.ep_info_buf) > 0 and len(self.ep_info_buf[0]) > 0:
+                        logger.logkv('ep_reward_mean', safe_mean([ep_info['r'] for ep_info in self.ep_info_buf]))
+                        logger.logkv('ep_len_mean', safe_mean([ep_info['l'] for ep_info in self.ep_info_buf]))
                     logger.dump_tabular()
 
         return self

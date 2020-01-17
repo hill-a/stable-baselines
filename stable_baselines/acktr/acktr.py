@@ -1,6 +1,5 @@
 import time
 import warnings
-from collections import deque
 
 import numpy as np
 import tensorflow as tf
@@ -321,16 +320,12 @@ class ACKTR(ActorCriticRLModel):
 
             self.trained = True
 
-
             t_start = time.time()
             coord = tf.train.Coordinator()
             if self.q_runner is not None:
                 enqueue_threads = self.q_runner.create_threads(self.sess, coord=coord, start=True)
             else:
                 enqueue_threads = []
-
-            # Training stats (when using Monitor wrapper)
-            ep_info_buf = deque(maxlen=100)
 
             for update in range(1, total_timesteps // self.n_batch + 1):
                 # pytype:disable=bad-unpacking
@@ -342,7 +337,7 @@ class ACKTR(ActorCriticRLModel):
                     obs, states, returns, masks, actions, values, ep_infos, true_reward = self.runner.run()
                 # pytype:enable=bad-unpacking
 
-                ep_info_buf.extend(ep_infos)
+                self.ep_info_buf.extend(ep_infos)
                 policy_loss, value_loss, policy_entropy = self._train_step(obs, states, returns, masks, actions, values,
                                                                            self.num_timesteps // (self.n_batch + 1),
                                                                            writer)
@@ -370,9 +365,9 @@ class ACKTR(ActorCriticRLModel):
                     logger.record_tabular("policy_loss", float(policy_loss))
                     logger.record_tabular("value_loss", float(value_loss))
                     logger.record_tabular("explained_variance", float(explained_var))
-                    if len(ep_info_buf) > 0 and len(ep_info_buf[0]) > 0:
-                        logger.logkv('ep_reward_mean', safe_mean([ep_info['r'] for ep_info in ep_info_buf]))
-                        logger.logkv('ep_len_mean', safe_mean([ep_info['l'] for ep_info in ep_info_buf]))
+                    if len(self.ep_info_buf) > 0 and len(self.ep_info_buf[0]) > 0:
+                        logger.logkv('ep_reward_mean', safe_mean([ep_info['r'] for ep_info in self.ep_info_buf]))
+                        logger.logkv('ep_len_mean', safe_mean([ep_info['l'] for ep_info in self.ep_info_buf]))
                     logger.dump_tabular()
 
                 self.num_timesteps += self.n_batch + 1

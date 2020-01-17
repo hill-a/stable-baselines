@@ -1,6 +1,5 @@
 import sys
 import time
-from collections import deque
 import warnings
 
 import numpy as np
@@ -105,7 +104,6 @@ class SAC(OffPolicyRLModel):
         self.value_fn = None
         self.graph = None
         self.replay_buffer = None
-        self.episode_reward = None
         self.sess = None
         self.tensorboard_log = tensorboard_log
         self.verbose = verbose
@@ -390,8 +388,6 @@ class SAC(OffPolicyRLModel):
             if self.action_noise is not None:
                 self.action_noise.reset()
             obs = self.env.reset()
-            self.episode_reward = np.zeros((1,))
-            ep_info_buf = deque(maxlen=100)
             n_updates = 0
             infos_values = []
 
@@ -431,7 +427,7 @@ class SAC(OffPolicyRLModel):
                 # Retrieve reward and episode length if using Monitor wrapper
                 maybe_ep_info = info.get('episode')
                 if maybe_ep_info is not None:
-                    ep_info_buf.extend([maybe_ep_info])
+                    self.ep_info_buf.extend([maybe_ep_info])
 
                 if writer is not None:
                     # Write reward per episode to tensorboard
@@ -487,9 +483,9 @@ class SAC(OffPolicyRLModel):
                     fps = int(step / (time.time() - start_time))
                     logger.logkv("episodes", num_episodes)
                     logger.logkv("mean 100 episode reward", mean_reward)
-                    if len(ep_info_buf) > 0 and len(ep_info_buf[0]) > 0:
-                        logger.logkv('ep_rewmean', safe_mean([ep_info['r'] for ep_info in ep_info_buf]))
-                        logger.logkv('eplenmean', safe_mean([ep_info['l'] for ep_info in ep_info_buf]))
+                    if len(self.ep_info_buf) > 0 and len(self.ep_info_buf[0]) > 0:
+                        logger.logkv('ep_rewmean', safe_mean([ep_info['r'] for ep_info in self.ep_info_buf]))
+                        logger.logkv('eplenmean', safe_mean([ep_info['l'] for ep_info in self.ep_info_buf]))
                     logger.logkv("n_updates", n_updates)
                     logger.logkv("current_lr", current_lr)
                     logger.logkv("fps", fps)

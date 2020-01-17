@@ -21,7 +21,11 @@ New Features:
 Bug Fixes:
 ^^^^^^^^^^
 
-- Fixed Docker build script, `scripts/build_docker.sh`, to pass `USE_GPU` build argument.
+- Fixed Docker images via `scripts/build_docker.sh` and `Dockerfile`: GPU image now contains `tensorflow-gpu`,
+  and both images have `stable_baselines` installed in developer mode at correct directory for mounting.
+- Fixed Docker GPU run script, `scripts/run_docker_gpu.sh`, to work with new NVidia Container Toolkit.
+- Repeated calls to `RLModel.learn()` now preserve internal counters for some episode
+  logging statistics that used to be zeroed at the start of every call.
 - Fixed a bug in PPO2, ACER, A2C, and ACKTR where repeated calls to `learn(total_timesteps)` reset
   the environment on every call, potentially biasing samples toward early episode timesteps.
   (@shwang)
