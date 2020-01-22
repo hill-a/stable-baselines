@@ -25,7 +25,7 @@ class IdentityEnv(Env):
                 dim = 1
             space = Discrete(dim)
         else:
-            assert dim is None
+            assert dim is None, "arguments for both 'dim' and 'space' provided: at most one allowed"
 
         self.action_space = self.observation_space = space
         self.ep_length = ep_length
