@@ -9,7 +9,7 @@ class IdentityEnv(Env):
     def __init__(self,
                  dim: Optional[int] = None,
                  space: Optional[Space] = None,
-                 ep_length=100):
+                 ep_length: int = 100):
         """
         Identity environment for testing purposes
 
