@@ -1,8 +1,11 @@
 from abc import ABC, abstractmethod
 import inspect
 import pickle
+from typing import List
 
 import cloudpickle
+import numpy as np
+
 from stable_baselines import logger
 from stable_baselines.common.tile_images import tile_images
 
@@ -134,7 +137,7 @@ class VecEnv(ABC):
         self.step_async(actions)
         return self.step_wait()
 
-    def get_images(self, *args, **kwargs):
+    def get_images(self, *args, **kwargs) -> List[np.ndarray]:
         """
         Return RGB images from each environment
         """
@@ -149,7 +152,7 @@ class VecEnv(ABC):
         try:
             imgs = self.get_images(*args, **kwargs)
         except NotImplementedError:
-            logger.warn('Render not defined for %s' % self)
+            logger.warn('Render not defined for {}'.format(self))
             return
 
         # Create a big image by tiling images from subprocesses

@@ -1,5 +1,6 @@
 import multiprocessing
 from collections import OrderedDict
+from typing import List
 
 import gym
 import numpy as np
@@ -124,7 +125,7 @@ class SubprocVecEnv(VecEnv):
             process.join()
         self.closed = True
 
-    def get_images(self, *args, **kwargs):
+    def get_images(self, *args, **kwargs) -> List[np.ndarray]:
         for pipe in self.remotes:
             # gather images from subprocesses
             # `mode` will be taken into account later
