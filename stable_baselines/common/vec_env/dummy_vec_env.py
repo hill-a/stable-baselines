@@ -65,7 +65,7 @@ class DummyVecEnv(VecEnv):
         """
         Gym environment rendering. If there are multiple environments then
         they are tiled together in one image via `BaseVecEnv.render()`.
-        Otherwise (if `num_envs == 1`), we pass the render call directly to the
+        Otherwise (if `self.num_envs == 1`), we pass the render call directly to the
         underlying environment.
 
         Therefore, some arguments such as `mode` will have values that are valid
