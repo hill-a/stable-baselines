@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 import inspect
 import pickle
-from typing import List
+from typing import Sequence
 
 import cloudpickle
 import numpy as np
@@ -137,7 +137,7 @@ class VecEnv(ABC):
         self.step_async(actions)
         return self.step_wait()
 
-    def get_images(self, *args, **kwargs) -> List[np.ndarray]:
+    def get_images(self, *args, **kwargs) -> Sequence[np.ndarray]:
         """
         Return RGB images from each environment
         """
