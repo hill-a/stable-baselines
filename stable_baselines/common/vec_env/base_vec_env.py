@@ -4,6 +4,7 @@ import pickle
 
 import cloudpickle
 from stable_baselines import logger
+from stable_baselines.common.tile_images import tile_images
 
 
 class AlreadySteppingError(Exception):
@@ -133,19 +134,34 @@ class VecEnv(ABC):
         self.step_async(actions)
         return self.step_wait()
 
-    def get_images(self):
+    def get_images(self, *args, **kwargs):
         """
         Return RGB images from each environment
         """
         raise NotImplementedError
 
-    def render(self, *args, **kwargs):
+    def render(self, mode: str, *args, **kwargs):
         """
         Gym environment rendering
 
-        :param mode: (str) the rendering type
+        :param mode: the rendering type
         """
-        logger.warn('Render not defined for %s' % self)
+        try:
+            imgs = self.get_images(*args, **kwargs)
+        except NotImplementedError:
+            logger.warn('Render not defined for %s' % self)
+            return
+
+        # Create a big image by tiling images from subprocesses
+        bigimg = tile_images(imgs)
+        if mode == 'human':
+            import cv2  # pytype:disable=import-error
+            cv2.imshow('vecenv', bigimg[:, :, ::-1])
+            cv2.waitKey(1)
+        elif mode == 'rgb_array':
+            return bigimg
+        else:
+            raise NotImplementedError
 
     @property
     def unwrapped(self):

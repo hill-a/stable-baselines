@@ -57,7 +57,7 @@ class DummyVecEnv(VecEnv):
         for env in self.envs:
             env.close()
 
-    def get_images(self):
+    def get_images(self, *args, **kwargs):
         return [env.render(mode='rgb_array') for env in self.envs]
 
     def render(self, *args, **kwargs):

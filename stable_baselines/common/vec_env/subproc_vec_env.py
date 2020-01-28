@@ -5,7 +5,6 @@ import gym
 import numpy as np
 
 from stable_baselines.common.vec_env.base_vec_env import VecEnv, CloudpickleWrapper
-from stable_baselines.common.tile_images import tile_images
 
 
 def _worker(remote, parent_remote, env_fn_wrapper):
@@ -125,26 +124,11 @@ class SubprocVecEnv(VecEnv):
             process.join()
         self.closed = True
 
-    def render(self, mode='human', *args, **kwargs):
+    def get_images(self, *args, **kwargs):
         for pipe in self.remotes:
             # gather images from subprocesses
             # `mode` will be taken into account later
             pipe.send(('render', (args, {'mode': 'rgb_array', **kwargs})))
-        imgs = [pipe.recv() for pipe in self.remotes]
-        # Create a big image by tiling images from subprocesses
-        bigimg = tile_images(imgs)
-        if mode == 'human':
-            import cv2  # pytype:disable=import-error
-            cv2.imshow('vecenv', bigimg[:, :, ::-1])
-            cv2.waitKey(1)
-        elif mode == 'rgb_array':
-            return bigimg
-        else:
-            raise NotImplementedError
-
-    def get_images(self):
-        for pipe in self.remotes:
-            pipe.send(('render', {"mode": 'rgb_array'}))
         imgs = [pipe.recv() for pipe in self.remotes]
         return imgs
 
