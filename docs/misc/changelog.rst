@@ -26,6 +26,7 @@ Bug Fixes:
 - Fixed Docker GPU run script, `scripts/run_docker_gpu.sh`, to work with new NVidia Container Toolkit.
 - Repeated calls to `RLModel.learn()` now preserve internal counters for some episode
   logging statistics that used to be zeroed at the start of every call.
+- Fix `DummyVecEnv.render` for `num_envs > 1`. This used to print a warning and then not render at all. (@shwang)
 - Fixed a bug in PPO2, ACER, A2C, and ACKTR where repeated calls to `learn(total_timesteps)` reset
   the environment on every call, potentially biasing samples toward early episode timesteps.
   (@shwang)
