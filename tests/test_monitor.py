@@ -1,6 +1,8 @@
 import uuid
 import json
 import os
+import sys
+import warnings
 
 import pandas
 import gym
@@ -15,7 +17,7 @@ def test_monitor():
     """
     env = gym.make("CartPole-v1")
     env.seed(0)
-    mon_file = "/tmp/stable_baselines-test-{}.monitor.csv".format(uuid.uuid4())
+    mon_file = "./stable_baselines-test-{}.monitor.csv".format(uuid.uuid4())
     menv = Monitor(env, mon_file)
     menv.reset()
     for _ in range(1000):
@@ -34,7 +36,10 @@ def test_monitor():
     last_logline = pandas.read_csv(file_handler, index_col=None)
     assert set(last_logline.keys()) == {'l', 't', 'r'}, "Incorrect keys in monitor logline"
     file_handler.close()
-    os.remove(mon_file)
+    try:
+        os.remove(mon_file)
+    except PermissionError:
+        warnings.warn(str(sys.exc_info()[1]))
 
 def test_monitor_load_results(tmp_path):
     """
@@ -82,5 +87,8 @@ def test_monitor_load_results(tmp_path):
 
     assert results_size2 == (results_size1 + episode_count2)
 
-    os.remove(monitor_file1)
-    os.remove(monitor_file2)
+    try:
+        os.remove(monitor_file1)
+        os.remove(monitor_file2)
+    except PermissionError:
+        warnings.warn(str(sys.exc_info()[1]))

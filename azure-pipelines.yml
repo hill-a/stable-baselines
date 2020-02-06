@@ -1,0 +1,56 @@
+pool:
+  vmImage: 'windows-latest'
+
+variables:
+  PYTHON_VERSION: 3.6
+
+jobs:
+- template: azure_templates/run-test.yml
+  parameters:
+    name: 'UnitTests_a_d'
+    PYTHON_VERSION: $(PYTHON_VERSION)
+    GLOB: '[a-d]*'
+- template: azure_templates/run-test.yml
+  parameters:
+    name: 'UnitTests_e_h'
+    PYTHON_VERSION: $(PYTHON_VERSION)
+    GLOB: '[e-h]*'
+- template: azure_templates/run-test.yml
+  parameters:
+    name: 'UnitTests_i_lo'
+    PYTHON_VERSION: $(PYTHON_VERSION)
+    GLOB: '[i-lo]*'
+- template: azure_templates/run-test.yml
+  parameters:
+    name: 'UnitTests_lp_lz'
+    PYTHON_VERSION: $(PYTHON_VERSION)
+    GLOB: '[lp-lz]*'
+- template: azure_templates/run-test.yml
+  parameters:
+    name: 'UnitTests_m_r'
+    PYTHON_VERSION: $(PYTHON_VERSION)
+    GLOB: '[m-r]*'
+- template: azure_templates/run-test.yml
+  parameters:
+    name: 'UnitTests_s'
+    PYTHON_VERSION: $(PYTHON_VERSION)
+    GLOB: 's*'
+- template: azure_templates/run-test.yml
+  parameters:
+    name: 'UnitTests_t_z'
+    PYTHON_VERSION: $(PYTHON_VERSION)
+    GLOB: '[t-z]*'
+- template: azure_templates/run-test.yml
+  parameters:
+    name: 'UnitTests_determinism'
+    PYTHON_VERSION: $(PYTHON_VERSION)
+    GLOB: '0deterministic.py'
+- job: Test_mpi_adam
+  steps:
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: $(PYTHON_VERSION)
+  - template: azure_templates/install-msmpi.yml
+  - template: azure_templates/install-python-package.yml
+  - script: bash -c "python -m stable_baselines.common.mpi_adam"
+    displayName: 'Run test'

@@ -1,0 +1,10 @@
+jobs:
+- job: ${{ parameters.name }}
+  steps:
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: ${{ parameters.PYTHON_VERSION }}
+  - template: install-msmpi.yml
+  - template: install-python-package.yml
+  - script: bash -c "python -m pytest --cov-config .coveragerc --cov-report term --cov=. -v tests/test_${{ parameters.GLOB }}"
+    displayName: 'Run test'

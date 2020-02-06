@@ -1,3 +1,4 @@
+import platform
 import subprocess
 
 import gym
@@ -125,8 +126,12 @@ def test_normalize_external():
 
 def test_mpi_runningmeanstd():
     """Test RunningMeanStd object for MPI"""
-    return_code = subprocess.call(['mpirun', '--allow-run-as-root', '-np', '2',
-                                   'python', '-m', 'stable_baselines.common.mpi_running_mean_std'])
+    if platform.system() == 'Windows':
+        return_code = subprocess.call(['mpiexec', '-np', '2',
+                                    'python', '-m', 'stable_baselines.common.mpi_running_mean_std'])
+    else:
+        return_code = subprocess.call(['mpirun', '--allow-run-as-root', '-np', '2',
+                                    'python', '-m', 'stable_baselines.common.mpi_running_mean_std'])
     _assert_eq(return_code, 0)
 
 
@@ -134,6 +139,11 @@ def test_mpi_moments():
     """
     test running mean std function
     """
-    subprocess.check_call(['mpirun', '--allow-run-as-root', '-np', '3', 'python', '-c',
-                           'from stable_baselines.common.mpi_moments '
-                           'import _helper_runningmeanstd; _helper_runningmeanstd()'])
+    if platform.system() == 'Windows':
+        subprocess.check_call(['mpiexec', '-np', '3', 'python', '-c',
+                            'from stable_baselines.common.mpi_moments '
+                            'import _helper_runningmeanstd; _helper_runningmeanstd()'])
+    else:
+        subprocess.check_call(['mpirun', '--allow-run-as-root', '-np', '3', 'python', '-c',
+                            'from stable_baselines.common.mpi_moments '
+                            'import _helper_runningmeanstd; _helper_runningmeanstd()'])
