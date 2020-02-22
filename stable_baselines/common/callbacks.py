@@ -77,7 +77,6 @@ class BaseCallback(ABC):
     def on_step(self) -> bool:
         """
         This method will be called by the model after each call to `env.step()`.
-        This is the equivalent to the callback function in previous versions.
 
         For child callback (of an `EventCallback`), this will be called
         when the event is triggered.

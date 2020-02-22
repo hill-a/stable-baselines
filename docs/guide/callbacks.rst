@@ -65,11 +65,12 @@ You can find two examples of custom callbacks in the documentation: one for savi
 
         def _on_step(self) -> bool:
             """
-            This method will be called by the model.
-            This is the equivalent to the callback function.
-            ``locals()`` and ``globals()`` are directly accessible as attributes.
+            This method will be called by the model after each call to `env.step()`.
 
-            :return: (bool) Return True for continuing training, False for stopping.
+            For child callback (of an `EventCallback`), this will be called
+            when the event is triggered.
+
+            :return: (bool) If the callback returns False, training is aborted early.
             """
             return True
 
@@ -99,18 +100,19 @@ You can find two examples of custom callbacks in the documentation: one for savi
   For off-policy algorithms like SAC, DDPG, TD3 or DQN, the notion of ``rollout`` corresponds to the steps taken in the environment between two updates.
 
 
+.. _EventCallback:
 
 Event Callback
 --------------
 
 Compared to Keras, Stable Baselines provides a second type of ``BaseCallback``, named ``EventCallback`` that is meant to trigger events. When an event is triggered, then a child callback is called.
 
-As an example, ``EvalCallback`` is an ``EventCallback`` that will trigger its child callback when there is a new best model.
-A child callback is for instance ``StopTrainingOnRewardThreshold`` that stops the training if the mean reward achieved by the RL model is above a threshold.
+As an example, :ref:`EvalCallback` is an ``EventCallback`` that will trigger its child callback when there is a new best model.
+A child callback is for instance :ref:`StopTrainingOnRewardThreshold <StopTrainingCallback>` that stops the training if the mean reward achieved by the RL model is above a threshold.
 
 .. note::
 
-	We recommend to take a look at the source code of ``EvalCallback`` and ``StopTrainingOnRewardThreshold`` to have a better overview of what can be achieved with this kind of callbacks.
+	We recommend to take a look at the source code of :ref:`EvalCallback` and :ref:`StopTrainingOnRewardThreshold <StopTrainingCallback>` to have a better overview of what can be achieved with this kind of callbacks.
 
 
 .. code-block:: python
@@ -143,12 +145,14 @@ Callback Collection
 
 Stable Baselines provides you with a set of common callbacks for:
 
-- saving the model periodically (``CheckpointCallback``)
-- evaluating the model periodically and saving the best one (``EvalCallback``)
-- chaining callbacks (``CallbackList``)
-- triggering callback on events (``EventCallback``, ``EveryNTimesteps``)
-- stopping the training early based on a reward threshold (``StopTrainingOnRewardThreshold``)
+- saving the model periodically (:ref:`CheckpointCallback`)
+- evaluating the model periodically and saving the best one (:ref:`EvalCallback`)
+- chaining callbacks (:ref:`CallbackList`)
+- triggering callback on events (:ref:`EventCallback`, :ref:`EveryNTimesteps`)
+- stopping the training early based on a reward threshold (:ref:`StopTrainingOnRewardThreshold <StopTrainingCallback>`)
 
+
+.. _CheckpointCallback:
 
 CheckpointCallback
 ^^^^^^^^^^^^^^^^^^
@@ -168,6 +172,8 @@ and optionally a prefix for the checkpoints (``rl_model`` by default).
     model = SAC('MlpPolicy', 'Pendulum-v0')
     model.learn(2000, callback=checkpoint_callback)
 
+
+.. _EvalCallback:
 
 EvalCallback
 ^^^^^^^^^^^^
@@ -200,6 +206,8 @@ It will save the best model if ``best_model_save_path`` folder is specified and 
     model.learn(5000, callback=eval_callback)
 
 
+.. _Callbacklist:
+
 CallbackList
 ^^^^^^^^^^^^
 
@@ -228,11 +236,13 @@ Alternatively, you can pass directly a list of callbacks to the `learn()` method
     model.learn(5000, callback=callback)
 
 
+.. _StopTrainingCallback:
+
 StopTrainingOnRewardThreshold
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Stop the training once a threshold in episodic reward (mean episode reward over the evaluations) has been reached (i.e., when the model is good enough).
-It must be used with the ``EvalCallback`` and use the event triggered by a new best model.
+It must be used with the :ref:`EvalCallback` and use the event triggered by a new best model.
 
 
 .. code-block:: python
@@ -254,10 +264,12 @@ It must be used with the ``EvalCallback`` and use the event triggered by a new b
     model.learn(int(1e10), callback=eval_callback)
 
 
+.. _EveryNTimesteps:
+
 EveryNTimesteps
 ^^^^^^^^^^^^^^^
 
-An ``EventCallback`` that will trigger its child callback every ``n_steps`` timesteps.
+An :ref:`EventCallback` that will trigger its child callback every ``n_steps`` timesteps.
 
 
 .. note::
