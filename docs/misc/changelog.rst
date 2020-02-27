@@ -63,6 +63,7 @@ Documentation:
 - Add dedicated page for callbacks
 - Fixed example for creating a GIF (@KuKuXia)
 - Change Colab links in the README to point to the notebooks repo
+- Fix typo in Reinforcement Learning Tips and Tricks page.
 
 
 Release 2.9.0 (2019-12-20)
