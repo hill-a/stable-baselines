@@ -63,7 +63,7 @@ Documentation:
 - Add dedicated page for callbacks
 - Fixed example for creating a GIF (@KuKuXia)
 - Change Colab links in the README to point to the notebooks repo
-- Fix typo in Reinforcement Learning Tips and Tricks page.
+- Fix typo in Reinforcement Learning Tips and Tricks page. (@mmcenta)
 
 
 Release 2.9.0 (2019-12-20)
@@ -630,4 +630,4 @@ Thanks to @bjmuld @iambenzo @iandanforth @r7vme @brendenpetersen @huvar @abhiskk
 @XMaster96 @kantneel @Pastafarianist @GerardMaggiolino @PatrickWalter214 @yutingsz @sc420 @Aaahh @billtubbs
 @Miffyli @dwiel @miguelrass @qxcv @jaberkow @eavelardev @ruifeng96150 @pedrohbtp @srivatsankrishnan @evilsocket
 @MarvineGothic @jdossgollin @SyllogismRXS @rusu24edward @jbulow @Antymon @seheevic @justinkterry @edbeeching
-@flodorner @KuKuXia @NeoExtended @solliet
+@flodorner @KuKuXia @NeoExtended @solliet @mmcenta
