@@ -56,7 +56,7 @@ That's why most of the successes in RL were achieved on games or in simulation o
 As a general advice, to obtain better performances, you should augment the budget of the agent (number of training timesteps).
 
 
-In order to to achieved a desired behavior, expert knowledge is often required to design an adequate reward function.
+In order to achieve the desired behavior, expert knowledge is often required to design an adequate reward function.
 This *reward engineering* (or *RewArt* as coined by `Freek Stulp <http://www.freekstulp.net/>`_), necessitates several iterations. As a good example of reward shaping,
 you can take a look at `Deep Mimic paper <https://xbpeng.github.io/projects/DeepMimic/index.html>`_ which combines imitation learning and reinforcement learning to do acrobatic moves.
 
