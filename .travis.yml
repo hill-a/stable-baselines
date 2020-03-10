@@ -4,7 +4,7 @@ python:
 
 env:
   global:
-    - DOCKER_IMAGE=stablebaselines/stable-baselines-cpu:v2.9.0
+    - DOCKER_IMAGE=stablebaselines/stable-baselines-cpu:v2.10.0
 
 notifications:
   email: false
@@ -39,7 +39,7 @@ jobs:
 
     - name: "Sphinx Documentation"
       script:
-        - 'docker run -it --rm --mount src=$(pwd),target=/root/code/stable-baselines,type=bind ${DOCKER_IMAGE} bash -c "cd /root/code/stable-baselines/ && pip install .[docs] && pushd docs/ && make clean && make html"'
+        - 'docker run -it --rm --mount src=$(pwd),target=/root/code/stable-baselines,type=bind ${DOCKER_IMAGE} bash -c "cd /root/code/stable-baselines/ && pushd docs/ && make clean && make html"'
 
     - name: "Type Checking"
       script:

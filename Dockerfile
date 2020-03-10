@@ -27,12 +27,13 @@ ENV VENV /root/venv
 
 COPY ./setup.py ${CODE_DIR}/stable-baselines/setup.py
 RUN \
+    pip install pip --upgrade && \
     pip install virtualenv && \
     virtualenv $VENV --python=python3 && \
     . $VENV/bin/activate && \
     pip install --upgrade pip && \
     cd ${CODE_DIR}/stable-baselines && \
-    pip install -e .[mpi,tests] && \
+    pip install -e .[mpi,tests,docs] && \
     rm -rf $HOME/.cache/pip
 
 ENV PATH=$VENV/bin:$PATH

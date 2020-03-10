@@ -116,13 +116,13 @@ Build GPU image (with nvidia-docker):
 
 .. code-block:: bash
 
-   USE_GPU=True ./scripts/build_docker.sh
+   make docker-gpu
 
 Build CPU image:
 
 .. code-block:: bash
 
-   ./scripts/build_docker.sh
+   make docker-cpu
 
 Note: if you are using a proxy, you need to pass extra params during
 build and do some `tweaks`_:
