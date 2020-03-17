@@ -1000,6 +1000,11 @@ class DDPG(OffPolicyRLModel):
                                     eval_episode_reward = 0.
 
                     mpi_size = MPI.COMM_WORLD.Get_size()
+
+                    # Not enough samples in the replay buffer
+                    if not self.replay_buffer.can_sample(self.batch_size):
+                        continue
+
                     # Log stats.
                     # XXX shouldn't call np.mean on variable length lists
                     duration = time.time() - start_time
