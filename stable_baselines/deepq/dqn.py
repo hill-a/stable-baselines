@@ -30,6 +30,7 @@ class DQN(OffPolicyRLModel):
             annealed
     :param exploration_final_eps: (float) final value of random action probability
     :param exploration_initial_eps: (float) initial value of random action probability
+    :param exploration_annealing_steps: (int) number of steps to anneal exploration, when None, uses total_timesteps in learn
     :param train_freq: (int) update the model every `train_freq` steps. set to None to disable printing
     :param batch_size: (int) size of a batched sampled from replay buffer for training
     :param double_q: (bool) Whether to enable Double-Q learning or not.
@@ -55,7 +56,7 @@ class DQN(OffPolicyRLModel):
         If None, the number of cpu of the current machine will be used.
     """
     def __init__(self, policy, env, gamma=0.99, learning_rate=5e-4, buffer_size=50000, exploration_fraction=0.1,
-                 exploration_final_eps=0.02, exploration_initial_eps=1.0, train_freq=1, batch_size=32, double_q=True,
+                 exploration_final_eps=0.02, exploration_initial_eps=1.0, exploration_annealing_steps=None, train_freq=1, batch_size=32, double_q=True,
                  learning_starts=1000, target_network_update_freq=500, prioritized_replay=False,
                  prioritized_replay_alpha=0.6, prioritized_replay_beta0=0.4, prioritized_replay_beta_iters=None,
                  prioritized_replay_eps=1e-6, param_noise=False,
@@ -79,6 +80,7 @@ class DQN(OffPolicyRLModel):
         self.exploration_final_eps = exploration_final_eps
         self.exploration_initial_eps = exploration_initial_eps
         self.exploration_fraction = exploration_fraction
+        self.exploration_annealing_steps = exploration_annealing_steps
         self.buffer_size = buffer_size
         self.learning_rate = learning_rate
         self.gamma = gamma
@@ -178,7 +180,11 @@ class DQN(OffPolicyRLModel):
                 self.replay_buffer = replay_wrapper(self.replay_buffer)
 
             # Create the schedule for exploration starting from 1.
-            self.exploration = LinearSchedule(schedule_timesteps=int(self.exploration_fraction * total_timesteps),
+            # Ensures that the annealing steps are consistent across multiple learn calls.
+            exploration_annealing_steps = self.exploration_annealing_steps
+            if exploration_annealing_steps is None:
+                exploration_annealing_steps = int(self.exploration_fraction * total_timesteps)
+            self.exploration = LinearSchedule(schedule_timesteps=exploration_annealing_steps,
                                               initial_p=self.exploration_initial_eps,
                                               final_p=self.exploration_final_eps)
 

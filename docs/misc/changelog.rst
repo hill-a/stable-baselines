@@ -20,6 +20,7 @@ Bug Fixes:
 - Fixed DDPG sampling empty replay buffer when combined with HER  (@tirafesi)
 - Fixed a bug in ``HindsightExperienceReplayWrapper``, where the openai-gym signature for ``compute_reward`` was not matched correctly (@johannes-dornheim)
 - Fixed SAC/TD3 checking time to update on learn steps instead of total steps (@solliet)
+- Fixed a divide by zero bug when `dqn.learn` was called with small `total_timesteps` (@solliet)
 
 Deprecations:
 ^^^^^^^^^^^^^
