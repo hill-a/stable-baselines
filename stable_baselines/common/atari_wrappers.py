@@ -214,8 +214,8 @@ class FrameStack(gym.Wrapper):
         self.observation_space = spaces.Box(low=0, high=255, shape=(shp[0], shp[1], shp[2] * n_frames),
                                             dtype=env.observation_space.dtype)
 
-    def reset(self):
-        obs = self.env.reset()
+    def reset(self, **kwargs):
+        obs = self.env.reset(**kwargs)
         for _ in range(self.n_frames):
             self.frames.append(obs)
         return self._get_ob()
