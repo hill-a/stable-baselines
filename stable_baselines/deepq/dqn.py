@@ -183,7 +183,8 @@ class DQN(OffPolicyRLModel):
             # Ensures that the annealing steps are consistent across multiple learn calls.
             exploration_annealing_steps = self.exploration_annealing_steps
             if exploration_annealing_steps is None:
-                exploration_annealing_steps = int(self.exploration_fraction * total_timesteps)
+                exploration_annealing_steps = self.exploration_fraction * total_timesteps
+            exploration_annealing_steps = int(exploration_annealing_steps) # ensure integer
             self.exploration = LinearSchedule(schedule_timesteps=exploration_annealing_steps,
                                               initial_p=self.exploration_initial_eps,
                                               final_p=self.exploration_final_eps)
