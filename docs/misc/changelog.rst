@@ -20,7 +20,7 @@ Bug Fixes:
 - Fixed DDPG sampling empty replay buffer when combined with HER  (@tirafesi)
 - Fixed a bug in ``HindsightExperienceReplayWrapper``, where the openai-gym signature for ``compute_reward`` was not matched correctly (@johannes-dornheim)
 - Fixed SAC/TD3 checking time to update on learn steps instead of total steps (@solliet)
-- Added `**kwarg` pass through for `reset` method in `atari_wrappers.FrameStack` (@solliet)
+- Added ``**kwarg`` pass through for ``reset`` method in ``atari_wrappers.FrameStack`` (@solliet)
 
 Deprecations:
 ^^^^^^^^^^^^^
