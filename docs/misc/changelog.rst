@@ -15,6 +15,7 @@ Breaking Changes:
 New Features:
 ^^^^^^^^^^^^^
 - Added momentum parameter to A2C for the embedded RMSPropOptimizer (@kantneel)
+- ActionNoise is now an abstract base class and implements `__call__` (@solliet)
 
 Bug Fixes:
 ^^^^^^^^^^
