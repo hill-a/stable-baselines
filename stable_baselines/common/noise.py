@@ -42,15 +42,23 @@ class AdaptiveParamNoiseSpec(object):
         return fmt.format(self.initial_stddev, self.desired_action_stddev, self.adoption_coefficient)
 
 
-class ActionNoise(object):
+class ActionNoise(ABC):
     """
     The action noise base class
     """
-    def reset(self):
+
+    def __init__(self):
+        super(ActionNoise, self).__init__()
+
+    def reset(self) -> None:
         """
         call end of episode reset for the noise
         """
         pass
+
+    @abstractmethod
+    def __call__(self) -> np.ndarray:
+        raise NotImplementedError()
 
 
 class NormalActionNoise(ActionNoise):
