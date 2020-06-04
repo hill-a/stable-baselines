@@ -243,7 +243,7 @@ class VecEnvWrapper(VecEnv):
     def close(self):
         return self.venv.close()
 
-    def render(self, mode='human'):
+    def render(self, mode: str = 'human'):
         return self.venv.render(mode=mode)
 
     def get_images(self):
