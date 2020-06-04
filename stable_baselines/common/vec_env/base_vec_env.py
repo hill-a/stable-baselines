@@ -149,20 +149,20 @@ class VecEnv(ABC):
         self.step_async(actions)
         return self.step_wait()
 
-    def get_images(self, *args, **kwargs) -> Sequence[np.ndarray]:
+    def get_images(self) -> Sequence[np.ndarray]:
         """
         Return RGB images from each environment
         """
         raise NotImplementedError
 
-    def render(self, mode: str, *args, **kwargs):
+    def render(self, mode: str = 'human'):
         """
         Gym environment rendering
 
         :param mode: the rendering type
         """
         try:
-            imgs = self.get_images(*args, **kwargs)
+            imgs = self.get_images()
         except NotImplementedError:
             logger.warn('Render not defined for {}'.format(self))
             return
@@ -243,8 +243,8 @@ class VecEnvWrapper(VecEnv):
     def close(self):
         return self.venv.close()
 
-    def render(self, *args, **kwargs):
-        return self.venv.render(*args, **kwargs)
+    def render(self, mode='human'):
+        return self.venv.render(mode=mode)
 
     def get_images(self):
         return self.venv.get_images()

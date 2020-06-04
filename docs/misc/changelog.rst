@@ -6,11 +6,12 @@ Changelog
 For download links, please look at `Github release page <https://github.com/hill-a/stable-baselines/releases>`_.
 
 
-Pre-Release 2.10.1a0 (WIP)
+Pre-Release 2.10.1a1 (WIP)
 ---------------------------
 
 Breaking Changes:
 ^^^^^^^^^^^^^^^^^
+- ``render()`` method of ``VecEnvs`` now only accept one argument: ``mode``
 
 New Features:
 ^^^^^^^^^^^^^
@@ -30,6 +31,8 @@ Bug Fixes:
 - Fixed potential bug in ``DummyVecEnv`` where ``copy()`` was used instead of ``deepcopy()``
 - Fixed a bug in ``GAIL`` where the dataloader was not available after saving, causing an error when using ``CheckpointCallback``
 - Fixed a bug in ``SAC`` where any convolutional layers were not included in the target network parameters.
+- Fixed ``render()`` method for ``VecEnvs``
+- Fixed ``seed()``` method for ``SubprocVecEnv``
 
 Deprecations:
 ^^^^^^^^^^^^^
@@ -38,6 +41,7 @@ Others:
 ^^^^^^^
 - Added ``version.txt`` to manage version number in an easier way
 - Added ``.readthedocs.yml`` to install requirements with read the docs
+- Added a test for seeding ``SubprocVecEnv``` and rendering
 
 Documentation:
 ^^^^^^^^^^^^^^
