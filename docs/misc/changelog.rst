@@ -36,6 +36,7 @@ Bug Fixes:
 - Fixed a bug ``callback.locals`` did not have the correct values (@PartiallyTyped)
 - Fixed a bug in the ``close()`` method of ``SubprocVecEnv``, causing wrappers further down in the wrapper stack to not be closed. (@NeoExtended)
 - Fixed a bug in the ``generate_expert_traj()`` method in ``record_expert.py`` when using a non-image vectorized environment (@jbarsce)
+- Fixed a bug in CloudPickleWrapper's (used by VecEnvs) ``__setstate___`` where loading was incorrectly using `pickle.loads` (@shwang).
 
 
 Deprecations:
