@@ -37,7 +37,8 @@ Bug Fixes:
 - Fixed a bug in the ``close()`` method of ``SubprocVecEnv``, causing wrappers further down in the wrapper stack to not be closed. (@NeoExtended)
 - Fixed a bug in the ``generate_expert_traj()`` method in ``record_expert.py`` when using a non-image vectorized environment (@jbarsce)
 - Fixed a bug in CloudPickleWrapper's (used by VecEnvs) ``__setstate___`` where loading was incorrectly using ``pickle.loads`` (@shwang).
-- Fixed a bug in ``SAC`` and ``TD3`` where the log timesteps was not correct(@YangRui2015) 
+- Fixed a bug in ``SAC`` and ``TD3`` where the log timesteps was not correct(@YangRui2015)
+- Fixed a bug where the environment was reset twice when using ``evaluate_policy``
 
 
 Deprecations:
