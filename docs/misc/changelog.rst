@@ -28,7 +28,7 @@ Others:
 Documentation:
 ^^^^^^^^^^^^^^
 - Added stable-baselines-tf2 link on Projects page. (@sophiagu)
-- Fixed a typo in ``stable_baselines.common.env_checker.check_env `` (@OGordon100)
+- Fixed a typo in ``stable_baselines.common.env_checker.check_env`` (@OGordon100)
 
 Release 2.10.1 (2020-08-05)
 ---------------------------
