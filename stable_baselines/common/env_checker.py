@@ -178,7 +178,7 @@ def check_env(env: gym.Env, warn: bool = True, skip_render_check: bool = True) -
     :param skip_render_check: (bool) Whether to skip the checks for the render method.
         True by default (useful for the CI)
     """
-    assert isinstance(env, gym.Env), ("You environment must inherit from gym.Env class "
+    assert isinstance(env, gym.Env), ("Your environment must inherit from the gym.Env class"
                                       " cf https://github.com/openai/gym/blob/master/gym/core.py")
 
     # ============= Check the spaces (observation and action) ================
