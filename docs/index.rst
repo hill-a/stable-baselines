@@ -10,16 +10,6 @@ Welcome to Stable Baselines docs! - RL Baselines Made Easy
 of Reinforcement Learning (RL) algorithms based on OpenAI `Baselines <https://github.com/openai/baselines>`_.
 
 
-.. warning::
-
-    This package is in maintenance mode, please use `Stable-Baselines3
-    (SB3)`_ for an up-to-date version. You can find a `migration guide`_ in
-    SB3 documentation.
-
-
-.. _Stable-Baselines3 (SB3): https://github.com/DLR-RM/stable-baselines3
-.. _migration guide: https://stable-baselines3.readthedocs.io/en/master/guide/migration.html
-
 Github repository: https://github.com/hill-a/stable-baselines
 
 RL Baselines Zoo (collection of pre-trained agents): https://github.com/araffin/rl-baselines-zoo

@@ -84,6 +84,20 @@ if enable_spell_check:
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
 
+# Add a string of reStructuredText that will be included at the beginning
+# of every source file that is read. This is a possible place to add
+# substitutions that should be available in every file.
+rst_prolog = """
+.. warning::
+
+    This package is in maintenance mode, please use `Stable-Baselines3
+    (SB3)`_ for an up-to-date version. You can find a `migration guide`_ in
+    SB3 documentation.
+
+.. _Stable-Baselines3 (SB3): https://github.com/DLR-RM/stable-baselines3
+.. _migration guide: https://stable-baselines3.readthedocs.io/en/master/guide/migration.html
+"""
+
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
 #
