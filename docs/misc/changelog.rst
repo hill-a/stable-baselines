@@ -26,6 +26,10 @@ Deprecations:
 Others:
 ^^^^^^^
 
+Documentation:
+^^^^^^^^^^^^^^
+- Adding the version warning banner on every documentation page (@qgallouedec)
+
 Release 2.10.2 (2021-04-05)
 ---------------------------
 
