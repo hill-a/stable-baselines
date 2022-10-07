@@ -435,11 +435,13 @@ class LstmPolicy(RecurrentActorCriticPolicy):
         else:  # Use the new net_arch parameter
             if layers is not None:
                 warnings.warn("The new net_arch parameter overrides the deprecated layers parameter.")
-            if feature_extraction == "cnn":
-                raise NotImplementedError()
 
             with tf.variable_scope("model", reuse=reuse):
-                latent = tf.layers.flatten(self.processed_obs)
+                if feature_extraction == "cnn":
+                    latent = cnn_extractor(self.processed_obs, **kwargs)
+                    latent = tf.layers.flatten(latent)
+                else:
+                    latent = tf.layers.flatten(self.processed_obs)
                 policy_only_layers = []  # Layer sizes of the network that only belongs to the policy network
                 value_only_layers = []  # Layer sizes of the network that only belongs to the value network
 
