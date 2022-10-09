@@ -2,7 +2,7 @@ import os
 
 import gym
 import pytest
-import tensorflow as tf
+import tensorflow.compat.v1 as tf
 
 from stable_baselines import A2C, ACER, ACKTR, DQN, PPO1, PPO2, TRPO, SAC, DDPG
 from stable_baselines.common.policies import FeedForwardPolicy

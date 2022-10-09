@@ -62,7 +62,7 @@ The functions in this file can are used to create the following functions:
     Q' is set to Q once every 10000 updates training steps.
 
 """
-import tensorflow as tf
+import tensorflow.compat.v1 as tf
 from gym.spaces import MultiDiscrete
 
 from stable_baselines.common import tf_util

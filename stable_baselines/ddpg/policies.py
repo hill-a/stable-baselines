@@ -1,4 +1,4 @@
-import tensorflow as tf
+import tensorflow.compat.v1 as tf
 from gym.spaces import Box
 
 from stable_baselines.common.policies import BasePolicy, nature_cnn, register_policy

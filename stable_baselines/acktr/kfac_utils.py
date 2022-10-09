@@ -1,4 +1,4 @@
-import tensorflow as tf
+import tensorflow.compat.v1 as tf
 
 
 def gmatmul(tensor_a, tensor_b, transpose_a=False, transpose_b=False, reduce_dim=None):

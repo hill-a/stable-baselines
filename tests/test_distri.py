@@ -1,5 +1,5 @@
 import numpy as np
-import tensorflow as tf
+import tensorflow.compat.v1 as tf
 
 import stable_baselines.common.tf_util as tf_util
 from stable_baselines.common.distributions import DiagGaussianProbabilityDistributionType,\

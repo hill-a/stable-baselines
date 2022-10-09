@@ -2,7 +2,7 @@ import time
 import warnings
 
 import numpy as np
-import tensorflow as tf
+import tensorflow.compat.v1 as tf
 
 from stable_baselines.common import tf_util, OffPolicyRLModel, SetVerbosity, TensorboardWriter
 from stable_baselines.common.vec_env import VecEnv

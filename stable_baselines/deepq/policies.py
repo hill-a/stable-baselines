@@ -1,4 +1,4 @@
-import tensorflow as tf
+import tensorflow.compat.v1 as tf
 import tensorflow.contrib.layers as tf_layers
 import numpy as np
 from gym.spaces import Discrete

@@ -50,6 +50,7 @@ Breaking Changes:
 New Features:
 ^^^^^^^^^^^^^
 - EvalCallback now works also for recurrent policies (@mily20001)
+- Add minimal support for TF2 using tensorflow.compat.v1 while keeping support for TF1
 
 Bug Fixes:
 ^^^^^^^^^^

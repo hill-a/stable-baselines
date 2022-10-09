@@ -9,7 +9,7 @@ import warnings
 from collections import defaultdict
 from typing import Optional
 
-import tensorflow as tf
+import tensorflow.compat.v1 as tf
 from tensorflow.python import pywrap_tensorflow
 from tensorflow.core.util import event_pb2
 from tensorflow.python.util import compat
@@ -715,7 +715,7 @@ def read_tb(path):
     import numpy as np
     from glob import glob
     # from collections import defaultdict
-    import tensorflow as tf
+    import tensorflow.compat.v1 as tf
     if os.path.isdir(path):
         fnames = glob(os.path.join(path, "events.*"))
     elif os.path.basename(path).startswith("events."):
