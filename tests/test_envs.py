@@ -127,6 +127,22 @@ def check_step_assert_error(env, new_step_return=()):
         check_env(env)
 
 
+def test_action_format ( env, action ):
+    """
+    Test if action format check works
+    :param env: (gym.Env)
+    :param action: (list, array)
+    """
+
+    env = gym.make('CartPole-v0')
+
+    with pytest.raises(TypeError):
+        env.step( action )
+
+    with pytest.raises(not TypeError):
+        env.step( [ action ] )
+
+
 def test_common_failures_step():
     """
     Test that common failure cases of the `step` method are caught
@@ -147,3 +163,6 @@ def test_common_failures_step():
     # Done is not a boolean
     check_step_assert_error(env, (env.observation_space.sample(), 0.0, 3.0, {}))
     check_step_assert_error(env, (env.observation_space.sample(), 0.0, 1, {}))
+
+    # action format must be [] or np.ndarray
+    test_action_format ( env, 0 )

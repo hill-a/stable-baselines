@@ -210,6 +210,7 @@ Others:
 - Removed redundant return value from ``a2c.utils::total_episode_reward_logger``. (@shwang)
 - Cleanup and refactoring in ``common/identity_env.py`` (@shwang)
 - Added a Makefile to simplify common development tasks (build the doc, type check, run the tests)
+- Action Type Check: Assertion added to ``VecEnv` to check if action is of type list or np.ndarray. Otherwise a developer friendly message is displayed on how to fix the issue. (@mentalgear)
 
 
 Documentation:
