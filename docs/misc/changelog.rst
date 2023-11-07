@@ -104,7 +104,8 @@ Bug Fixes:
 - Fixed a bug in CloudPickleWrapper's (used by VecEnvs) ``__setstate___`` where loading was incorrectly using ``pickle.loads`` (@shwang).
 - Fixed a bug in ``SAC`` and ``TD3`` where the log timesteps was not correct(@YangRui2015)
 - Fixed a bug where the environment was reset twice when using ``evaluate_policy``
-
+- Fixed a bug where ``SAC`` uses wrong step to log to tensorboard after multiple calls to ``SAC.learn(..., reset_num_timesteps=True)`` (@krishpop)
+- Fixed issue where HER replay buffer wrapper is used multiple times after multiple calls to ``HER.learn`` (@krishpop)
 
 Deprecations:
 ^^^^^^^^^^^^^

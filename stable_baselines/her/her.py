@@ -70,6 +70,7 @@ class HER(BaseRLModel):
                                                 n_sampled_goal=self.n_sampled_goal,
                                                 goal_selection_strategy=self.goal_selection_strategy,
                                                 wrapped_env=self.env)
+        self.wrapped_buffer = False
 
     def set_env(self, env):
         assert not isinstance(env, VecEnvWrapper), "HER does not support VecEnvWrapper"
@@ -108,9 +109,11 @@ class HER(BaseRLModel):
 
     def learn(self, total_timesteps, callback=None, log_interval=100, tb_log_name="HER",
               reset_num_timesteps=True):
+        replay_wrapper = self.replay_wrapper if not self.wrapped_buffer else None
+        self.wrapped_buffer = True
         return self.model.learn(total_timesteps, callback=callback, log_interval=log_interval,
                                 tb_log_name=tb_log_name, reset_num_timesteps=reset_num_timesteps,
-                                replay_wrapper=self.replay_wrapper)
+                                replay_wrapper=replay_wrapper)
 
     def _check_obs(self, observation):
         if isinstance(observation, dict):
